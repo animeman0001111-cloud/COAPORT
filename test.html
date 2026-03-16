@@ -1,0 +1,271 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>COA Play Book</title>
+
+<style>
+
+/* RESET */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+/* BACKGROUND */
+
+body{
+
+background:
+radial-gradient(circle at 20% 30%, rgba(0,255,255,0.2), transparent),
+radial-gradient(circle at 80% 70%, rgba(0,255,255,0.1), transparent),
+#020b16;
+
+color:white;
+min-height:100vh;
+
+}
+
+/* OUTER FRAME */
+
+.frame{
+
+width:95%;
+margin:auto;
+margin-top:20px;
+padding:20px;
+
+border:1px solid rgba(0,255,255,0.5);
+border-radius:20px;
+
+box-shadow:
+0 0 30px rgba(0,255,255,0.3),
+inset 0 0 20px rgba(0,255,255,0.2);
+
+}
+
+/* NAVBAR */
+
+.navbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:10px 20px;
+
+border-bottom:1px solid rgba(0,255,255,0.4);
+
+}
+
+.logo{
+
+color:cyan;
+font-weight:bold;
+letter-spacing:2px;
+text-shadow:0 0 10px cyan;
+
+}
+
+.nav{
+
+display:flex;
+gap:40px;
+
+}
+
+.nav a{
+
+text-decoration:none;
+color:white;
+font-size:18px;
+
+}
+
+/* TITLE */
+
+.title{
+
+text-align:center;
+font-size:60px;
+margin-top:20px;
+
+color:#b6f5ff;
+
+text-shadow:
+0 0 15px cyan,
+0 0 30px cyan;
+
+}
+
+/* QUESTION */
+
+.question{
+
+text-align:center;
+margin-top:25px;
+color:#d0faff;
+
+}
+
+/* IMAGE BOX */
+
+.image-box{
+
+margin-top:30px;
+
+border:1px solid rgba(0,255,255,0.5);
+border-radius:20px;
+
+padding:10px;
+
+box-shadow:0 0 20px rgba(0,255,255,0.3);
+
+}
+
+.image-box img{
+
+width:100%;
+border-radius:15px;
+
+}
+
+/* TEXT */
+
+.content{
+
+margin-top:20px;
+line-height:1.6;
+color:#d8faff;
+
+}
+
+.highlight{
+
+color:cyan;
+font-weight:bold;
+
+}
+
+/* BOTTOM GRID */
+
+.bottom{
+
+display:flex;
+gap:30px;
+margin-top:40px;
+
+}
+
+.card{
+
+flex:1;
+
+border:1px solid rgba(0,255,255,0.4);
+border-radius:15px;
+
+padding:10px;
+
+box-shadow:0 0 20px rgba(0,255,255,0.25);
+
+}
+
+.card img{
+
+width:100%;
+border-radius:10px;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="frame">
+
+<div class="navbar">
+
+<div class="logo">COA PROJECT</div>
+
+<div class="nav">
+<a href="test1.html">Home</a>
+<a href="#">Play Book</a>
+</div>
+
+</div>
+
+
+<h1 class="title">Play Book</h1>
+
+
+<div class="question">
+
+<h3>
+1. “Why does your laptop feel slow even with a fast processor?”
+</h3>
+
+<p>
+Which unit affects performance the most and why?
+</p>
+
+</div>
+
+
+<div class="image-box">
+
+<img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c">
+
+</div>
+
+
+<div class="content">
+
+<p>
+Many people think that a<span class="highlight"> fast processor (CPU)</span>alone makes a laptop fast, but performance actually depends on several components working together. Even with a powerful CPU, a laptop can feel slow if other units are not efficient.
+</p>
+
+<p>
+<span class="highlight">The unit that affects performance the most is the RAM (Random Access Memory).</span>
+RAM stores the data and programs that the CPU is currently using. When you open applications, browse the internet, or run software, the system loads this information into RAM so the CPU can access it quickly. If the RAM capacity is low, the laptop cannot keep many programs in memory at the same time. As a result, the system starts using the storage drive as temporary memory, which is much slower. This causes delays, lag, and slow multitasking.
+</p>
+
+<p>
+If the RAM capacity is low, the laptop cannot keep many programs in memory at the same time.
+The system starts using the storage drive as temporary memory which is much slower.
+</p>
+
+<p>
+Another important factor is the <span class="highlight">storage type</span>.
+A laptop with an HDD is slower compared to one with an SSD.
+</p>
+
+<p>
+Therefore, even with a fast processor,
+<span class="highlight">insufficient RAM or slow storage</span>
+can make a laptop feel slow.
+</p>
+<p>Another component that influences laptop performance is the <span class="highlight">cache memory</span>. Cache is a very small but extremely fast memory located inside or very close to the CPU. It stores frequently used data and instructions so that the processor can access them quickly without waiting for the slower RAM. If a processor has a larger and more efficient cache, it can reduce the time needed to retrieve data and therefore improve overall system performance.
+
+<span class="highlight">The number of CPU cores also plays an important role in determining performance. Modern processors often contain multiple cores, which means they can execute several tasks simultaneously</span>. For example, while one core is handling a web browser, another core can process background applications or system tasks. This improves multitasking and helps the laptop run multiple programs smoothly at the same time.
+
+Another factor is the<span class="highlight"> clock speed of the processor, which determines how many instructions the CPU can execute per second</span>. A higher clock speed generally means the processor can complete tasks faster. However, clock speed alone does not guarantee better performance because the efficiency of the architecture and other components also affects how quickly instructions are processed.
+
+The <span class="highlight">graphics processing unit (GPU) </span>is another important part of a laptop’s performance, especially for tasks such as gaming, video editing, and graphic design. <span class="highlight">A dedicated GPU can handle graphical computations separately from the CPU, reducing the workload on the processor and improving system efficiency</span>.
+
+The <span class="highlight">system bus and motherboard architecture also affect how quickly data moves between components like the CPU, RAM, and storage</span>. A faster bus speed allows quicker communication between these parts, reducing delays and improving overall responsiveness.
+
+Additionally, <span class="highlight">thermal management and cooling systems can influence performance</span>. When a laptop overheats, the processor may reduce its speed automatically to prevent damage, a process known as thermal throttling. Efficient cooling systems help maintain stable performance during heavy workloads.
+
+Therefore, laptop performance is not determined by a single component. It is the result of<span class="highlight"> multiple hardware units working together efficiently, including the CPU, RAM, cache memory, storage type, GPU, and system architecture</span>.
+</p>
+</div>
+</div>
+
+</body>
+</html>
+```
