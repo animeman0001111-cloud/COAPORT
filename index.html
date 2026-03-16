@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Calculus Visual Notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+:root{
+  --ink:#1f2937;
+  --paper:#fffef9;
+  --accent1:#ff5fa2;
+  --accent2:#3f7cff;
+  --accent3:#4caf50;
+  --accent4:#f5c400;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Segoe UI',system-ui,sans-serif;
+  color:var(--ink);
+  background:#eceff5;
+  overflow-x:hidden;
+}
+
+/* ===== PARALLAX BACKGROUND ===== */
+.parallax{
+  position:fixed;
+  inset:0;
+  z-index:-10;
+  overflow:hidden;
+}
+.layer{
+  position:absolute;
+  inset:-20%;
+  opacity:.35;
+  animation:drift linear infinite;
+}
+.layer.grid{
+  background-image:
+    linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation-duration:140s;
+}
+.layer.paper{
+  background:radial-gradient(circle at 30% 20%,#ffffff 0,#f3f4f6 45%,transparent 70%);
+  animation-duration:110s;
+}
+.layer.color{
+  background:conic-gradient(from 180deg,var(--accent1),var(--accent2),var(--accent3),var(--accent4),var(--accent1));
+  opacity:.08;
+  animation-duration:180s;
+}
+
+@keyframes drift{
+  to{transform:translate3d(12%,12%,0)}
+}
+
+/* ===== TIMELINE ===== */
+.timeline{
+  position:fixed;
+  left:40px;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:linear-gradient(var(--accent1),var(--accent2),var(--accent3));
+  opacity:.6;
+}
+.dot{
+  position:absolute;
+  left:-6px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 0 0 4px rgba(0,0,0,.15);
+}
+
+/* ===== SECTIONS ===== */
+section{
+  max-width:1100px;
+  margin:140px auto;
+  padding:90px 80px;
+  background:var(--paper);
+  border-radius:32px;
+  box-shadow:0 40px 120px rgba(0,0,0,.25);
+  opacity:0;
+  transform:translateY(120px) scale(.9);
+  transition:1.2s cubic-bezier(.19,1,.22,1);
+}
+section.show{
+  opacity:1;
+  transform:none;
+}
+
+section::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:32px;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,.04) 0,
+    rgba(0,0,0,.04) 1px,
+    transparent 1px,
+    transparent 30px
+  );
+  pointer-events:none;
+}
+
+h1{
+  text-align:center;
+  font-size:42px;
+  letter-spacing:5px;
+  margin-bottom:70px;
+}
+
+/* ===== CARD SYSTEM ===== */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:36px;
+}
+
+.box{
+  padding:34px;
+  border-radius:26px;
+  background:linear-gradient(145deg,#ffffff,#fff7e2);
+  box-shadow:0 25px 60px rgba(0,0,0,.25);
+  font-size:18px;
+  transition:.6s cubic-bezier(.19,1,.22,1);
+  position:relative;
+}
+
+.box::before{
+  content:'';
+  position:absolute;
+  inset:-2px;
+  border-radius:28px;
+  background:conic-gradient(var(--accent1),var(--accent2),var(--accent3),var(--accent4),var(--accent1));
+  opacity:.35;
+  filter:blur(8px);
+  z-index:-1;
+  animation:spin 10s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.box:hover{
+  transform:translateY(-22px) scale(1.08);
+}
+
+/* ===== COLOR TAGS ===== */
+.pink{border-left:7px solid var(--accent1)}
+.blue{border-left:7px solid var(--accent2)}
+.green{border-left:7px solid var(--accent3)}
+.yellow{border-left:7px solid var(--accent4)}
+.red{border-left:7px solid #ef4444}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.product-card {
+  background: #ffffff;
+  width: 320px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.image-wrapper {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.image-wrapper img {
+  width: 180px;
+  height: auto;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.card-content h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+}
+
+.description {
+  margin: 8px 0 14px;
+  font-size: 14px;
+  color: #555;
+}
+
+.weight {
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.badge {
+  display: inline-block;
+  background: #8b5cf6;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+button {
+  width: 100%;
+  background: #8b5cf6;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #7c3aed;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<section>
+ <div class="product-card">
+    
+    <div class="image-wrapper">
+      <img src="stone.png" alt="Stone Cookware">
+    </div>
+
+    <div class="card-content">
+      <h2>Stone Cookware</h2>
+      <p class="description">
+        Traditional cooking vessels for authentic flavors
+      </p>
+
+      <p class="weight">⚖️ <strong>Weight:</strong> 3-5 kg</p>
+
+      <span class="badge">🖐️ Handmade</span>
+
+      <button onclick="reserveProduct()">Reserve Product</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</section>
+
+
+
+<script>
+function reserveProduct() {
+  alert("Product reserved successfully!");
+}
+
+</script>
+
+</body>
+</html>
