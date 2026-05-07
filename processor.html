@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple M3 Processor</title>
+
+<style>
+
+/* ENHANCED CSS START */
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+    radial-gradient(circle at top left,#00111f,#050505 45%),
+    radial-gradient(circle at bottom right,#001a2f,#020202 40%);
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
+    position:relative;
+    animation:bgMove 12s ease infinite alternate;
+    margin:0;
+    padding:20px;
+}
+
+/* Animated Background Motion */
+
+body::before{
+    content:"";
+    position:fixed;
+    width:600px;
+    height:600px;
+    background:radial-gradient(circle,#00bfff33,transparent 70%);
+    top:-200px;
+    left:-200px;
+    animation:floatGlow 12s infinite alternate ease-in-out;
+    z-index:-2;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle,#0066ff22,transparent 70%);
+    bottom:-150px;
+    right:-150px;
+    animation:floatGlow2 15s infinite alternate ease-in-out;
+    z-index:-2;
+}
+
+@keyframes bgMove{
+    0%{
+        background-position:left top,right bottom;
+    }
+    100%{
+        background-position:right top,left bottom;
+    }
+}
+
+@keyframes floatGlow{
+    0%{
+        transform:translate(0,0) scale(1);
+    }
+    100%{
+        transform:translate(120px,80px) scale(1.2);
+    }
+}
+
+@keyframes floatGlow2{
+    0%{
+        transform:translate(0,0) scale(1);
+    }
+    100%{
+        transform:translate(-100px,-60px) scale(1.1);
+    }
+}
+
+/* Container */
+
+.processor-container{
+    width:420px;
+    margin:40px auto;
+    background:rgba(15,15,15,0.7);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    padding:14px;
+
+    border:2px solid #00bfff;
+    border-radius:18px;
+
+    box-shadow:
+    0 0 15px #00bfff66,
+    0 0 40px #008cff33,
+    inset 0 0 20px #00bfff22;
+
+    position:relative;
+    overflow:hidden;
+
+    animation:containerFloat 5s ease-in-out infinite;
+}
+
+/* Floating Motion */
+
+@keyframes containerFloat{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* Animated Neon Border */
+
+.processor-container::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius:18px;
+
+    background:linear-gradient(
+        45deg,
+        #00bfff,
+        transparent,
+        #00bfff,
+        transparent
+    );
+
+    background-size:400%;
+    z-index:-1;
+
+    animation:borderMove 8s linear infinite;
+    opacity:0.4;
+}
+
+@keyframes borderMove{
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:400% 0;
+    }
+}
+
+/* Main Heading */
+
+.processor-container h2{
+    text-align:center;
+    color:#00bfff;
+    font-size:22px;
+    margin-bottom:18px;
+    letter-spacing:1px;
+
+    text-shadow:
+    0 0 10px #00bfff,
+    0 0 20px #00bfff;
+
+    animation:glowPulse 2s infinite alternate;
+
+    position:relative;
+}
+
+.processor-container h2::after{
+    content:"";
+    position:absolute;
+    width:70%;
+    height:2px;
+    background:#00bfff;
+    bottom:-6px;
+    left:15%;
+
+    box-shadow:0 0 10px #00bfff;
+
+    animation:lineGlow 2s infinite alternate;
+}
+
+@keyframes glowPulse{
+    from{
+        text-shadow:0 0 10px #00bfff;
+    }
+    to{
+        text-shadow:
+        0 0 20px #00bfff,
+        0 0 40px #00bfff;
+    }
+}
+
+@keyframes lineGlow{
+    from{
+        opacity:0.4;
+    }
+    to{
+        opacity:1;
+    }
+}
+
+/* Cards */
+
+.card{
+    background:rgba(10,10,10,0.72);
+
+    border:1px solid rgba(0,191,255,0.5);
+
+    margin-bottom:14px;
+    padding:12px;
+
+    color:white;
+
+    border-radius:14px;
+
+    position:relative;
+    overflow:hidden;
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    box-shadow:
+    0 0 10px rgba(0,191,255,0.15),
+    inset 0 0 10px rgba(0,191,255,0.08);
+
+    transition:
+    transform 0.25s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+
+    transform-style:preserve-3d;
+
+    opacity:0;
+    transform:translateY(40px);
+}
+
+/* Motion Graphic Shine */
+
+.card::before{
+    content:"";
+    position:absolute;
+    top:-100%;
+    left:-40%;
+    width:50%;
+    height:300%;
+
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.15),
+        transparent
+    );
+
+    transform:rotate(25deg);
+
+    transition:0.8s;
+}
+
+.card:hover::before{
+    left:140%;
+}
+
+/* Hover Effect */
+
+.card:hover{
+    transform:
+    perspective(1000px)
+    rotateX(4deg)
+    rotateY(-4deg)
+    translateY(-6px)
+    scale(1.02);
+
+    border-color:#00e1ff;
+
+    box-shadow:
+    0 0 20px #00bfff88,
+    0 0 50px #00bfff33,
+    inset 0 0 15px #00bfff22;
+}
+
+/* Section Headings */
+
+.card h3{
+    color:#00bfff;
+
+    border-bottom:1px solid rgba(0,191,255,0.4);
+
+    padding-bottom:5px;
+    margin-bottom:10px;
+
+    font-size:15px;
+
+    position:relative;
+    overflow:hidden;
+}
+
+.card h3::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-1px;
+    width:0%;
+    height:2px;
+    background:#00bfff;
+
+    box-shadow:0 0 10px #00bfff;
+
+    transition:0.5s;
+}
+
+.card:hover h3::after{
+    width:100%;
+}
+
+/* Paragraphs & Lists */
+
+.card p,
+.card li{
+    font-size:12px;
+    line-height:1.7;
+    transition:0.3s;
+}
+
+.card li:hover{
+    color:#00d9ff;
+    text-shadow:0 0 8px #00bfff;
+    transform:translateX(4px);
+}
+
+.card ul{
+    padding-left:18px;
+}
+
+/* Diagram */
+
+pre{
+    color:#00ff99;
+    font-size:11px;
+    overflow:auto;
+
+    text-shadow:0 0 8px #00ff99;
+
+    background:rgba(0,0,0,0.4);
+    padding:10px;
+    border-radius:10px;
+
+    border:1px solid rgba(0,255,153,0.25);
+
+    box-shadow:
+    inset 0 0 10px rgba(0,255,153,0.08),
+    0 0 10px rgba(0,255,153,0.12);
+}
+
+/* Fade Up Animation */
+
+.card.show{
+    opacity:1;
+    transform:translateY(0);
+
+    transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+/* Ripple */
+
+.ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+
+    animation:rippleEffect 0.6s linear;
+
+    background:rgba(0,191,255,0.4);
+
+    pointer-events:none;
+}
+
+@keyframes rippleEffect{
+    to{
+        transform:scale(4);
+        opacity:0;
+    }
+}
+
+/* Responsive */
+
+@media(max-width:500px){
+
+    .processor-container{
+        width:92%;
+    }
+
+}
+
+/* ENHANCED CSS END */
+
+</style>
+</head>
+
+<body>
+
+<div class="processor-container">
+
+    <h2>Apple M3 Processor</h2>
+
+    <div class="card">
+        <h3>Introduction</h3>
+        <p>
+            The Apple M3 Processor is a high-performance chipset developed by Apple using advanced 3nm technology.
+            It is designed for MacBooks and desktops, delivering excellent CPU speed, graphics performance,
+            AI processing, and power efficiency.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>CPU Architecture</h3>
+        <ul>
+            <li>8-Core CPU architecture</li>
+            <li>4 Performance cores</li>
+            <li>4 Efficiency cores</li>
+            <li>Advanced Neural Engine support</li>
+            <li>Optimized for multitasking and low power usage</li>
+        </ul>
+        <p>
+            The hybrid architecture balances high performance and battery efficiency.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>ALU and Control Unit</h3>
+        <p>
+            The Arithmetic Logic Unit (ALU) performs mathematical and logical operations such as:
+        </p>
+
+        <ul>
+            <li>Addition and subtraction</li>
+            <li>Logical comparisons</li>
+            <li>Bitwise operations</li>
+            <li>Data processing tasks</li>
+        </ul>
+
+        <p>
+            The Control Unit manages instruction execution, memory access, and communication
+            between processor components.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Memory Organization</h3>
+
+        <ul>
+            <li>Unified Memory Architecture (UMA)</li>
+            <li>Shared CPU and GPU memory</li>
+            <li>High-bandwidth memory access</li>
+            <li>Reduced latency for faster processing</li>
+        </ul>
+
+        <p>
+            Unified memory improves efficiency and enables smooth multitasking performance.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>System Bus & Communication</h3>
+
+        <p>
+            The processor uses high-speed internal communication channels to transfer data between:
+        </p>
+
+        <ul>
+            <li>CPU and GPU</li>
+            <li>Neural Engine</li>
+            <li>Memory controller</li>
+            <li>Storage devices</li>
+        </ul>
+
+        <p>
+            Faster communication improves overall system responsiveness.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>GPU (Graphics Processing Unit)</h3>
+
+        <p>
+            The Apple M3 includes an advanced integrated GPU with:
+        </p>
+
+        <ul>
+            <li>Hardware-accelerated ray tracing</li>
+            <li>Dynamic caching technology</li>
+            <li>High-performance gaming support</li>
+            <li>Professional video editing capabilities</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>AI Engine</h3>
+
+        <p>
+            The Neural Engine accelerates AI and machine learning tasks such as:
+        </p>
+
+        <ul>
+            <li>Voice recognition</li>
+            <li>Image processing</li>
+            <li>Real-time translation</li>
+            <li>Smart application optimization</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Instruction Cycle (Working Principle)</h3>
+
+        <ul>
+            <li>Fetch instruction from memory</li>
+            <li>Decode instruction</li>
+            <li>Execute operation using ALU</li>
+            <li>Store result back to memory</li>
+            <li>Repeat cycle continuously</li>
+        </ul>
+
+        <p>
+            This process allows the processor to execute millions of instructions every second.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Simple Architecture Diagram</h3>
+
+<pre>
+        +----------------------+
+        |      Apple M3 CPU    |
+        +----------------------+
+             |    |     |
+     --------     |     --------
+     |             |            |
++---------+   +---------+   +---------+
+|   GPU   |   | Neural  |   | Memory  |
+|         |   | Engine  |   | Control |
++---------+   +---------+   +---------+
+</pre>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ENHANCED JS START */
+
+/* Fade-Up Reveal Animation */
+
+const cards = document.querySelectorAll('.card');
+
+const observer = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if(entry.isIntersecting){
+
+            entry.target.classList.add('show');
+
+        }
+
+    });
+
+},{
+    threshold:0.15
+});
+
+cards.forEach(card => {
+    observer.observe(card);
+});
+
+/* 3D Mouse Tilt */
+
+cards.forEach(card => {
+
+    card.addEventListener('mousemove', e => {
+
+        const rect = card.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / 18);
+        const rotateY = ((centerX - x) / 18);
+
+        card.style.transform = `
+        perspective(1000px)
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        scale(1.02)
+        `;
+    });
+
+    card.addEventListener('mouseleave', () => {
+
+        card.style.transform = `
+        perspective(1000px)
+        rotateX(0deg)
+        rotateY(0deg)
+        scale(1)
+        `;
+    });
+
+});
+
+/* Ripple Effect */
+
+cards.forEach(card => {
+
+    card.addEventListener('click', function(e){
+
+        const ripple = document.createElement('span');
+
+        ripple.classList.add('ripple');
+
+        const rect = card.getBoundingClientRect();
+
+        ripple.style.left = `${e.clientX - rect.left}px`;
+        ripple.style.top = `${e.clientY - rect.top}px`;
+
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        },600);
+
+    });
+
+});
+
+/* Floating Motion Graphics Particles */
+
+for(let i=0;i<18;i++){
+
+    const particle = document.createElement('div');
+
+    particle.style.position = 'fixed';
+
+    particle.style.width = Math.random()*4 + 2 + 'px';
+    particle.style.height = particle.style.width;
+
+    particle.style.background = 'rgba(0,191,255,0.35)';
+    particle.style.borderRadius = '50%';
+
+    particle.style.left = Math.random()*window.innerWidth + 'px';
+    particle.style.top = Math.random()*window.innerHeight + 'px';
+
+    particle.style.pointerEvents = 'none';
+
+    particle.style.zIndex = '-1';
+
+    particle.style.boxShadow = '0 0 10px #00bfff';
+
+    particle.style.animation = `
+    floatParticle
+    ${Math.random()*10 + 8}s
+    linear infinite
+    `;
+
+    document.body.appendChild(particle);
+
+}
+
+/* Dynamic Particle Animation */
+
+const style = document.createElement('style');
+
+style.innerHTML = `
+@keyframes floatParticle{
+
+    0%{
+        transform:translateY(0px);
+        opacity:0;
+    }
+
+    50%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-120vh);
+        opacity:0;
+    }
+
+}
+`;
+
+document.head.appendChild(style);
+
+/* ENHANCED JS END */
+
+</script>
+
+</body>
+</html>
