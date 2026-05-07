@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Teamwork And Selflearning</title>
+
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+
+<style>
+
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+
+:root{
+  --bg:#02060d;
+  --bg2:#07111f;
+  --panel:rgba(10,18,32,0.72);
+  --panel2:rgba(15,30,48,0.52);
+
+  --line:#2be4ff;
+  --line-soft:rgba(43,228,255,0.25);
+
+  --accent:#00f0ff;
+  --accent2:#7a5cff;
+
+  --text:#dffbff;
+  --muted:#7ba9bb;
+
+  --danger:#ff6b6b;
+
+  --heading-font:'Playfair Display', serif;
+  --body-font:'EB Garamond', serif;
+  --code-font:'JetBrains Mono', monospace;
+}
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:var(--body-font);
+  color:var(--text);
+  line-height:1.8;
+  font-size:17px;
+
+  background:
+    radial-gradient(circle at top left, rgba(0,240,255,.08), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(122,92,255,.08), transparent 20%),
+    linear-gradient(180deg,#01040a,#07111f 40%,#02060d);
+
+  overflow-x:hidden;
+  min-height:100vh;
+  perspective:1800px;
+  position:relative;
+}
+
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+
+  background-size:50px 50px;
+
+  animation:gridMove 18s linear infinite;
+
+  z-index:-2;
+  pointer-events:none;
+}
+
+@keyframes gridMove{
+  from{
+    transform:translateY(0);
+  }
+  to{
+    transform:translateY(50px);
+  }
+}
+
+/* =========================================================
+   SCANNER EFFECT
+========================================================= */
+
+body::after{
+  content:"";
+  position:fixed;
+  top:-200px;
+  left:0;
+  width:100%;
+  height:220px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(0,240,255,.08),
+      transparent
+    );
+
+  animation:scanner 7s linear infinite;
+
+  pointer-events:none;
+  z-index:999;
+}
+
+@keyframes scanner{
+  from{
+    transform:translateY(-220px);
+  }
+  to{
+    transform:translateY(calc(100vh + 220px));
+  }
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.hero{
+  position:relative;
+  overflow:hidden;
+
+  padding:120px 20px 100px;
+
+  text-align:center;
+
+  background:
+    radial-gradient(circle at center,
+      rgba(0,240,255,.14),
+      transparent 45%),
+    linear-gradient(135deg,
+      rgba(0,15,35,.98),
+      rgba(5,18,36,.95),
+      rgba(0,8,18,.98));
+
+  border-bottom:1px solid rgba(0,240,255,.2);
+
+  box-shadow:
+    inset 0 -30px 80px rgba(0,240,255,.08),
+    0 0 80px rgba(0,240,255,.06);
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(0,240,255,.06),
+      transparent,
+      rgba(122,92,255,.06),
+      transparent
+    );
+
+  animation:rotateHud 18s linear infinite;
+}
+
+@keyframes rotateHud{
+  from{
+    transform:rotate(0deg);
+  }
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px);
+
+  background-size:120px 120px;
+
+  animation:stars 25s linear infinite;
+
+  opacity:.2;
+}
+
+@keyframes stars{
+  from{
+    transform:translateY(0);
+  }
+  to{
+    transform:translateY(-120px);
+  }
+}
+
+.hero h1{
+  position:relative;
+  z-index:2;
+
+  font-size:clamp(3rem,8vw,6rem);
+  font-weight:900;
+
+  letter-spacing:.08em;
+  text-transform:uppercase;
+
+  color:#fff;
+
+  text-shadow:
+    0 0 10px rgba(255,255,255,.5),
+    0 0 25px rgba(0,240,255,.7),
+    0 0 60px rgba(0,240,255,.45);
+
+  animation:titleFloat 4s ease-in-out infinite;
+}
+
+@keyframes titleFloat{
+  0%,100%{
+    transform:translateY(0px);
+  }
+  50%{
+    transform:translateY(-8px);
+  }
+}
+
+.hero .subtitle{
+  position:relative;
+  z-index:2;
+
+  margin-top:20px;
+
+  font-family:var(--code-font);
+
+  color:#8edfff;
+
+  letter-spacing:.35em;
+  text-transform:uppercase;
+
+  font-size:.95rem;
+}
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.page{
+  width:min(1450px,95%);
+  margin:auto;
+  padding:70px 20px 120px;
+}
+
+/* =========================================================
+   QUESTION BLOCKS
+========================================================= */
+
+.question-block{
+  position:relative;
+  overflow:hidden;
+
+  margin-bottom:90px;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12,22,38,.92),
+      rgba(6,12,24,.88)
+    );
+
+  border:1px solid rgba(0,240,255,.18);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    inset 0 0 25px rgba(0,240,255,.05),
+    0 0 0 1px rgba(255,255,255,.03),
+    0 20px 60px rgba(0,0,0,.55),
+    0 0 45px rgba(0,240,255,.08);
+
+  transform-style:preserve-3d;
+
+  transition:
+    transform .7s ease,
+    box-shadow .7s ease,
+    border-color .5s ease;
+
+  animation:fadeRise 1s ease both;
+}
+
+.question-block:hover{
+  transform:
+    rotateX(5deg)
+    rotateY(-5deg)
+    translateY(-8px)
+    scale(1.01);
+
+  border-color:rgba(0,240,255,.55);
+
+  box-shadow:
+    0 0 80px rgba(0,240,255,.18),
+    0 30px 90px rgba(0,0,0,.7);
+}
+
+.question-block::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255,255,255,.06) 45%,
+      transparent 55%
+    );
+
+  transform:translateX(-120%);
+  transition:1s;
+}
+
+.question-block:hover::before{
+  transform:translateX(120%);
+}
+
+.question-block::after{
+  content:"";
+  position:absolute;
+  inset:12px;
+
+  border:1px solid rgba(0,240,255,.08);
+  border-radius:20px;
+
+  pointer-events:none;
+
+  clip-path:polygon(
+    0 18px,
+    18px 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+}
+
+/* =========================================================
+   ENTRY ANIMATION
+========================================================= */
+
+@keyframes fadeRise{
+  from{
+    opacity:0;
+    transform:
+      translateY(50px)
+      scale(.96);
+  }
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================================================
+   QUESTION TITLE
+========================================================= */
+
+.question-title{
+  position:relative;
+
+  padding:28px 38px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,240,255,.15),
+      rgba(122,92,255,.14),
+      rgba(0,240,255,.08)
+    );
+
+  border-bottom:1px solid rgba(0,240,255,.2);
+
+  font-family:var(--heading-font);
+
+  font-size:1.45rem;
+  font-weight:700;
+
+  color:#fff;
+
+  text-shadow:
+    0 0 12px rgba(0,240,255,.4);
+}
+
+.question-title::after{
+  content:"";
+  position:absolute;
+
+  left:0;
+  bottom:0;
+
+  width:100%;
+  height:2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--accent),
+      transparent
+    );
+
+  animation:scanline 4s linear infinite;
+}
+
+@keyframes scanline{
+  from{
+    transform:translateX(-100%);
+  }
+  to{
+    transform:translateX(100%);
+  }
+}
+
+.question-body{
+  padding:40px;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
+.section-head{
+  position:relative;
+  display:inline-block;
+
+  margin:40px 0 18px;
+
+  padding-bottom:10px;
+
+  font-family:var(--heading-font);
+
+  font-size:1.3rem;
+  font-weight:800;
+
+  color:#fff;
+
+  text-transform:uppercase;
+  letter-spacing:.05em;
+
+  text-shadow:0 0 15px rgba(0,240,255,.4);
+}
+
+.section-head::after{
+  content:"";
+  position:absolute;
+
+  left:0;
+  bottom:0;
+
+  width:100%;
+  height:2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--accent),
+      transparent
+    );
+}
+
+.subsection-head{
+  margin-top:28px;
+  margin-bottom:10px;
+
+  font-family:var(--code-font);
+
+  color:#8fdfff;
+
+  font-size:1.05rem;
+  font-weight:700;
+
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+p{
+  margin-bottom:14px;
+  color:#d6f3ff;
+}
+
+.label{
+  color:var(--accent);
+  font-weight:700;
+  text-shadow:0 0 10px rgba(0,240,255,.5);
+}
+
+/* =========================================================
+   LISTS
+========================================================= */
+
+ul,ol{
+  padding-left:24px;
+  margin:14px 0 18px;
+}
+
+li{
+  margin-bottom:10px;
+  color:#cbeaf4;
+}
+
+/* =========================================================
+   OPS GRID
+========================================================= */
+
+.ops-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;
+  margin-top:28px;
+}
+
+.ops-grid li{
+  list-style:none;
+
+  padding:16px 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,240,255,.08),
+      rgba(122,92,255,.08)
+    );
+
+  border:1px solid rgba(0,240,255,.18);
+  border-radius:18px;
+
+  backdrop-filter:blur(10px);
+
+  font-family:var(--code-font);
+
+  transition:
+    transform .4s ease,
+    border-color .4s ease,
+    box-shadow .4s ease;
+}
+
+.ops-grid li:hover{
+  transform:
+    translateY(-6px)
+    scale(1.03);
+
+  border-color:rgba(0,240,255,.55);
+
+  box-shadow:
+    0 0 25px rgba(0,240,255,.2);
+}
+
+.ops-grid li::before{
+  content:"◉ ";
+  color:var(--accent);
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.styled-table,
+.addr-table{
+  width:100%;
+  border-collapse:collapse;
+
+  margin-top:22px;
+
+  border-radius:20px;
+  overflow:hidden;
+
+  background:rgba(0,0,0,.2);
+
+  border:1px solid rgba(0,240,255,.15);
+
+  backdrop-filter:blur(10px);
+}
+
+.styled-table th,
+.addr-table th{
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,240,255,.2),
+      rgba(122,92,255,.22)
+    );
+
+  padding:16px;
+
+  color:#fff;
+
+  text-align:left;
+
+  font-family:var(--code-font);
+
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.styled-table td,
+.addr-table td{
+  padding:14px 16px;
+
+  color:#d9f5ff;
+
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+.styled-table tr:hover td,
+.addr-table tr:hover td{
+  background:rgba(0,240,255,.08);
+}
+
+/* =========================================================
+   IMAGE PLACEHOLDERS
+========================================================= */
+
+.img-placeholder{
+  position:relative;
+  overflow:hidden;
+
+  width:100%;
+
+  margin:34px 0;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,240,255,.06),
+      rgba(122,92,255,.06),
+      rgba(0,0,0,.3)
+    );
+
+  border:1px solid rgba(0,240,255,.18);
+
+  backdrop-filter:blur(12px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+
+  gap:16px;
+
+  color:#dffbff;
+
+  box-shadow:
+    inset 0 0 25px rgba(0,240,255,.05),
+    0 0 40px rgba(0,240,255,.08);
+
+  transition:
+    transform .7s ease,
+    box-shadow .7s ease,
+    border-color .5s ease;
+}
+
+.img-placeholder:hover{
+  transform:
+    perspective(1000px)
+    rotateX(5deg)
+    rotateY(-5deg)
+    scale(1.02);
+
+  border-color:rgba(0,240,255,.55);
+
+  box-shadow:
+    0 0 50px rgba(0,240,255,.22);
+}
+
+.img-placeholder::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255,255,255,.08) 50%,
+      transparent 80%
+    );
+
+  animation:holoSweep 5s linear infinite;
+}
+
+@keyframes holoSweep{
+  0%{
+    transform:translateX(-120%);
+  }
+  100%{
+    transform:translateX(120%);
+  }
+}
+
+.img-icon{
+  width:90px !important;
+  height:90px !important;
+
+  border-radius:50% !important;
+
+  border:2px solid rgba(0,240,255,.45) !important;
+
+  background:
+    radial-gradient(circle,
+      rgba(0,240,255,.15),
+      rgba(0,0,0,.2));
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:2.2rem !important;
+
+  box-shadow:
+    inset 0 0 25px rgba(0,240,255,.12),
+    0 0 25px rgba(0,240,255,.2);
+
+  animation:floatIcon 4s ease-in-out infinite;
+}
+
+@keyframes floatIcon{
+  0%,100%{
+    transform:translateY(0px);
+  }
+  50%{
+    transform:translateY(-10px);
+  }
+}
+
+.img-label{
+  font-size:1.08rem !important;
+
+  color:#fff !important;
+
+  text-transform:uppercase;
+  text-align:center;
+
+  letter-spacing:.06em;
+
+  text-shadow:
+    0 0 15px rgba(0,240,255,.35);
+}
+
+/* =========================================================
+   CALLOUTS
+========================================================= */
+
+.callout{
+  padding:18px 24px;
+
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,120,120,.08),
+      rgba(255,255,255,.03)
+    );
+
+  border:1px solid rgba(255,120,120,.25);
+  border-left:4px solid var(--danger);
+
+  backdrop-filter:blur(10px);
+
+  color:#ffe8e8;
+}
+
+.callout.blue{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,240,255,.08),
+      rgba(255,255,255,.03)
+    );
+
+  border-color:rgba(0,240,255,.25);
+}
+
+/* =========================================================
+   DATA ARROWS
+========================================================= */
+
+.arrow-item::before{
+  content:"⟶ ";
+  color:var(--accent);
+  text-shadow:0 0 12px rgba(0,240,255,.7);
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar{
+  width:10px;
+}
+
+::-webkit-scrollbar-track{
+  background:#020812;
+}
+
+::-webkit-scrollbar-thumb{
+  background:
+    linear-gradient(
+      180deg,
+      var(--accent),
+      var(--accent2)
+    );
+
+  border-radius:20px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .hero{
+    padding:90px 18px 80px;
+  }
+
+  .hero h1{
+    font-size:2.8rem;
+  }
+
+  .question-title{
+    padding:24px;
+    font-size:1.2rem;
+  }
+
+  .question-body{
+    padding:28px;
+  }
+
+  .section-head{
+    font-size:1.12rem;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HERO BANNER
+========================================================= -->
+
+<div class="hero">
+  <h1>Teamwork And Selflearning</h1>
+  <div class="subtitle">
+    KLE Tech · Processor Design & Digital Systems
+  </div>
+</div>
+
+<!-- =========================================================
+     MAIN PAGE
+========================================================= -->
+
+<div class="page">
+
+  <!-- =======================================================
+       QUESTION 1
+  ======================================================== -->
+
+  <div class="question-block">
+    <div class="question-title">
+      1. Design and implement an 8-bit ALU to perform the following operations:
+    </div>
+    <div class="question-body">
+
+      <ul class="ops-grid">
+        <li>i. Load</li>
+        <li>ii. Store</li>
+        <li>iii. Add</li>
+        <li>iv. Subtract</li>
+        <li>v. Multiply</li>
+        <li>vi. Division</li>
+        <li>vii. AND</li>
+        <li>viii. OR</li>
+        <li>ix. XOR</li>
+        <li>x. 2's Complement</li>
+        <li>xi. Comparator</li>
+        <li>xii. SHL, etc.</li>
+        <li>xiii. SHR, etc.</li>
+        <li>xiv. ASL, etc.</li>
+        <li>xv. ASR, etc.</li>
+      </ul>
+
+      <!-- ─ Operation Details Table / Document Image ─ -->
+      <div class="img-placeholder" style="min-height:420px;">
+        <div class="img-icon"><img src="</div>
+        <div class="img-label">ALU Operations Detail Table &amp; Block Diagram</div>
+        <span>(Logisim schematic — 8-bit ALU operation table)</span>
+      </div>
+
+      <!-- ─ Logisim Circuit Diagram (8-bit ALU) ─ -->
+      <div class="img-placeholder" style="min-height:380px;">
+        <div class="img-icon">🖥️</div>
+        <div class="img-label">8 BIT ALU — Logisim Circuit Diagram (Screenshot 7, bottom)</div>
+      </div>
+
+      <!-- ─ Second ALU diagram ─ -->
+      <div class="img-placeholder" style="min-height:380px;">
+        <div class="img-icon">🖥️</div>
+        <div class="img-label">8 BIT ALU — Full Circuit View (Screenshot 6, top)</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =======================================================
+       QUESTION 2
+  ======================================================== -->
+
+ <div class="question-block">
+    <div class="question-title">
+      2. Design and implement 4×4 memory using single cell memory
+    </div>
+    <div class="question-body">
+
+      <p class="section-head">Introduction</p>
+      <p>
+        A memory cell is the fundamental unit of RAM. A single static RAM (SRAM) cell stores one bit of data.
+        By arranging such cells in rows (word lines) and columns (bit lines), we build a complete memory array.
+        This design uses single SRAM cells to build a 4×4 memory — 4 locations each storing 4 bits.
+      </p>
+
+      <p class="section-head">Working of a Single SRAM Cell</p>
+      <p class="subsection-head">Components:</p>
+      <ul>
+        <li>Two cross-coupled CMOS inverters (INV1 and INV2), forming a bistable latch</li>
+        <li>Two NMOS access transistors (N1 and N2), controlled by the Word Line (WL)</li>
+      </ul>
+
+      <p class="subsection-head">Ports:</p>
+      <ul>
+        <li><span class="label">WL (Word Line):</span> Activates the cell for read/write</li>
+        <li><span class="label">BL (Bit Line):</span> Carries data during write; read ones during read</li>
+        <li><span class="label">BL̄ (Complement Bit Line):</span> Carries the inverted data bit</li>
+      </ul>
+
+      <p class="subsection-head">Reading/Writing Process:</p>
+      <p>
+        The cross-coupled inverters make nodes Q and Q̄ complementary. During write, Q and Q̄ are driven
+        to BL and BL̄ respectively. When WL is HIGH, connecting the inverter nodes to BL and BL̄. During write,
+        the sense amplifier drives BL/BL̄ forcefully to override the stored data. The stored charge directly
+        drives BL/BL̄ slightly, detected by the sense amplifier.
+      </p>
+
+      <p class="subsection-head">4×4 Array Operation:</p>
+      <p>The 4×4 array (shown in diagram) has 4 rows and 4 columns:</p>
+      <ul>
+        <li>A 2-to-4 row decoder selects a 2-bit address (A[1:0]), and drives one WL (WL[0-WL3]) at a time</li>
+        <li>All 4 bit lines (BL0-BL3) carry one bit each, forming a 4-bit data word</li>
+        <li>Write: Address selects WL, cells discharge their BL lines; sense amplifiers read Z_out[3:0]</li>
+        <li>Read: Address selects WL, data is driven to BL/BL̄ lines</li>
+      </ul>
+
+      <p class="subsection-head">Simulation Response Design:</p>
+      <p>
+        Write 0xAB (10101011) to address 01 → WL1 goes HIGH → Bank 1: C1D = gives HIGH, C1[0] = 1, C1[1] = 0.
+        Reading address 01 → Data from = 0x0B.
+        Read back → Data from 1 = 0xAB SHEET.
+      </p>
+
+      <p class="subsection-head">Conclusion:</p>
+      <p>
+        The 4×4 SRAM uses 16 single-bit SRAM cells arranged in a matrix. The row decoder selects the word line,
+        and the bit-line sense amplifiers complete the read/write operation. This technique is extensively used
+        in practical memory subsystem design.
+      </p>
+
+      <!-- 4×4 Memory Diagram -->
+      <div class="img-placeholder" style="min-height:340px;">
+        <div class="img-icon">🗂️</div>
+        <div class="img-label">4×4 Memory Using Single Memory Cell — Circuit Diagram</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =======================================================
+       QUESTION 3
+  ======================================================== -->
+
+   <div class="question-block">
+    <div class="question-title">
+      3. Design and implement a larger memory of size 1024×32 memory using a smaller memory of size 512×16.
+    </div>
+    <div class="question-body">
+
+      <p class="section-head">Introduction</p>
+      <p>
+        Large memory systems are built by combining smaller memory chips. A 512×16 chip has 512 addressable
+        locations each storing 16 bits. We need to build a 1024×32 memory — 1024 locations each 32 bits wide
+        (32 bits). This requires expanding both word depth (512→1024) and word width (16→32 bits).
+      </p>
+
+      <p class="section-head">Design Steps</p>
+
+      <p class="subsection-head">Step 1 — Determine expansion needed:</p>
+      <ul>
+        <li>Target: 1024 × 32 available modules: 512 × 16</li>
+        <li>Width expansion: 32 ÷ 16 = 2 chips in parallel per bank to get 32 data bits</li>
+        <li>Depth expansion: 1024 ÷ 512 = 2 banks to get 1024 addresses</li>
+        <li>Total chips needed: 2 × 2 = 4 chips</li>
+      </ul>
+
+      <p class="subsection-head">Step 2 — Address partitioning:</p>
+      <ul>
+        <li>Total address bits = log₂(1024) = 10 bits: A[9:0]</li>
+        <li>A[8:0] (9 bits) go to all chips as row address (512 locations per chip)</li>
+        <li>A[9] (MSB) is fed to a 1-to-2 decoder to generate Chip Select (CS0, CS1):
+          <ul>
+            <li>A[9] = 0 → CS0 = 1 → Bank 0 selected (addresses 0 – 511)</li>
+            <li>A[9] = 1 → CS1 = 1 → Bank 1 selected (addresses 512 – 1023)</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p class="subsection-head">Step 3 — Data bus connection:</p>
+      <ul>
+        <li>Chip A and Chip C provide D[15:0] (lower 16 bits)</li>
+        <li>Chip B and Chip D provide D[31:16] (higher 16 bits)</li>
+        <li>Both chips in the same bank are enabled simultaneously by the same CS signal</li>
+      </ul>
+
+      <p class="subsection-head">Step 4 — R/W signal:</p>
+      <p>
+        Connected to all chips simultaneously. A single READ or WRITE operation accesses both chips in the
+        selected bank, reading/writing all 32 bits at once.
+      </p>
+
+      <p class="subsection-head">Read and Write Operations:</p>
+      <p>
+        <strong>Write:</strong> CPU places A[9:0] on address bus, data D[31:0] drives all 32-bit data lines.
+        R/W = 0 (write). Decoder selects CS for correct bank. R/W = 0. Selected chip drives D[15:0] and D[31:16]
+        into the addressed locations simultaneously.
+      </p>
+      <p>
+        <strong>Read:</strong> CPU places A[9:0] on address bus. Decoder asserts CS for correct bank.
+        R/W = 1. Selected chip drives D[31:0] and D[31:16] onto the bus. CPU reads combined 32-bit word.
+      </p>
+
+      <p class="subsection-head">Simulation Response Design:</p>
+      <p>
+        Write 0x4BEEF to address 0x200 (512 in decimal) → Bank 1, CS1 gives HIGH, A[8:0] = 0. Chip C stores
+        0x4E:AB, Chip D stores 0x4E:EF.
+        Read back → Data from = 0x4E:BEEF.
+      </p>
+
+      <p class="subsection-head">Conclusion:</p>
+      <p>
+        A 1024×32 memory is constructed from four 512×16 chips by width-expanding (chips in parallel) and
+        depth-expanding (banks with chip-select decoding). The MSB of the address selects the bank; the remaining
+        bits address the row within the bank. This technique is extensively used in practical memory subsystem design.
+      </p>
+
+      <!-- 1024×32 Diagram 1 -->
+      <div class="img-placeholder" style="min-height:340px;">
+        <div class="img-icon">🗂️</div>
+        <div class="img-label">1024×32 Memory Using 512×16 Memory — Circuit Diagram (top view)</div>
+      </div>
+
+      <!-- 1024×32 Diagram 2 -->
+      <div class="img-placeholder" style="min-height:340px;">
+        <div class="img-icon">🗂️</div>
+        <div class="img-label">1024×32 Memory Using 512×16 Memory — Full Circuit Layout (bottom view)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =======================================================
+       QUESTION 4
+  ======================================================== -->
+ <div class="question-block">
+    <div class="question-title">
+      4. Design and implement both alternatives of a dual-ported 8-bit register file having 8 registers.
+    </div>
+    <div class="question-body">
+
+      <p class="section-head">Introduction</p>
+      <p>
+        A register file is a fast internal memory inside a processor, holding a small number of registers used
+        by the CPU during instruction execution. A dual-ported register file supports two simultaneous read
+        operations (one read and one write), which is essential for ALU instructions that need two source operands
+        at the same time (e.g., Add R1, R2, R3).
+      </p>
+
+      <p class="section-head">Design Specification</p>
+      <ul>
+        <li>Number of registers: 8 (R0–R7)</li>
+        <li>Width of each register: 8 bits</li>
+        <li>Ports: 2 read ports (RA, RB) + 1 write port (RW)</li>
+        <li>Address bit width: log₂(8) = 3 bits per port</li>
+      </ul>
+
+      <p class="section-head">Address / Port Width Table</p>
+      <table class="addr-table">
+        <thead>
+          <tr>
+            <th>Width</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>3 bits</td><td>Select register for Read Port A</td></tr>
+          <tr><td>3 bits</td><td>Select register for Read Port B</td></tr>
+          <tr><td>3 bits</td><td>Select register for Write Port</td></tr>
+          <tr><td>8 bits</td><td>Data to be written</td></tr>
+          <tr><td>1 bit</td><td>Write Enable</td></tr>
+          <tr><td>8 bits</td><td>Output from Read Port A</td></tr>
+          <tr><td>8 bits</td><td>Output from Read Port B</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Register File Diagram -->
+      <div class="img-placeholder" style="min-height:360px;">
+        <div class="img-icon">🖥️</div>
+        <div class="img-label">Dual-Ported 8-bit Register File — Block / Circuit Diagram</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =======================================================
+       QUESTION 5
+  ======================================================== -->
+
+  <div class="question-block">
+    <div class="question-title">
+      5. Design and implement the hardware needed to compute the following instructions:
+      <div style="margin-top:6px; font-size:0.95rem; font-weight:400;">
+        (i) Add R0, R1, R2 &nbsp;&nbsp;&nbsp; (ii) Add R0, R1, #0x45
+      </div>
+    </div>
+    <div class="question-body">
+
+      <p class="section-head">Introduction</p>
+      <p>
+        In a processor, instructions are executed using a datapath, which connects the register file, ALU, and
+        memory units. This question requires designing hardware to execute the following instructions:
+      </p>
+      <ol>
+        <li>Add R0, R1, R2 → R0 = R1 + R2</li>
+        <li>Add R0, R1, #0x45 → R0 = R1 + Immediate (0x45)</li>
+      </ol>
+      <p>The design must show how data flows between components and how instructions are executed step-by-step.</p>
+
+      <p class="section-head">Design Overview</p>
+      <p class="subsection-head">The required hardware consists of:</p>
+
+      <p><strong>1. Register File</strong></p>
+      <ul>
+        <li>8 registers (R0–R7), each 8-bit</li>
+        <li>2 read ports and 1 write port</li>
+      </ul>
+
+      <p><strong>2. ALU</strong></p>
+      <ul>
+        <li>Performs addition operation</li>
+      </ul>
+
+      <p><strong>3. Multiplexer (MUX)</strong></p>
+      <ul>
+        <li>Selects between register data and Immediate value</li>
+      </ul>
+
+      <p><strong>4. Code Memory</strong></p>
+      <ul>
+        <li>Stores Instructions</li>
+      </ul>
+
+      <p><strong>5. Control Unit</strong></p>
+      <ul>
+        <li>Generates control signals</li>
+      </ul>
+
+      <p class="section-head">Block Diagram Explanation</p>
+      <p>Draw the diagram with the following labeled components:</p>
+
+      <p class="subsection-head">Main Blocks:</p>
+
+      <p><strong>1. Code Memory</strong></p>
+      <ul>
+        <li>Outputs: Instruction</li>
+      </ul>
+
+      <p><strong>2. Register File</strong></p>
+      <ul>
+        <li>Inputs:
+          <ul>
+            <li>Read address A (R1)</li>
+            <li>Read address B (R2)</li>
+            <li>Write address (R0)</li>
+            <li>Write Data</li>
+            <li>Write Enable (WE)</li>
+          </ul>
+        </li>
+        <li>Outputs:
+          <ul>
+            <li>Data A</li>
+            <li>Data B</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>3. Multiplexer (MUX)</strong></p>
+      <ul>
+        <li>Input 1: Data B (from register)</li>
+        <li>Input 2: Immediate value (Imm1)</li>
+        <li>Control: Select signal</li>
+      </ul>
+
+      <p><strong>4. ALU</strong></p>
+      <ul>
+        <li>Inputs:
+          <ul>
+            <li>Operand A (Data A)</li>
+            <li>Operand B (MUX output)</li>
+          </ul>
+        </li>
+        <li>Outputs:
+          <ul>
+            <li>Result</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>5. Control Unit</strong></p>
+      <ul>
+        <li>Controls:
+          <ul>
+            <li>MUX select</li>
+            <li>Register write enable</li>
+            <li>ALU operation</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p class="section-head">Tracing of Instructions</p>
+
+      <!-- ─ Instruction 1 ─ -->
+      <p class="subsection-head">1. Instruction: Add R0, R1, R2</p>
+      <p>Step-by-Step Execution:</p>
+      <ol>
+        <li>Instruction is fetched from code memory</li>
+        <li>Register file reads:
+          <ul>
+            <li>R1 → Data A</li>
+            <li>R2 → Data B</li>
+          </ul>
+        </li>
+        <li>MUX selects Data B (register value)</li>
+        <li>ALU performs:
+          <ul>
+            <li>Result = R1 + R2</li>
+          </ul>
+        </li>
+        <li>Result is written back to R0</li>
+      </ol>
+
+      <!-- ─ Instruction 2 ─ -->
+      <p class="subsection-head">2. Instruction: Add R0, R1, #0x45</p>
+      <p>Step-by-Step Execution:</p>
+      <ol>
+        <li>Instruction is fetched from code memory</li>
+        <li>Register file reads:
+          <ul>
+            <li>R1 → Data A</li>
+          </ul>
+        </li>
+        <li>Immediate value (0x45) is extracted</li>
+        <li>MUX selects Immediate value</li>
+        <li>ALU performs:
+          <ul>
+            <li>Result = R1 + Imm1</li>
+          </ul>
+        </li>
+        <li>Result is written back to R0</li>
+      </ol>
+
+      <p class="section-head">Control Signals Table</p>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Instruction</th>
+            <th>MUX Select</th>
+            <th>ALU Operation</th>
+            <th>Write Enable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Add R0, R1, R2</td>
+            <td>0 (Register)</td>
+            <td>ADD</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Add R0, R1, #0x45</td>
+            <td>1 (Immediate)</td>
+            <td>ADD</td>
+            <td>1</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="section-head">Processor Explanation</p>
+
+      <p class="subsection-head">Test Case 1:</p>
+      <ul>
+        <li>R1 = 10</li>
+        <li>R2 = 5</li>
+        <li>Instruction: Add R0, R1, R2</li>
+      </ul>
+      <p><strong>Output: R0 = 15</strong></p>
+
+      <p class="subsection-head">Test Case 2:</p>
+      <ul>
+        <li>R1 = 10</li>
+        <li>Immediate = 0x45 (69 decimal)</li>
+        <li>Instruction: Add R0, R1, #0x45</li>
+      </ul>
+      <p><strong>Output: R0 = 79</strong></p>
+
+      <p class="section-head">Expected Simulation Behavior</p>
+      <ul>
+        <li>Correct register values should appear at ALU inputs</li>
+        <li>MUX should switch between register and immediate</li>
+        <li>Result should be stored in destination register</li>
+        <li>Waveform/schematic should show proper data flow</li>
+      </ul>
+
+      <p class="section-head">Diagram Description Requirements for Drawing</p>
+      <ul>
+        <li>Draw Register File on left</li>
+        <li>Draw ALU in center</li>
+        <li>Draw MUX before ALU Input B</li>
+        <li>Draw Code Memory at top</li>
+        <li>Draw Control Unit connected to all blocks</li>
+        <li>Data arrows:
+          <ul>
+            <li class="arrow-item">Register outputs → ALU</li>
+            <li class="arrow-item">Immediate → MUX → ALU</li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Processor / Datapath Diagram -->
+      <div class="img-placeholder" style="min-height:400px;">
+        <div class="img-icon">🖥️</div>
+        <div class="img-label">Processor Datapath — Register File + MUX + ALU Circuit Diagram</div>
+        <span>(Logisim implementation showing R0=00000111, R1=00000101, R2=00000010 values)</span>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
