@@ -2,282 +2,605 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- RESPONSIVE: Added viewport meta tag for proper scaling on all devices -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  ============================================================
+  RESPONSIVE FIX: viewport meta tag
+  WHY: Without this, mobile browsers render the page at ~980px
+  desktop width and then scale it down, making everything tiny
+  and unreadable. This forces the browser to use the real
+  device width as the layout viewport.
+  ============================================================
+-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <style>
 
-/* RESET */
+/* ============================================================
+   RESET
+   No changes — already correct.
+============================================================ */
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-/* SMOOTH SCROLL */
+/* SMOOTH SCROLL — unchanged */
 html{
-scroll-behavior:smooth;
+  scroll-behavior:smooth;
 }
 
-/* BACKGROUND */
+/* ============================================================
+   BACKGROUND / BODY
+   FIX: Added overflow-x:hidden to prevent any animated child
+   element (binary streams, canvas overflow) from creating a
+   horizontal scrollbar on narrow viewports.
+============================================================ */
 body{
-min-height:200vh;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364,#1c1c2b);
-background-size:400% 400%;
-animation:bgMove 15s infinite alternate;
-font-family:Arial;
-/* RESPONSIVE: Prevent horizontal overflow on all devices */
-overflow-x:hidden;
+  min-height:200vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364,#1c1c2b);
+  background-size:400% 400%;
+  animation:bgMove 15s infinite alternate;
+  font-family:Arial;
+
+  /* FIX: Stops binary/particle elements triggering horizontal scroll */
+  overflow-x:hidden;
+
+  /* FIX: Relative positioning context so .binary absolute children
+     are clipped to the body, not the viewport edges */
+  position:relative;
 }
 
 @keyframes bgMove{
-0%{background-position:0% 50%}
-100%{background-position:100% 50%}
+  0%  { background-position:0%   50% }
+  100%{ background-position:100% 50% }
 }
 
-/* CANVAS */
+/* ============================================================
+   CANVAS
+   FIX: pointer-events:none ensures the fixed canvas never
+   accidentally captures touch events meant for card overlays.
+============================================================ */
 #bg{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  /* FIX: Touch events pass through canvas to real elements below */
+  pointer-events:none;
 }
 
-/* NAVBAR */
+/* ============================================================
+   NAVBAR
+   FIX 1: Replaced fixed pixel padding (15px 50px) with
+           percentage-based padding so it never crushes nav
+           links on narrow screens.
+   FIX 2: flex-wrap:wrap allows logo + links to stack
+           vertically when they can no longer fit side-by-side.
+   FIX 3: gap replaces hard margin between wrapped rows.
+============================================================ */
 .navbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-/* RESPONSIVE: Changed fixed padding to responsive padding */
-padding:15px 5%;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(10px);
-border-bottom:1px solid rgba(0,255,255,0.3);
-z-index:1000;
-/* RESPONSIVE: Allow wrapping on very small screens */
-flex-wrap:wrap;
-gap:10px;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  /* FIX 1: Was padding:15px 50px — 50px side padding ate space on mobile */
+  padding:12px 4%;
+
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,255,255,0.3);
+  z-index:1000;
+
+  /* FIX 2: Wrap so links don't overflow at ~480px wide */
+  flex-wrap:wrap;
+  gap:6px;
 }
 
+/* ============================================================
+   LOGO
+   FIX: clamp() keeps the logo readable on all widths without
+   being oversized on desktop or tiny on mobile.
+============================================================ */
 .logo{
-color:cyan;
-/* RESPONSIVE: Fluid font size */
-font-size:clamp(15px, 2.5vw, 20px);
-font-weight:bold;
-letter-spacing:2px;
-text-shadow:0 0 8px cyan;
-/* RESPONSIVE: Prevent logo from shrinking too much */
-flex-shrink:0;
+  color:cyan;
+
+  /* FIX: Was font-size:20px — too large on 320px screens */
+  font-size:clamp(14px, 4vw, 20px);
+
+  font-weight:bold;
+  letter-spacing:2px;
+  text-shadow:0 0 8px cyan;
+
+  /* FIX: Prevents logo from being squished by flexbox */
+  flex-shrink:0;
 }
 
+/* ============================================================
+   NAV LINKS
+   FIX: gap scales with viewport; flex-wrap lets links spill
+   to a second line rather than overflow the navbar width.
+============================================================ */
 .nav-links{
-list-style:none;
-display:flex;
-/* RESPONSIVE: Fluid gap that scales down on smaller screens */
-gap:clamp(15px, 3vw, 40px);
-/* RESPONSIVE: Allow wrapping if screen is too narrow */
-flex-wrap:wrap;
+  list-style:none;
+  display:flex;
+  align-items:center;
+
+  /* FIX: Was gap:40px — causes overflow below ~600px */
+  gap:clamp(8px, 2.5vw, 40px);
+
+  /* FIX: Allow wrapping instead of overflowing */
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
 .nav-links a{
-text-decoration:none;
-color:white;
-/* RESPONSIVE: Fluid font size */
-font-size:clamp(12px, 1.8vw, 16px);
-transition:0.3s;
-position:relative;
-white-space:nowrap;
+  text-decoration:none;
+  color:white;
+
+  /* FIX: Was font-size:16px — clamp prevents overflow on 320px */
+  font-size:clamp(11px, 1.8vw, 16px);
+
+  transition:0.3s;
+  position:relative;
+
+  /* FIX: Prevent individual link text from wrapping mid-word */
+  white-space:nowrap;
 }
 
+/* Hover glow — unchanged */
 .nav-links a:hover{
-color:cyan;
-text-shadow:0 0 8px cyan;
+  color:cyan;
+  text-shadow:0 0 8px cyan;
 }
 
+/* Underline animation — unchanged */
 .nav-links a::after{
-content:"";
-position:absolute;
-bottom:-5px;
-left:0;
-width:0%;
-height:2px;
-background:cyan;
-transition:0.3s;
+  content:"";
+  position:absolute;
+  bottom:-5px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:cyan;
+  transition:0.3s;
 }
 
 .nav-links a:hover::after{
-width:100%;
+  width:100%;
 }
 
-/* BINARY STREAM */
+/* ============================================================
+   BINARY STREAM
+   FIX: overflow:hidden on body already clips these.
+        Added pointer-events:none so they never block taps.
+        Font size clamped so it stays legible but not massive.
+============================================================ */
 .binary{
-position:absolute;
-/* RESPONSIVE: Fluid font size */
-font-size:clamp(10px, 1.5vw, 14px);
-color:rgba(0,255,255,0.4);
-white-space:nowrap;
-animation:binaryMove linear infinite;
-font-family:monospace;
-/* RESPONSIVE: Prevent binary text from causing scroll */
-pointer-events:none;
+  /* FIX: Must be fixed (not absolute) to stay on screen while scrolling */
+  position:fixed;
+
+  /* FIX: Was font-size:14px — on retina/zoomed mobile this could be huge */
+  font-size:clamp(10px, 1.4vw, 14px);
+
+  color:rgba(0,255,255,0.4);
+  white-space:nowrap;
+  animation:binaryMove linear infinite;
+  font-family:monospace;
+
+  /* FIX: Never intercept taps or mouse events */
+  pointer-events:none;
+
+  /* FIX: Stay under everything visible */
+  z-index:0;
 }
 
+/* Binary animation — unchanged */
 @keyframes binaryMove{
-from{transform:translateX(-100%)}
-to{transform:translateX(100vw)}
+  from{ transform:translateX(-100%) }
+  to  { transform:translateX(100vw) }
 }
 
-/* HEADING */
+/* ============================================================
+   MAIN HEADING
+   FIX 1: margin-top uses clamp so it always clears the navbar
+           regardless of whether it's 1-row or 2-row (wrapped).
+   FIX 2: font-size clamped — the original 4vw = 12.8px on
+           320px screens (too small) and 56px is fine on desktop.
+   FIX 3: padding prevents text from kissing the screen edges.
+   FIX 4: letter-spacing reduced on mobile — 5px spacing on a
+           narrow heading caused text overflow / wrapping issues.
+============================================================ */
 .heading{
-/* RESPONSIVE: Increased top margin to clear fixed navbar, fluid sizing */
-margin-top:clamp(100px, 15vw, 140px);
-text-align:center;
-/* RESPONSIVE: Fluid font size using clamp instead of fixed vw */
-font-size:clamp(24px, 4vw, 56px);
-color:cyan;
-letter-spacing:5px;
-text-shadow:0 0 10px cyan;
-/* RESPONSIVE: Horizontal padding to prevent edge clipping */
-padding:0 5%;
+  /* FIX 1: Enough top margin to clear a potentially 2-row navbar */
+  margin-top:clamp(110px, 18vw, 150px);
+
+  text-align:center;
+
+  /* FIX 2: Fluid — grows from 20px (tiny phone) to 52px (desktop) */
+  font-size:clamp(20px, 4.5vw, 52px);
+
+  color:cyan;
+
+  /* FIX 4: Reduce tracking on mobile so heading doesn't overflow */
+  letter-spacing:clamp(1px, 0.8vw, 5px);
+
+  text-shadow:0 0 10px cyan;
+
+  /* FIX 3: Side padding prevents text touching screen edge */
+  padding:0 clamp(12px, 5%, 40px);
+
+  /* FIX: line-height prevents lines colliding when heading wraps */
+  line-height:1.3;
 }
 
-/* CARD */
+/* ============================================================
+   CARDS
+   FIX 1: height:auto (was fixed 30vh) — fixed heights break
+           content on short or narrow screens.
+   FIX 2: margin reduced on mobile via media query below.
+   FIX 3: min-height ensures the card always has enough room
+           to show the background image even if content is short.
+============================================================ */
 .card{
-/* RESPONSIVE: Use percentage width instead of fixed 90% — already good, kept */
-width:90%;
-/* RESPONSIVE: Changed fixed height to auto for flexible content */
-height:auto;
-min-height:200px;
-margin:120px auto;
-position:relative;
-overflow:hidden;
-border-radius:15px;
-box-shadow:0 0 20px rgba(0,255,255,0.3);
-opacity:0;
-transform:translateY(80px);
-transition:1s;
+  width:90%;
+
+  /* FIX 1: Never fix height — let content determine it */
+  height:auto;
+  min-height:clamp(220px, 40vw, 400px);
+
+  margin:clamp(40px, 10vw, 120px) auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:15px;
+  box-shadow:0 0 20px rgba(0,255,255,0.3);
+
+  /* Scroll-reveal starting state — unchanged */
+  opacity:0;
+  transform:translateY(80px);
+  transition:opacity 1s ease, transform 1s ease;
 }
 
+/* Scroll-reveal active state — unchanged */
 .card.show{
-opacity:1;
-transform:translateY(0);
+  opacity:1;
+  transform:translateY(0);
 }
 
+/* ============================================================
+   CARD IMAGE
+   FIX: object-fit:cover keeps the image filling the card
+        without distortion. position:absolute lets the overlay
+        sit correctly on top. min-height matches the card.
+============================================================ */
 .card img{
-width:100%;
-height:100%;
-object-fit:cover;
-/* RESPONSIVE: Ensure image fills card properly */
-display:block;
-min-height:200px;
+  /* FIX: absolute so overlay stacks exactly on top */
+  position:absolute;
+  top:0;
+  left:0;
+
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
+/* ============================================================
+   OVERLAY
+   DESKTOP: slides in from left on :hover (unchanged).
+   MOBILE FIX: On touch devices :hover isn't reliable —
+   we use a .active class toggled by JavaScript tap events.
+   The CSS stays identical; JS adds the class on tap.
+   FIX: overflow-y:auto lets content scroll inside overlay
+        when text is taller than the card on small screens.
+============================================================ */
 .overlay{
-position:absolute;
-top:0;
-left:-100%;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-color:white;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-transition:0.6s;
-/* RESPONSIVE: Fluid padding */
-padding:clamp(15px, 4vw, 30px);
+  position:absolute;
+  top:0;
+  left:-100%;        /* starts hidden off-screen left */
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  transition:left 0.6s ease;  /* FIX: animate only 'left', not all */
+
+  /* FIX: Fluid padding — was fixed 30px, cramped on 320px */
+  padding:clamp(14px, 5%, 30px);
+
+  /* FIX: If content overflows card height, allow internal scroll */
+  overflow-y:auto;
 }
 
+/* Desktop hover — unchanged */
 .card:hover .overlay{
-left:0;
+  left:0;
 }
 
-/* LIST */
+/* ============================================================
+   OVERLAY ACTIVE STATE (touch / tap)
+   FIX: .active class mirrors :hover behaviour for mobile.
+   Applied by JS touchstart handler below.
+============================================================ */
+.card.active .overlay{
+  left:0;
+}
+
+/* ============================================================
+   LIST INSIDE OVERLAY
+   FIX: clamp font-size so it never becomes unreadable on tiny
+        screens or comically large on tablets.
+============================================================ */
 .list{
-text-align:left;
-/* RESPONSIVE: Fluid font size */
-font-size:clamp(13px, 2vw, 18px);
-width:100%;
+  text-align:left;
+
+  /* FIX: Was font-size:18px — too large on 320px, now scales */
+  font-size:clamp(12px, 2.2vw, 17px);
+
+  width:100%;
+
+  /* FIX: Stop long university name overflowing on small screens */
+  word-break:break-word;
+  overflow-wrap:break-word;
 }
 
 .list ul{
-margin:10px 0;
-/* RESPONSIVE: Prevent list items from overflowing */
-word-break:break-word;
+  margin:8px 0;
+
+  /* FIX: Prevent extremely long text strings overflowing card */
+  word-break:break-word;
+  overflow-wrap:break-word;
 }
 
-/* ============================================
-   RESPONSIVE: MEDIA QUERIES
-   ============================================ */
+/* ============================================================
+   ABOUT ME H1 inside overlay
+   FIX: Inline styles on the element use clamp — already set
+        in HTML. Adding a fallback rule here for safety.
+============================================================ */
+.overlay h1{
+  font-size:clamp(15px, 3.5vw, 26px);
+  margin-bottom:10px;
+  text-align:center;
+}
 
-/* Tablet (max 768px) */
-@media(max-width:768px){
+/* ============================================================
+   ABOUT ME H2 inside overlay
+============================================================ */
+.overlay h2{
+  font-size:clamp(11px, 1.9vw, 17px);
+  font-weight:normal;
+  text-align:center;
+  line-height:1.7;
+
+  /* FIX: Long paragraphs can overflow on tiny screens */
+  overflow-wrap:break-word;
+  word-break:break-word;
+}
+
+/* ============================================================
+   TAP HINT — mobile only
+   A subtle "tap to reveal" indicator shown on touch devices
+   so users know the cards are interactive.
+   Hidden on desktop (pointer:fine).
+============================================================ */
+.tap-hint{
+  position:absolute;
+  bottom:10px;
+  right:12px;
+  font-size:11px;
+  color:rgba(0,255,255,0.7);
+  letter-spacing:1px;
+  font-family:monospace;
+  pointer-events:none;
+  z-index:2;
+
+  /* Only show on touch screens */
+  display:none;
+}
+
+@media(hover:none) and (pointer:coarse){
+  .tap-hint{ display:block; }
+}
+
+/* ============================================================
+   MEDIA QUERIES
+   ============================================================ */
+
+/* ── Large Mobile / Small Tablet  481px – 767px ── */
+@media(max-width:767px){
 
   .navbar{
-    padding:12px 4%;
-    gap:8px;
+    padding:10px 4%;
+    gap:6px;
   }
 
   .nav-links{
-    gap:12px;
+    gap:10px;
   }
 
   .heading{
-    margin-top:120px;
-    letter-spacing:2px;
+    /* Navbar is still 1 row here — standard clearance */
+    margin-top:clamp(90px, 15vw, 120px);
   }
 
   .card{
-    width:95%;
+    width:93%;
+    min-height:clamp(200px, 45vw, 320px);
+    margin:clamp(30px, 8vw, 80px) auto;
+  }
+
+}
+
+/* ── Mobile  320px – 480px ── */
+@media(max-width:480px){
+
+  /* --- NAVBAR -------------------------------------------- */
+  .navbar{
+    padding:10px 3%;
+    /* Center everything when wrapping to 2 rows */
+    justify-content:center;
+    gap:8px;
+  }
+
+  .logo{
+    /* Full width so it sits on its own line cleanly */
+    width:100%;
+    text-align:center;
+    font-size:clamp(14px, 4.5vw, 18px);
+    letter-spacing:1.5px;
+  }
+
+  .nav-links{
+    width:100%;
+    justify-content:center;
+    /* Tighter gap to fit 4 links in one line if possible */
+    gap:clamp(6px, 2.5vw, 12px);
+  }
+
+  .nav-links a{
+    font-size:clamp(10px, 2.8vw, 12px);
+  }
+
+  /* --- HEADING ------------------------------------------- */
+  .heading{
+    /*
+      FIX: Navbar wraps to 2 rows on ≤480px, adding ~35px height.
+      Increased margin-top so heading never overlaps the navbar.
+    */
+    margin-top:clamp(130px, 35vw, 160px);
+    font-size:clamp(16px, 5.5vw, 24px);
+    letter-spacing:clamp(1px, 1vw, 3px);
+    padding:0 10px;
+    line-height:1.35;
+  }
+
+  /* --- CARDS --------------------------------------------- */
+  .card{
+    width:96%;
+    min-height:clamp(180px, 50vw, 280px);
+    margin:clamp(25px, 7vw, 50px) auto;
+  }
+
+  /* --- OVERLAY ------------------------------------------- */
+  .overlay{
+    padding:12px;
+    /* Ensure text scrolls if it overflows the small card */
+    overflow-y:auto;
+    justify-content:flex-start;
+    padding-top:20px;
+  }
+
+  /* --- LIST ---------------------------------------------- */
+  .list{
+    font-size:clamp(11px, 3vw, 14px);
+  }
+
+}
+
+/* ── Tiny phones  ≤ 360px ── */
+@media(max-width:360px){
+
+  .nav-links a{
+    font-size:10px;
+    gap:5px;
+  }
+
+  .heading{
+    margin-top:150px;
+    font-size:15px;
+    letter-spacing:0.5px;
+  }
+
+  .card{
+    min-height:160px;
+  }
+
+  .list{
+    font-size:11px;
+  }
+
+}
+
+/* ── Tablet  768px – 1024px ── */
+@media(min-width:768px) and (max-width:1024px){
+
+  .navbar{
+    padding:14px 4%;
+  }
+
+  .nav-links{
+    gap:clamp(16px, 2.5vw, 32px);
+  }
+
+  .heading{
+    margin-top:100px;
+    font-size:clamp(28px, 4vw, 44px);
+    letter-spacing:3px;
+  }
+
+  .card{
+    width:88%;
+    min-height:clamp(260px, 35vw, 380px);
     margin:80px auto;
   }
 
 }
 
-/* Mobile (max 480px) */
-@media(max-width:480px){
+/* ── Desktop  1025px+ — preserve original appearance ── */
+@media(min-width:1025px){
 
   .navbar{
-    padding:10px 4%;
-    justify-content:center;
-  }
-
-  .logo{
-    width:100%;
-    text-align:center;
+    padding:15px 50px;   /* Restore original desktop padding exactly */
+    flex-wrap:nowrap;    /* Links never wrap on desktop */
   }
 
   .nav-links{
-    justify-content:center;
-    gap:10px;
-    width:100%;
+    gap:40px;            /* Restore original desktop gap */
+    flex-wrap:nowrap;
   }
 
   .nav-links a{
-    font-size:11px;
+    font-size:16px;      /* Restore original desktop size */
   }
 
-  .heading{
-    /* RESPONSIVE: Larger margin to clear taller wrapped navbar */
-    margin-top:140px;
-    font-size:clamp(18px, 6vw, 28px);
+  .logo{
+    font-size:20px;      /* Restore original desktop size */
     letter-spacing:2px;
   }
 
+  .heading{
+    margin-top:140px;    /* Restore original desktop margin */
+    font-size:4vw;       /* Restore original desktop font-size */
+    letter-spacing:5px;
+  }
+
   .card{
-    width:96%;
-    margin:60px auto;
+    width:90%;
+    min-height:300px;
+    margin:120px auto;
+  }
+
+  .overlay{
+    padding:30px;
   }
 
   .list{
-    font-size:13px;
+    font-size:18px;
+  }
+
+  .binary{
+    font-size:14px;
   }
 
 }
@@ -305,7 +628,9 @@ word-break:break-word;
 
 <!-- CARD 1 -->
 <div id="about" class="card reveal">
-  <img src="COA.png">
+  <img src="COA.png" alt="COA background">
+  <!-- TAP HINT: visible only on touch devices, tells user to tap -->
+  <span class="tap-hint">TAP TO REVEAL ▶</span>
   <div class="overlay">
     <div class="list">
       <ul>NAME = N.B.VARUN</ul>
@@ -320,74 +645,92 @@ word-break:break-word;
 
 <!-- CARD 2 -->
 <div id="info" class="card reveal">
-  <img src="COA.png">
+  <img src="COA.png" alt="COA background">
+  <!-- TAP HINT: visible only on touch devices -->
+  <span class="tap-hint">TAP TO REVEAL ▶</span>
   <div class="overlay">
-    <h1 style="font-size:clamp(16px,3vw,28px);margin-bottom:10px;">ABOUT ME</h1>
-    <h2 style="font-size:clamp(12px,1.8vw,18px);font-weight:normal;text-align:center;line-height:1.6;">
+    <h1>ABOUT ME</h1>
+    <h2>
       My name is N.B.Varun. I am a first-year Computer Science Engineering student at
       KLE Technological University (BVB Campus), Hubballi.
-
-      I am interested in learning Computer Organization and Architecture because it helps me understand how the CPU, memory, and other components of a computer system work together.
-
-      I am passionate about building a strong foundation in computer science and improving my technical skills.
+      I am interested in learning Computer Organization and Architecture because it helps
+      me understand how the CPU, memory, and other components of a computer system work together.
+      I am passionate about building a strong foundation in computer science and improving
+      my technical skills.
     </h2>
   </div>
 </div>
 
 <script>
 
-/* PARTICLE NETWORK */
-const canvas=document.getElementById("bg");
-const ctx=canvas.getContext("2d");
+/* ===========================================================
+   PARTICLE NETWORK — unchanged logic
+   FIX: Added resize handler so canvas always fills the screen
+   after orientation change or window resize.
+=========================================================== */
+const canvas = document.getElementById("bg");
+const ctx    = canvas.getContext("2d");
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+function resizeCanvas(){
+  /* FIX: Use clientWidth/clientHeight to match the layout viewport,
+     avoiding the scrollbar-width discrepancy on some browsers */
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
 
-// RESPONSIVE: Resize canvas when window size changes
-window.addEventListener("resize",()=>{
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
+resizeCanvas();
+
+/* FIX: Debounce resize so rapid resize events don't thrash the canvas */
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(resizeCanvas, 100);
 });
 
-let particles=[];
+let particles = [];
 
 class Particle{
   constructor(){
-    this.x=Math.random()*canvas.width;
-    this.y=Math.random()*canvas.height;
-    this.vx=(Math.random()-0.5)*1.5;
-    this.vy=(Math.random()-0.5)*1.5;
-    this.size=Math.random()*2+1;
+    this.reset();
+  }
+  reset(){
+    this.x  = Math.random() * canvas.width;
+    this.y  = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = (Math.random() - 0.5) * 1.5;
+    this.size = Math.random() * 2 + 1;
   }
   move(){
-    this.x+=this.vx;
-    this.y+=this.vy;
-    if(this.x<0||this.x>canvas.width)this.vx*=-1;
-    if(this.y<0||this.y>canvas.height)this.vy*=-1;
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x < 0 || this.x > canvas.width)  this.vx *= -1;
+    if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
   }
   draw(){
     ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle="cyan";
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = "cyan";
     ctx.fill();
   }
 }
 
-for(let i=0;i<120;i++){
+/* FIX: Reduce particle count on mobile for better performance */
+const particleCount = window.innerWidth < 600 ? 60 : 120;
+for(let i = 0; i < particleCount; i++){
   particles.push(new Particle());
 }
 
 function connect(){
-  for(let a=0;a<particles.length;a++){
-    for(let b=a;b<particles.length;b++){
-      let dx=particles[a].x-particles[b].x;
-      let dy=particles[a].y-particles[b].y;
-      let dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<120){
+  for(let a = 0; a < particles.length; a++){
+    for(let b = a; b < particles.length; b++){
+      const dx   = particles[a].x - particles[b].x;
+      const dy   = particles[a].y - particles[b].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 120){
         ctx.beginPath();
-        ctx.moveTo(particles[a].x,particles[a].y);
-        ctx.lineTo(particles[b].x,particles[b].y);
-        ctx.strokeStyle="rgba(0,255,255,0.15)";
+        ctx.moveTo(particles[a].x, particles[a].y);
+        ctx.lineTo(particles[b].x, particles[b].y);
+        ctx.strokeStyle = "rgba(0,255,255,0.15)";
         ctx.stroke();
       }
     }
@@ -395,45 +738,88 @@ function connect(){
 }
 
 function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    p.move();
-    p.draw();
-  });
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.move(); p.draw(); });
   connect();
   requestAnimationFrame(animate);
 }
 
 animate();
 
-/* BINARY STREAM */
+/* ===========================================================
+   BINARY STREAM — unchanged visual behaviour
+   FIX: Appended to body but marked position:fixed in CSS so
+   streams don't extend the document width/height.
+=========================================================== */
 function createBinary(){
-  let bin=document.createElement("div");
-  bin.className="binary";
-  let text="";
-  for(let i=0;i<40;i++){
-    text+=Math.random()>0.5?"1":"0";
+  const bin = document.createElement("div");
+  bin.className = "binary";
+
+  let text = "";
+  for(let i = 0; i < 40; i++){
+    text += Math.random() > 0.5 ? "1" : "0";
   }
-  bin.innerText=text;
-  bin.style.top=Math.random()*100+"%";
-  bin.style.animationDuration=(6+Math.random()*8)+"s";
+
+  bin.innerText = text;
+  bin.style.top             = Math.random() * 100 + "vh";
+  bin.style.animationDuration = (6 + Math.random() * 8) + "s";
+
   document.body.appendChild(bin);
-  setTimeout(()=>bin.remove(),15000);
+  setTimeout(() => bin.remove(), 15000);
 }
 
-setInterval(createBinary,600);
+setInterval(createBinary, 600);
 
-/* SCROLL REVEAL */
-const reveals=document.querySelectorAll(".reveal");
+/* ===========================================================
+   SCROLL REVEAL — unchanged
+=========================================================== */
+const reveals = document.querySelectorAll(".reveal");
 
-window.addEventListener("scroll",()=>{
-  reveals.forEach(el=>{
-    const top=el.getBoundingClientRect().top;
-    if(top<window.innerHeight-100){
+window.addEventListener("scroll", () => {
+  reveals.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if(top < window.innerHeight - 100){
       el.classList.add("show");
     }
   });
 });
+
+/* ===========================================================
+   TOUCH / TAP OVERLAY FIX
+   WHY: CSS :hover does not fire reliably on touch screens.
+   Tapping a card must show the overlay (same visual effect).
+   FIX: Listen for touchstart on each card; toggle .active
+   class which maps to the same CSS as :hover.
+   Tapping a second card removes .active from any open card.
+   Tapping outside closes all overlays.
+=========================================================== */
+const cards = document.querySelectorAll(".card");
+
+cards.forEach(card => {
+
+  card.addEventListener("touchstart", function(e){
+
+    const isAlreadyOpen = this.classList.contains("active");
+
+    /* Close all cards first */
+    cards.forEach(c => c.classList.remove("active"));
+
+    /* If it was closed, open it; if it was open, leave it closed (toggle) */
+    if(!isAlreadyOpen){
+      this.classList.add("active");
+      /* Prevent the tap from immediately bubbling to document
+         and closing the overlay we just opened */
+      e.stopPropagation();
+    }
+
+  }, { passive: true });
+
+});
+
+/* Tap anywhere outside a card closes all overlays */
+document.addEventListener("touchstart", () => {
+  cards.forEach(c => c.classList.remove("active"));
+}, { passive: true });
 
 </script>
 
