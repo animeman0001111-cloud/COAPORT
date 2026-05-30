@@ -1,331 +1,986 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teamwork And Self Learning</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<!-- RESPONSIVE: Added viewport meta tag -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Teamwork And Selflearning</title>
+
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+
 <style>
+
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+
 :root{
-  --bg:#02060d;--bg2:#07111f;
-  --accent:#00f0ff;--accent2:#7a5cff;
-  --text:#dffbff;--muted:#7ba9bb;
+  --bg:#02060d;
+  --bg2:#07111f;
+  --panel:rgba(10,18,32,0.72);
+  --panel2:rgba(15,30,48,0.52);
+
+  --line:#2be4ff;
+  --line-soft:rgba(43,228,255,0.25);
+
+  --accent:#00f0ff;
+  --accent2:#7a5cff;
+
+  --text:#dffbff;
+  --muted:#7ba9bb;
+
   --danger:#ff6b6b;
-  --heading-font:'Playfair Display',serif;
-  --body-font:'EB Garamond',serif;
-  --code-font:'JetBrains Mono',monospace;
+
+  --heading-font:'Playfair Display', serif;
+  --body-font:'EB Garamond', serif;
+  --code-font:'JetBrains Mono', monospace;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
 
 body{
-  font-family:var(--body-font);color:var(--text);
-  line-height:1.8;font-size:clamp(15px,3.5vw,17px);
+  font-family:var(--body-font);
+  color:var(--text);
+  line-height:1.8;
+  /* RESPONSIVE: Fluid base font size */
+  font-size:clamp(15px,2vw,17px);
+
   background:
-    radial-gradient(circle at top left,rgba(0,240,255,.07),transparent 20%),
-    radial-gradient(circle at bottom right,rgba(122,92,255,.07),transparent 20%),
+    radial-gradient(circle at top left, rgba(0,240,255,.08), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(122,92,255,.08), transparent 20%),
     linear-gradient(180deg,#01040a,#07111f 40%,#02060d);
-  overflow-x:hidden;min-height:100vh;
+
+  /* RESPONSIVE: Prevent horizontal scroll */
+  overflow-x:hidden;
+  min-height:100vh;
+  perspective:1800px;
+  position:relative;
 }
 
-/* GRID BG */
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
 body::before{
-  content:"";position:fixed;inset:0;
-  background:
-    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:50px 50px;
-  animation:gridMove 20s linear infinite;
-  z-index:-2;pointer-events:none;
-}
-@keyframes gridMove{from{transform:translateY(0)}to{transform:translateY(50px)}}
+  content:"";
+  position:fixed;
+  inset:0;
 
-/* SCANNER — desktop only */
-@media(min-width:700px){
-  body::after{
-    content:"";position:fixed;top:-200px;left:0;width:100%;height:200px;
-    background:linear-gradient(to bottom,transparent,rgba(0,240,255,.06),transparent);
-    animation:scanner 7s linear infinite;pointer-events:none;z-index:999;
-  }
-  @keyframes scanner{from{transform:translateY(-200px)}to{transform:translateY(calc(100vh + 200px))}}
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+
+  background-size:50px 50px;
+
+  animation:gridMove 18s linear infinite;
+
+  z-index:-2;
+  pointer-events:none;
+}
+
+@keyframes gridMove{
+  from{transform:translateY(0);}
+  to{transform:translateY(50px);}
+}
+
+/* =========================================================
+   SCANNER EFFECT
+========================================================= */
+
+body::after{
+  content:"";
+  position:fixed;
+  top:-200px;
+  left:0;
+  width:100%;
+  height:220px;
+
+  background:
+    linear-gradient(to bottom,transparent,rgba(0,240,255,.08),transparent);
+
+  animation:scanner 7s linear infinite;
+
+  pointer-events:none;
+  z-index:999;
+}
+
+@keyframes scanner{
+  from{transform:translateY(-220px);}
+  to{transform:translateY(calc(100vh + 220px));}
 }
 
 /* NAVBAR */
 .navbar{
-  position:fixed;top:0;left:0;width:100%;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 20px;
-  background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(0,255,255,0.3);z-index:1000;
-}
-.logo{color:cyan;font-size:16px;font-weight:bold;letter-spacing:2px;text-shadow:0 0 8px cyan;white-space:nowrap;}
-
-.hamburger{
-  display:none;flex-direction:column;gap:5px;
-  background:none;border:none;cursor:pointer;padding:4px;
-}
-.hamburger span{display:block;width:24px;height:2px;background:cyan;border-radius:2px;transition:0.3s;}
-.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-.hamburger.open span:nth-child(2){opacity:0;}
-.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-.nav-links{list-style:none;display:flex;gap:18px;}
-.nav-links a{text-decoration:none;color:white;font-size:13px;transition:0.3s;position:relative;white-space:nowrap;}
-.nav-links a:hover{color:cyan;text-shadow:0 0 8px cyan;}
-.nav-links a::after{content:"";position:absolute;bottom:-4px;left:0;width:0%;height:2px;background:cyan;transition:0.3s;}
-.nav-links a:hover::after{width:100%;}
-
-@media(max-width:700px){
-  .hamburger{display:flex;}
-  .nav-links{
-    display:none;flex-direction:column;gap:0;
-    position:fixed;top:52px;left:0;width:100%;
-    background:rgba(0,0,0,0.97);
-    border-bottom:1px solid rgba(0,255,255,0.3);
-    padding:10px 0;
-  }
-  .nav-links.open{display:flex;}
-  .nav-links a{display:block;padding:12px 24px;font-size:16px;border-bottom:1px solid rgba(255,255,255,0.05);}
-  .nav-links a::after{display:none;}
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  /* RESPONSIVE: Fluid padding */
+  padding:15px 5%;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,255,255,0.3);
+  z-index:1000;
+  /* RESPONSIVE: Allow wrapping */
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-/* HERO */
+.logo{
+  color:cyan;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(15px,2.5vw,20px);
+  font-weight:bold;
+  letter-spacing:2px;
+  text-shadow:0 0 8px cyan;
+  flex-shrink:0;
+}
+
+.nav-links{
+  list-style:none;
+  display:flex;
+  /* RESPONSIVE: Fluid gap */
+  gap:clamp(12px,2.5vw,40px);
+  flex-wrap:wrap;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:white;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(12px,1.8vw,16px);
+  transition:0.3s;
+  position:relative;
+  white-space:nowrap;
+}
+
+.nav-links a:hover{
+  color:cyan;
+  text-shadow:0 0 8px cyan;
+}
+
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  bottom:-5px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:cyan;
+  transition:0.3s;
+}
+
+.nav-links a:hover::after{
+  width:100%;
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
 .hero{
-  position:relative;overflow:hidden;
-  padding:clamp(80px,15vw,120px) 20px clamp(50px,10vw,100px);
+  position:relative;
+  overflow:hidden;
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(90px,12vw,120px) clamp(15px,4vw,20px) clamp(60px,10vw,100px);
   text-align:center;
+
   background:
-    radial-gradient(circle at center,rgba(0,240,255,.12),transparent 45%),
-    linear-gradient(135deg,rgba(0,15,35,.98),rgba(5,18,36,.95));
+    radial-gradient(circle at center,rgba(0,240,255,.14),transparent 45%),
+    linear-gradient(135deg,rgba(0,15,35,.98),rgba(5,18,36,.95),rgba(0,8,18,.98));
+
   border-bottom:1px solid rgba(0,240,255,.2);
-  box-shadow:inset 0 -30px 80px rgba(0,240,255,.06);
+
+  box-shadow:
+    inset 0 -30px 80px rgba(0,240,255,.08),
+    0 0 80px rgba(0,240,255,.06);
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(0,240,255,.06),
+      transparent,
+      rgba(122,92,255,.06),
+      transparent
+    );
+
+  animation:rotateHud 18s linear infinite;
+}
+
+@keyframes rotateHud{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px);
+  background-size:120px 120px;
+
+  animation:stars 25s linear infinite;
+  opacity:.2;
+}
+
+@keyframes stars{
+  from{transform:translateY(0);}
+  to{transform:translateY(-120px);}
 }
 
 .hero h1{
-  position:relative;z-index:2;
-  font-size:clamp(28px,7vw,6rem);
-  font-weight:900;letter-spacing:.05em;text-transform:uppercase;
+  position:relative;
+  z-index:2;
+
+  /* RESPONSIVE: Fluid font size using clamp */
+  font-size:clamp(2rem,8vw,6rem);
+  font-weight:900;
+
+  letter-spacing:.08em;
+  text-transform:uppercase;
+
   color:#fff;
-  text-shadow:0 0 10px rgba(255,255,255,.4),0 0 30px rgba(0,240,255,.6);
+
+  text-shadow:
+    0 0 10px rgba(255,255,255,.5),
+    0 0 25px rgba(0,240,255,.7),
+    0 0 60px rgba(0,240,255,.45);
+
   animation:titleFloat 4s ease-in-out infinite;
-  line-height:1.2;
+
+  /* RESPONSIVE: Handle long words on small screens */
+  word-break:break-word;
 }
-@keyframes titleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+@keyframes titleFloat{
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-8px);}
+}
 
 .hero .subtitle{
-  position:relative;z-index:2;margin-top:16px;
-  font-family:var(--code-font);color:#8edfff;
-  letter-spacing:.25em;text-transform:uppercase;
-  font-size:clamp(11px,2.5vw,.9rem);
+  position:relative;
+  z-index:2;
+  margin-top:20px;
+  font-family:var(--code-font);
+  color:#8edfff;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(.7rem,1.5vw,.95rem);
+  /* RESPONSIVE: Prevent overflow on small screens */
+  word-break:break-word;
 }
 
-/* PAGE */
-.page{width:min(1200px,94%);margin:auto;padding:50px 16px 100px;}
+/* =========================================================
+   MAIN PAGE
+========================================================= */
 
-/* QUESTION BLOCK */
+.page{
+  /* RESPONSIVE: Already uses min() — kept, adjusted padding */
+  width:min(1450px,95%);
+  margin:auto;
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(40px,6vw,70px) clamp(10px,3vw,20px) clamp(60px,10vw,120px);
+}
+
+/* =========================================================
+   QUESTION BLOCKS
+========================================================= */
+
 .question-block{
-  position:relative;overflow:hidden;
+  position:relative;
+  overflow:hidden;
+  /* RESPONSIVE: Fluid margin */
   margin-bottom:clamp(40px,8vw,90px);
-  border-radius:20px;
-  background:linear-gradient(145deg,rgba(12,22,38,.92),rgba(6,12,24,.88));
-  border:1px solid rgba(0,240,255,.18);
-  backdrop-filter:blur(16px);
-  box-shadow:inset 0 0 20px rgba(0,240,255,.04),0 16px 50px rgba(0,0,0,.5),0 0 30px rgba(0,240,255,.06);
-  transition:transform .5s ease,box-shadow .5s ease,border-color .5s ease;
-  animation:fadeRise .8s ease both;
-}
-@keyframes fadeRise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  border-radius:28px;
 
-@media(hover:hover){
-  .question-block:hover{
-    transform:translateY(-5px) scale(1.005);
-    border-color:rgba(0,240,255,.45);
-    box-shadow:0 0 60px rgba(0,240,255,.14),0 25px 80px rgba(0,0,0,.65);
-  }
+  background:
+    linear-gradient(145deg,rgba(12,22,38,.92),rgba(6,12,24,.88));
+
+  border:1px solid rgba(0,240,255,.18);
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    inset 0 0 25px rgba(0,240,255,.05),
+    0 0 0 1px rgba(255,255,255,.03),
+    0 20px 60px rgba(0,0,0,.55),
+    0 0 45px rgba(0,240,255,.08);
+
+  transform-style:preserve-3d;
+
+  transition:
+    transform .7s ease,
+    box-shadow .7s ease,
+    border-color .5s ease;
+
+  animation:fadeRise 1s ease both;
 }
+
+.question-block:hover{
+  transform:
+    rotateX(5deg)
+    rotateY(-5deg)
+    translateY(-8px)
+    scale(1.01);
+
+  border-color:rgba(0,240,255,.55);
+
+  box-shadow:
+    0 0 80px rgba(0,240,255,.18),
+    0 30px 90px rgba(0,0,0,.7);
+}
+
+.question-block::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(120deg,transparent 0%,rgba(255,255,255,.06) 45%,transparent 55%);
+
+  transform:translateX(-120%);
+  transition:1s;
+}
+
+.question-block:hover::before{
+  transform:translateX(120%);
+}
+
+.question-block::after{
+  content:"";
+  position:absolute;
+  inset:12px;
+
+  border:1px solid rgba(0,240,255,.08);
+  border-radius:20px;
+
+  pointer-events:none;
+
+  clip-path:polygon(
+    0 18px,18px 0,calc(100% - 18px) 0,100% 18px,
+    100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px)
+  );
+}
+
+/* =========================================================
+   ENTRY ANIMATION
+========================================================= */
+
+@keyframes fadeRise{
+  from{opacity:0;transform:translateY(50px) scale(.96);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* =========================================================
+   QUESTION TITLE
+========================================================= */
 
 .question-title{
-  padding:clamp(16px,4vw,28px) clamp(18px,5vw,38px);
-  background:linear-gradient(90deg,rgba(0,240,255,.12),rgba(122,92,255,.12),rgba(0,240,255,.06));
-  border-bottom:1px solid rgba(0,240,255,.18);
+  position:relative;
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(16px,3vw,28px) clamp(18px,4vw,38px);
+
+  background:
+    linear-gradient(90deg,rgba(0,240,255,.15),rgba(122,92,255,.14),rgba(0,240,255,.08));
+
+  border-bottom:1px solid rgba(0,240,255,.2);
+
   font-family:var(--heading-font);
-  font-size:clamp(14px,3.5vw,1.35rem);
-  font-weight:700;color:#fff;
-  text-shadow:0 0 10px rgba(0,240,255,.35);
-  line-height:1.4;
+
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(1rem,2.5vw,1.45rem);
+  font-weight:700;
+
+  color:#fff;
+
+  text-shadow:0 0 12px rgba(0,240,255,.4);
+
+  /* RESPONSIVE: Handle long content */
+  word-break:break-word;
 }
 
-.question-body{padding:clamp(20px,5vw,40px);}
+.question-title::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:2px;
 
-/* TYPOGRAPHY */
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+
+  animation:scanline 4s linear infinite;
+}
+
+@keyframes scanline{
+  from{transform:translateX(-100%);}
+  to{transform:translateX(100%);}
+}
+
+.question-body{
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(20px,4vw,40px);
+}
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
 .section-head{
-  position:relative;display:inline-block;
-  margin:clamp(24px,5vw,40px) 0 14px;padding-bottom:8px;
+  position:relative;
+  display:inline-block;
+
+  /* RESPONSIVE: Fluid margin */
+  margin:clamp(24px,4vw,40px) 0 18px;
+  padding-bottom:10px;
+
   font-family:var(--heading-font);
-  font-size:clamp(14px,3.5vw,1.25rem);font-weight:800;
-  color:#fff;text-transform:uppercase;letter-spacing:.04em;
-  text-shadow:0 0 12px rgba(0,240,255,.35);
+
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(1.05rem,2.5vw,1.3rem);
+  font-weight:800;
+
+  color:#fff;
+
+  text-transform:uppercase;
+  letter-spacing:.05em;
+
+  text-shadow:0 0 15px rgba(0,240,255,.4);
 }
+
 .section-head::after{
-  content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:2px;
   background:linear-gradient(90deg,var(--accent),transparent);
 }
 
 .subsection-head{
-  margin-top:22px;margin-bottom:8px;
-  font-family:var(--code-font);color:#8fdfff;
-  font-size:clamp(12px,3vw,.95rem);
-  font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  margin-top:28px;
+  margin-bottom:10px;
+  font-family:var(--code-font);
+  color:#8fdfff;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(.9rem,1.8vw,1.05rem);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
 }
 
-p{margin-bottom:12px;color:#d6f3ff;font-size:clamp(13px,3vw,15px);}
-.label{color:var(--accent);font-weight:700;}
+p{
+  margin-bottom:14px;
+  color:#d6f3ff;
+}
 
-ul,ol{padding-left:20px;margin:12px 0 16px;}
-li{margin-bottom:8px;color:#cbeaf4;font-size:clamp(13px,3vw,15px);}
+.label{
+  color:var(--accent);
+  font-weight:700;
+  text-shadow:0 0 10px rgba(0,240,255,.5);
+}
 
-/* OPS GRID */
+/* =========================================================
+   LISTS
+========================================================= */
+
+ul,ol{
+  padding-left:24px;
+  margin:14px 0 18px;
+}
+
+li{
+  margin-bottom:10px;
+  color:#cbeaf4;
+}
+
+/* =========================================================
+   OPS GRID
+========================================================= */
+
 .ops-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-  gap:12px;margin-top:20px;padding:0;
+  /* RESPONSIVE: Already uses auto-fit — kept, adjusted min */
+  grid-template-columns:repeat(auto-fit,minmax(clamp(140px,20vw,180px),1fr));
+  gap:18px;
+  margin-top:28px;
 }
+
 .ops-grid li{
   list-style:none;
-  padding:12px 14px;
-  background:linear-gradient(135deg,rgba(0,240,255,.07),rgba(122,92,255,.07));
-  border:1px solid rgba(0,240,255,.18);border-radius:14px;
-  backdrop-filter:blur(8px);
-  font-family:var(--code-font);font-size:clamp(11px,2.8vw,13px);
-  color:#cbeaf4;margin-bottom:0;
-  transition:transform .3s,border-color .3s;
-}
-@media(hover:hover){
-  .ops-grid li:hover{transform:translateY(-4px);border-color:rgba(0,240,255,.5);}
-}
-.ops-grid li::before{content:"◉ ";color:var(--accent);}
+  padding:16px 18px;
 
-/* TABLES */
-.styled-table,.addr-table{
-  width:100%;border-collapse:collapse;
-  margin-top:18px;border-radius:14px;overflow:hidden;
-  background:rgba(0,0,0,.2);border:1px solid rgba(0,240,255,.14);
-}
-.styled-table th,.addr-table th{
-  background:linear-gradient(90deg,rgba(0,240,255,.18),rgba(122,92,255,.2));
-  padding:clamp(10px,3vw,16px);color:#fff;text-align:left;
-  font-family:var(--code-font);letter-spacing:.05em;text-transform:uppercase;
-  font-size:clamp(11px,2.5vw,13px);
-}
-.styled-table td,.addr-table td{
-  padding:clamp(10px,3vw,14px) clamp(10px,3vw,16px);
-  color:#d9f5ff;border-top:1px solid rgba(255,255,255,.04);
-  font-size:clamp(12px,3vw,14px);
+  background:linear-gradient(135deg,rgba(0,240,255,.08),rgba(122,92,255,.08));
+
+  border:1px solid rgba(0,240,255,.18);
+  border-radius:18px;
+  backdrop-filter:blur(10px);
+  font-family:var(--code-font);
+
+  transition:transform .4s ease,border-color .4s ease,box-shadow .4s ease;
+
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(.8rem,1.5vw,.95rem);
 }
 
-/* TABLE RESPONSIVE */
-.table-wrap{width:100%;overflow-x:auto;}
+.ops-grid li:hover{
+  transform:translateY(-6px) scale(1.03);
+  border-color:rgba(0,240,255,.55);
+  box-shadow:0 0 25px rgba(0,240,255,.2);
+}
 
-/* IMAGES */
+.ops-grid li::before{
+  content:"◉ ";
+  color:var(--accent);
+}
+
+/* =========================================================
+   TABLES — RESPONSIVE
+========================================================= */
+
+/* RESPONSIVE: Wrap table in a scrollable container for small screens */
+.table-wrapper{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin-top:22px;
+  border-radius:20px;
+}
+
+.styled-table,
+.addr-table{
+  width:100%;
+  border-collapse:collapse;
+
+  /* RESPONSIVE: min-width ensures table stays readable when wrapped */
+  min-width:400px;
+
+  border-radius:20px;
+  overflow:hidden;
+
+  background:rgba(0,0,0,.2);
+
+  border:1px solid rgba(0,240,255,.15);
+  backdrop-filter:blur(10px);
+}
+
+.styled-table th,
+.addr-table th{
+  background:linear-gradient(90deg,rgba(0,240,255,.2),rgba(122,92,255,.22));
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(10px,2vw,16px);
+  color:#fff;
+  text-align:left;
+  font-family:var(--code-font);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(.75rem,1.5vw,.9rem);
+}
+
+.styled-table td,
+.addr-table td{
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(10px,1.5vw,14px) clamp(10px,2vw,16px);
+  color:#d9f5ff;
+  border-top:1px solid rgba(255,255,255,.05);
+  font-size:clamp(.8rem,1.5vw,.95rem);
+}
+
+.styled-table tr:hover td,
+.addr-table tr:hover td{
+  background:rgba(0,240,255,.08);
+}
+
+/* =========================================
+   IMAGE CONTAINER
+========================================= */
+
 .img-placeholder{
-  width:100%;padding:clamp(12px,3vw,24px);
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-  margin-top:16px;
+  width:100%;
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(15px,3vw,25px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  min-height:auto !important;
+  overflow:hidden;
 }
-.img-icon{width:100%;position:relative;overflow:hidden;border-radius:14px;}
+
+.img-icon{
+  width:100% !important;
+  height:auto !important;
+  border-radius:20px !important;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+
 .img-icon img{
-  width:100%;max-width:1100px;height:auto;display:block;
-  border-radius:14px;
-  border:1.5px solid rgba(0,240,255,.22);
-  box-shadow:0 0 20px rgba(0,240,255,.1);
-  transition:transform .5s,box-shadow .5s;
+  width:100%;
+  /* RESPONSIVE: Limit max width on large screens */
+  max-width:1200px;
+  height:auto;
+  object-fit:contain;
+  display:block;
+  border-radius:18px;
+  border:2px solid rgba(0,240,255,.25);
+  box-shadow:0 0 25px rgba(0,240,255,.12),0 0 60px rgba(0,240,255,.08);
+  transition:transform .6s ease,box-shadow .6s ease,filter .6s ease;
+  transform-style:preserve-3d;
 }
-@media(hover:hover){
-  .img-icon img:hover{transform:scale(1.02);box-shadow:0 0 40px rgba(0,240,255,.2);}
+
+.img-icon img:hover{
+  transform:scale(1.03) rotateX(3deg) rotateY(-3deg);
+  filter:brightness(1.08) contrast(1.05);
+  box-shadow:0 0 45px rgba(0,240,255,.25),0 0 90px rgba(0,240,255,.12);
 }
+
+.img-icon::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.18),transparent);
+  transform:skewX(-20deg);
+  animation:holoSweep 5s linear infinite;
+  pointer-events:none;
+  z-index:5;
+}
+
+@keyframes holoSweep{
+  0%{left:-120%;}
+  100%{left:120%;}
+}
+
+.img-placeholder:hover{
+  transform:perspective(1000px) rotateX(4deg) rotateY(-4deg) translateY(-4px);
+}
+
 .img-label{
-  text-align:center;font-size:clamp(12px,3vw,14px);
-  color:#dffbff;margin-top:4px;letter-spacing:.06em;
-  text-transform:uppercase;line-height:1.5;
-  text-shadow:0 0 10px rgba(0,240,255,.3);
+  width:100%;
+  text-align:center;
+  /* RESPONSIVE: Fluid font size */
+  font-size:clamp(.8rem,1.5vw,1rem) !important;
+  color:#dffbff !important;
+  margin-top:5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  line-height:1.6;
+  text-shadow:0 0 12px rgba(0,240,255,.35);
 }
-.img-placeholder span{color:#8cc7d8;font-size:clamp(11px,2.5vw,13px);text-align:center;}
 
-/* CALLOUT */
+.img-placeholder span{
+  text-align:center;
+  color:#8cc7d8;
+  font-size:.95rem;
+  margin-top:-8px;
+}
+
+/* =========================================================
+   CALLOUTS
+========================================================= */
+
 .callout{
-  padding:16px 20px;border-radius:14px;
-  background:linear-gradient(135deg,rgba(255,120,120,.07),rgba(255,255,255,.02));
-  border:1px solid rgba(255,120,120,.2);border-left:4px solid var(--danger);
-  color:#ffe8e8;font-size:clamp(13px,3vw,15px);
+  /* RESPONSIVE: Fluid padding */
+  padding:clamp(12px,2vw,18px) clamp(14px,3vw,24px);
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(255,120,120,.08),rgba(255,255,255,.03));
+  border:1px solid rgba(255,120,120,.25);
+  border-left:4px solid var(--danger);
+  backdrop-filter:blur(10px);
+  color:#ffe8e8;
 }
+
 .callout.blue{
-  background:linear-gradient(135deg,rgba(0,240,255,.07),rgba(255,255,255,.02));
-  border-color:rgba(0,240,255,.2);border-left-color:var(--accent);color:#d6f3ff;
+  background:linear-gradient(135deg,rgba(0,240,255,.08),rgba(255,255,255,.03));
+  border-color:rgba(0,240,255,.25);
 }
 
-.arrow-item::before{content:"⟶ ";color:var(--accent);text-shadow:0 0 8px rgba(0,240,255,.6);}
+/* =========================================================
+   DATA ARROWS
+========================================================= */
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:8px;}
+.arrow-item::before{
+  content:"⟶ ";
+  color:var(--accent);
+  text-shadow:0 0 12px rgba(0,240,255,.7);
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar{width:10px;}
 ::-webkit-scrollbar-track{background:#020812;}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:20px;}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  border-radius:20px;
+}
+
+/* =========================================================
+   RESPONSIVE: MEDIA QUERIES
+========================================================= */
+
+/* Tablet */
+@media(max-width:900px){
+
+  .hero{
+    padding:90px 18px 80px;
+  }
+
+  .hero h1{
+    font-size:clamp(1.8rem,6vw,3rem);
+    letter-spacing:.04em;
+  }
+
+  .question-title{
+    padding:20px 24px;
+    font-size:1.1rem;
+  }
+
+  .question-body{
+    padding:24px;
+  }
+
+  .section-head{
+    font-size:1.05rem;
+  }
+
+  /* Disable 3D hover on touch */
+  .question-block:hover{
+    transform:translateY(-4px);
+  }
+
+  .img-placeholder:hover{
+    transform:none;
+  }
+
+  .img-icon img:hover{
+    transform:scale(1.02);
+  }
+
+}
+
+/* Mobile */
+@media(max-width:600px){
+
+  .navbar{
+    padding:10px 4%;
+    justify-content:center;
+  }
+
+  .logo{
+    width:100%;
+    text-align:center;
+  }
+
+  .nav-links{
+    justify-content:center;
+    width:100%;
+    gap:8px;
+  }
+
+  .nav-links a{
+    font-size:11px;
+  }
+
+  .hero{
+    padding:120px 12px 60px;
+  }
+
+  .hero h1{
+    font-size:clamp(1.5rem,7vw,2.5rem);
+    letter-spacing:.03em;
+  }
+
+  .hero .subtitle{
+    letter-spacing:.15em;
+    font-size:.75rem;
+  }
+
+  .page{
+    width:100%;
+    padding:30px 12px 60px;
+  }
+
+  .question-block{
+    border-radius:16px;
+    margin-bottom:40px;
+  }
+
+  .question-block::after{
+    inset:6px;
+    border-radius:12px;
+  }
+
+  .question-title{
+    padding:16px 18px;
+    font-size:.95rem;
+    border-radius:16px 16px 0 0;
+  }
+
+  .question-body{
+    padding:16px;
+  }
+
+  .ops-grid{
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+  }
+
+  .ops-grid li{
+    padding:10px 12px;
+  }
+
+  .section-head{
+    font-size:.95rem;
+    margin-top:20px;
+  }
+
+  .subsection-head{
+    font-size:.85rem;
+  }
+
+  /* RESPONSIVE: Fully disable 3D transforms on mobile */
+  .question-block:hover{
+    transform:none;
+  }
+
+  .img-placeholder:hover,
+  .img-icon img:hover{
+    transform:none;
+    filter:none;
+  }
+
+}
+
+/* Small mobile */
+@media(max-width:380px){
+
+  .hero h1{
+    font-size:1.4rem;
+  }
+
+  .nav-links a{
+    font-size:10px;
+  }
+
+}
+
 </style>
 </head>
+
 <body>
 
 <nav class="navbar">
   <div class="logo">COA PROJECT</div>
-  <button class="hamburger" id="ham" aria-label="Toggle menu">
-    <span></span><span></span><span></span>
-  </button>
-  <ul class="nav-links" id="navlinks">
+  <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="test.html">Play Book</a></li>
     <li><a href="processor.html">Processor</a></li>
-    <li><a href="selfacessment.html">Teamwork &amp; Self Learning</a></li>
+    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
   </ul>
 </nav>
 
+<!-- HERO BANNER -->
 <div class="hero">
-  <h1>Teamwork &amp; Self Learning</h1>
-  <div class="subtitle">KLE Tech · Processor Design &amp; Digital Systems</div>
+  <h1>Teamwork And Selflearning</h1>
+  <div class="subtitle">
+    KLE Tech · Processor Design &amp; Digital Systems
+  </div>
 </div>
 
+<!-- MAIN PAGE -->
 <div class="page">
 
-  <!-- Q1 -->
+  <!-- QUESTION 1 -->
   <div class="question-block">
-    <div class="question-title">1. Design and implement an 8-bit ALU to perform the following operations:</div>
+    <div class="question-title">
+      1. Design and implement an 8-bit ALU to perform the following operations:
+    </div>
     <div class="question-body">
+
       <ul class="ops-grid">
-        <li>i. Load</li><li>ii. Store</li><li>iii. Add</li>
-        <li>iv. Subtract</li><li>v. Multiply</li><li>vi. Division</li>
-        <li>vii. AND</li><li>viii. OR</li><li>ix. XOR</li>
-        <li>x. 2's Complement</li><li>xi. Comparator</li>
-        <li>xii. SHL</li><li>xiii. SHR</li><li>xiv. ASL</li><li>xv. ASR</li>
+        <li>i. Load</li>
+        <li>ii. Store</li>
+        <li>iii. Add</li>
+        <li>iv. Subtract</li>
+        <li>v. Multiply</li>
+        <li>vi. Division</li>
+        <li>vii. AND</li>
+        <li>viii. OR</li>
+        <li>ix. XOR</li>
+        <li>x. 2's Complement</li>
+        <li>xi. Comparator</li>
+        <li>xii. SHL, etc.</li>
+        <li>xiii. SHR, etc.</li>
+        <li>xiv. ASL, etc.</li>
+        <li>xv. ASR, etc.</li>
       </ul>
-      <div class="img-placeholder">
+
+      <div class="img-placeholder" style="min-height:200px;">
         <div class="img-icon"><img src="1 (1).png" alt="ALU Operations Detail Table"></div>
         <div class="img-label">ALU Operations Detail Table &amp; Block Diagram</div>
         <span>(Logisim schematic — 8-bit ALU operation table)</span>
       </div>
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (2).png" alt="8-bit ALU Logisim Circuit"></div>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (2).png" alt="8 Bit ALU Logisim Circuit Diagram"></div>
         <div class="img-label">8 BIT ALU — Logisim Circuit Diagram</div>
       </div>
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (3).png" alt="8-bit ALU Full View"></div>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (3).png" alt="8 Bit ALU Full Circuit View"></div>
         <div class="img-label">8 BIT ALU — Full Circuit View</div>
       </div>
+
     </div>
   </div>
 
-  <!-- Q2 -->
+  <!-- QUESTION 2 -->
   <div class="question-block">
-    <div class="question-title">2. Design and implement 4×4 memory using single cell memory</div>
+    <div class="question-title">
+      2. Design and implement 4×4 memory using single cell memory
+    </div>
     <div class="question-body">
+
       <p class="section-head">Introduction</p>
-      <p>A memory cell is the fundamental unit of RAM. A single SRAM cell stores one bit. Arranging cells in rows (word lines) and columns (bit lines) builds a complete memory array. This design uses SRAM cells to create a 4×4 memory — 4 locations each storing 4 bits.</p>
+      <p>
+        A memory cell is the fundamental unit of RAM. A single static RAM (SRAM) cell stores one bit of data.
+        By arranging such cells in rows (word lines) and columns (bit lines), we build a complete memory array.
+        This design uses single SRAM cells to build a 4×4 memory — 4 locations each storing 4 bits.
+      </p>
 
       <p class="section-head">Working of a Single SRAM Cell</p>
       <p class="subsection-head">Components:</p>
@@ -333,76 +988,168 @@ li{margin-bottom:8px;color:#cbeaf4;font-size:clamp(13px,3vw,15px);}
         <li>Two cross-coupled CMOS inverters (INV1 and INV2), forming a bistable latch</li>
         <li>Two NMOS access transistors (N1 and N2), controlled by the Word Line (WL)</li>
       </ul>
+
       <p class="subsection-head">Ports:</p>
       <ul>
         <li><span class="label">WL (Word Line):</span> Activates the cell for read/write</li>
         <li><span class="label">BL (Bit Line):</span> Carries data during write; read ones during read</li>
         <li><span class="label">BL̄ (Complement Bit Line):</span> Carries the inverted data bit</li>
       </ul>
+
+      <p class="subsection-head">Reading/Writing Process:</p>
+      <p>
+        The cross-coupled inverters make nodes Q and Q̄ complementary. During write, Q and Q̄ are driven
+        to BL and BL̄ respectively. When WL is HIGH, connecting the inverter nodes to BL and BL̄. During write,
+        the sense amplifier drives BL/BL̄ forcefully to override the stored data. The stored charge directly
+        drives BL/BL̄ slightly, detected by the sense amplifier.
+      </p>
+
       <p class="subsection-head">4×4 Array Operation:</p>
-      <p>The 4×4 array has 4 rows and 4 columns. A 2-to-4 row decoder selects one WL at a time. All 4 bit lines carry one bit each, forming a 4-bit data word.</p>
+      <p>The 4×4 array (shown in diagram) has 4 rows and 4 columns:</p>
+      <ul>
+        <li>A 2-to-4 row decoder selects a 2-bit address (A[1:0]), and drives one WL (WL[0-WL3]) at a time</li>
+        <li>All 4 bit lines (BL0-BL3) carry one bit each, forming a 4-bit data word</li>
+        <li>Write: Address selects WL, cells discharge their BL lines; sense amplifiers read Z_out[3:0]</li>
+        <li>Read: Address selects WL, data is driven to BL/BL̄ lines</li>
+      </ul>
+
+      <p class="subsection-head">Simulation Response Design:</p>
+      <p>
+        Write 0xAB (10101011) to address 01 → WL1 goes HIGH → Bank 1: C1D = gives HIGH, C1[0] = 1, C1[1] = 0.
+        Reading address 01 → Data from = 0x0B.
+        Read back → Data from 1 = 0xAB SHEET.
+      </p>
+
       <p class="subsection-head">Conclusion:</p>
-      <p>The 4×4 SRAM uses 16 single-bit cells in a matrix. The row decoder selects the word line; bit-line sense amplifiers complete read/write operations. This technique is fundamental in practical memory design.</p>
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (4).png" alt="4x4 Memory Circuit"></div>
+      <p>
+        The 4×4 SRAM uses 16 single-bit SRAM cells arranged in a matrix. The row decoder selects the word line,
+        and the bit-line sense amplifiers complete the read/write operation. This technique is extensively used
+        in practical memory subsystem design.
+      </p>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (4).png" alt="4x4 Memory Circuit Diagram"></div>
         <div class="img-label">4×4 Memory Using Single Memory Cell — Circuit Diagram</div>
       </div>
+
     </div>
   </div>
 
-  <!-- Q3 -->
+  <!-- QUESTION 3 -->
   <div class="question-block">
-    <div class="question-title">3. Design and implement a 1024×32 memory using 512×16 memory chips.</div>
+    <div class="question-title">
+      3. Design and implement a larger memory of size 1024×32 memory using a smaller memory of size 512×16.
+    </div>
     <div class="question-body">
+
       <p class="section-head">Introduction</p>
-      <p>A 512×16 chip has 512 addressable locations storing 16 bits each. To build 1024×32, we must expand both depth (512→1024) and width (16→32 bits).</p>
+      <p>
+        Large memory systems are built by combining smaller memory chips. A 512×16 chip has 512 addressable
+        locations each storing 16 bits. We need to build a 1024×32 memory — 1024 locations each 32 bits wide
+        (32 bits). This requires expanding both word depth (512→1024) and word width (16→32 bits).
+      </p>
 
       <p class="section-head">Design Steps</p>
-      <p class="subsection-head">Step 1 — Expansion needed:</p>
+
+      <p class="subsection-head">Step 1 — Determine expansion needed:</p>
       <ul>
-        <li>Width: 32 ÷ 16 = 2 chips in parallel per bank</li>
-        <li>Depth: 1024 ÷ 512 = 2 banks</li>
-        <li>Total chips: 2 × 2 = <strong>4 chips</strong></li>
+        <li>Target: 1024 × 32 available modules: 512 × 16</li>
+        <li>Width expansion: 32 ÷ 16 = 2 chips in parallel per bank to get 32 data bits</li>
+        <li>Depth expansion: 1024 ÷ 512 = 2 banks to get 1024 addresses</li>
+        <li>Total chips needed: 2 × 2 = 4 chips</li>
       </ul>
+
       <p class="subsection-head">Step 2 — Address partitioning:</p>
       <ul>
         <li>Total address bits = log₂(1024) = 10 bits: A[9:0]</li>
-        <li>A[8:0] (9 bits) → all chips as row address</li>
-        <li>A[9] (MSB) → 1-to-2 decoder → CS0 or CS1</li>
+        <li>A[8:0] (9 bits) go to all chips as row address (512 locations per chip)</li>
+        <li>A[9] (MSB) is fed to a 1-to-2 decoder to generate Chip Select (CS0, CS1):
+          <ul>
+            <li>A[9] = 0 → CS0 = 1 → Bank 0 selected (addresses 0 – 511)</li>
+            <li>A[9] = 1 → CS1 = 1 → Bank 1 selected (addresses 512 – 1023)</li>
+          </ul>
+        </li>
       </ul>
-      <p class="subsection-head">Step 3 — Data bus:</p>
+
+      <p class="subsection-head">Step 3 — Data bus connection:</p>
       <ul>
-        <li>Chip A &amp; C → D[15:0] (lower 16 bits)</li>
-        <li>Chip B &amp; D → D[31:16] (upper 16 bits)</li>
+        <li>Chip A and Chip C provide D[15:0] (lower 16 bits)</li>
+        <li>Chip B and Chip D provide D[31:16] (higher 16 bits)</li>
+        <li>Both chips in the same bank are enabled simultaneously by the same CS signal</li>
       </ul>
+
+      <p class="subsection-head">Step 4 — R/W signal:</p>
+      <p>
+        Connected to all chips simultaneously. A single READ or WRITE operation accesses both chips in the
+        selected bank, reading/writing all 32 bits at once.
+      </p>
+
+      <p class="subsection-head">Read and Write Operations:</p>
+      <p>
+        <strong>Write:</strong> CPU places A[9:0] on address bus, data D[31:0] drives all 32-bit data lines.
+        R/W = 0 (write). Decoder selects CS for correct bank. R/W = 0. Selected chip drives D[15:0] and D[31:16]
+        into the addressed locations simultaneously.
+      </p>
+      <p>
+        <strong>Read:</strong> CPU places A[9:0] on address bus. Decoder asserts CS for correct bank.
+        R/W = 1. Selected chip drives D[31:0] and D[31:16] onto the bus. CPU reads combined 32-bit word.
+      </p>
+
+      <p class="subsection-head">Simulation Response Design:</p>
+      <p>
+        Write 0x4BEEF to address 0x200 (512 in decimal) → Bank 1, CS1 gives HIGH, A[8:0] = 0. Chip C stores
+        0x4E:AB, Chip D stores 0x4E:EF.
+        Read back → Data from = 0x4E:BEEF.
+      </p>
+
       <p class="subsection-head">Conclusion:</p>
-      <p>Four 512×16 chips build a 1024×32 memory using width-expansion (parallel chips) and depth-expansion (chip-select decoding). This technique is widely used in practical memory subsystem design.</p>
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (5).png" alt="1024x32 Memory Circuit"></div>
-        <div class="img-label">1024×32 Memory Using 512×16 — Circuit Diagram</div>
+      <p>
+        A 1024×32 memory is constructed from four 512×16 chips by width-expanding (chips in parallel) and
+        depth-expanding (banks with chip-select decoding). The MSB of the address selects the bank; the remaining
+        bits address the row within the bank. This technique is extensively used in practical memory subsystem design.
+      </p>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (5).png" alt="1024x32 Memory Circuit Diagram"></div>
+        <div class="img-label">1024×32 Memory Using 512×16 Memory — Circuit Diagram (top view)</div>
       </div>
+
     </div>
   </div>
 
-  <!-- Q4 -->
+  <!-- QUESTION 4 -->
   <div class="question-block">
-    <div class="question-title">4. Design and implement both alternatives of a dual-ported 8-bit register file having 8 registers.</div>
+    <div class="question-title">
+      4. Design and implement both alternatives of a dual-ported 8-bit register file having 8 registers.
+    </div>
     <div class="question-body">
+
       <p class="section-head">Introduction</p>
-      <p>A register file is fast internal memory inside a processor. A dual-ported register file supports two simultaneous reads and one write — essential for ALU instructions needing two source operands simultaneously.</p>
+      <p>
+        A register file is a fast internal memory inside a processor, holding a small number of registers used
+        by the CPU during instruction execution. A dual-ported register file supports two simultaneous read
+        operations (one read and one write), which is essential for ALU instructions that need two source operands
+        at the same time (e.g., Add R1, R2, R3).
+      </p>
 
       <p class="section-head">Design Specification</p>
       <ul>
         <li>Number of registers: 8 (R0–R7)</li>
         <li>Width of each register: 8 bits</li>
         <li>Ports: 2 read ports (RA, RB) + 1 write port (RW)</li>
-        <li>Address width: log₂(8) = 3 bits per port</li>
+        <li>Address bit width: log₂(8) = 3 bits per port</li>
       </ul>
 
-      <p class="section-head">Port Width Table</p>
-      <div class="table-wrap">
+      <p class="section-head">Address / Port Width Table</p>
+      <!-- RESPONSIVE: Wrapped table in scrollable div -->
+      <div class="table-wrapper">
         <table class="addr-table">
-          <thead><tr><th>Width</th><th>Description</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Width</th>
+              <th>Description</th>
+            </tr>
+          </thead>
           <tbody>
             <tr><td>3 bits</td><td>Select register for Read Port A</td></tr>
             <tr><td>3 bits</td><td>Select register for Read Port B</td></tr>
@@ -414,86 +1161,247 @@ li{margin-bottom:8px;color:#cbeaf4;font-size:clamp(13px,3vw,15px);}
           </tbody>
         </table>
       </div>
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (6).png" alt="Register File Circuit"></div>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (6).png" alt="Dual-Ported Register File Diagram"></div>
         <div class="img-label">Dual-Ported 8-bit Register File — Block / Circuit Diagram</div>
       </div>
+
     </div>
   </div>
 
-  <!-- Q5 -->
+  <!-- QUESTION 5 -->
   <div class="question-block">
-    <div class="question-title">5. Design hardware for: (i) Add R0, R1, R2 &nbsp; (ii) Add R0, R1, #0x45</div>
+    <div class="question-title">
+      5. Design and implement the hardware needed to compute the following instructions:
+      <div style="margin-top:6px; font-size:0.95rem; font-weight:400;">
+        (i) Add R0, R1, R2 &nbsp;&nbsp;&nbsp; (ii) Add R0, R1, #0x45
+      </div>
+    </div>
     <div class="question-body">
-      <p class="section-head">Introduction</p>
-      <p>The datapath connects the register file, ALU, and memory to execute instructions. We need hardware for two cases: register-to-register addition, and register-to-immediate addition.</p>
 
-      <p class="section-head">Required Hardware</p>
+      <p class="section-head">Introduction</p>
+      <p>
+        In a processor, instructions are executed using a datapath, which connects the register file, ALU, and
+        memory units. This question requires designing hardware to execute the following instructions:
+      </p>
+      <ol>
+        <li>Add R0, R1, R2 → R0 = R1 + R2</li>
+        <li>Add R0, R1, #0x45 → R0 = R1 + Immediate (0x45)</li>
+      </ol>
+      <p>The design must show how data flows between components and how instructions are executed step-by-step.</p>
+
+      <p class="section-head">Design Overview</p>
+      <p class="subsection-head">The required hardware consists of:</p>
+
+      <p><strong>1. Register File</strong></p>
       <ul>
-        <li><strong>Register File</strong> — 8 registers (R0–R7), 8-bit each, 2 read + 1 write port</li>
-        <li><strong>ALU</strong> — Performs addition</li>
-        <li><strong>Multiplexer (MUX)</strong> — Selects between register data and immediate value</li>
-        <li><strong>Code Memory</strong> — Stores instructions</li>
-        <li><strong>Control Unit</strong> — Generates control signals</li>
+        <li>8 registers (R0–R7), each 8-bit</li>
+        <li>2 read ports and 1 write port</li>
       </ul>
 
-      <p class="section-head">Instruction Tracing</p>
-      <p class="subsection-head">1. Add R0, R1, R2</p>
+      <p><strong>2. ALU</strong></p>
+      <ul>
+        <li>Performs addition operation</li>
+      </ul>
+
+      <p><strong>3. Multiplexer (MUX)</strong></p>
+      <ul>
+        <li>Selects between register data and Immediate value</li>
+      </ul>
+
+      <p><strong>4. Code Memory</strong></p>
+      <ul>
+        <li>Stores Instructions</li>
+      </ul>
+
+      <p><strong>5. Control Unit</strong></p>
+      <ul>
+        <li>Generates control signals</li>
+      </ul>
+
+      <p class="section-head">Block Diagram Explanation</p>
+      <p>Draw the diagram with the following labeled components:</p>
+
+      <p class="subsection-head">Main Blocks:</p>
+
+      <p><strong>1. Code Memory</strong></p>
+      <ul>
+        <li>Outputs: Instruction</li>
+      </ul>
+
+      <p><strong>2. Register File</strong></p>
+      <ul>
+        <li>Inputs:
+          <ul>
+            <li>Read address A (R1)</li>
+            <li>Read address B (R2)</li>
+            <li>Write address (R0)</li>
+            <li>Write Data</li>
+            <li>Write Enable (WE)</li>
+          </ul>
+        </li>
+        <li>Outputs:
+          <ul>
+            <li>Data A</li>
+            <li>Data B</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>3. Multiplexer (MUX)</strong></p>
+      <ul>
+        <li>Input 1: Data B (from register)</li>
+        <li>Input 2: Immediate value (Imm1)</li>
+        <li>Control: Select signal</li>
+      </ul>
+
+      <p><strong>4. ALU</strong></p>
+      <ul>
+        <li>Inputs:
+          <ul>
+            <li>Operand A (Data A)</li>
+            <li>Operand B (MUX output)</li>
+          </ul>
+        </li>
+        <li>Outputs:
+          <ul>
+            <li>Result</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>5. Control Unit</strong></p>
+      <ul>
+        <li>Controls:
+          <ul>
+            <li>MUX select</li>
+            <li>Register write enable</li>
+            <li>ALU operation</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p class="section-head">Tracing of Instructions</p>
+
+      <p class="subsection-head">1. Instruction: Add R0, R1, R2</p>
+      <p>Step-by-Step Execution:</p>
       <ol>
-        <li>Fetch instruction from code memory</li>
-        <li>Register file reads R1 → Data A, R2 → Data B</li>
+        <li>Instruction is fetched from code memory</li>
+        <li>Register file reads:
+          <ul>
+            <li>R1 → Data A</li>
+            <li>R2 → Data B</li>
+          </ul>
+        </li>
         <li>MUX selects Data B (register value)</li>
-        <li>ALU: Result = R1 + R2</li>
-        <li>Result written back to R0</li>
-      </ol>
-      <p class="subsection-head">2. Add R0, R1, #0x45</p>
-      <ol>
-        <li>Fetch instruction from code memory</li>
-        <li>Register file reads R1 → Data A</li>
-        <li>Immediate value 0x45 extracted</li>
-        <li>MUX selects Immediate</li>
-        <li>ALU: Result = R1 + 0x45</li>
-        <li>Result written back to R0</li>
+        <li>ALU performs:
+          <ul>
+            <li>Result = R1 + R2</li>
+          </ul>
+        </li>
+        <li>Result is written back to R0</li>
       </ol>
 
-      <p class="section-head">Control Signals</p>
-      <div class="table-wrap">
+      <p class="subsection-head">2. Instruction: Add R0, R1, #0x45</p>
+      <p>Step-by-Step Execution:</p>
+      <ol>
+        <li>Instruction is fetched from code memory</li>
+        <li>Register file reads:
+          <ul>
+            <li>R1 → Data A</li>
+          </ul>
+        </li>
+        <li>Immediate value (0x45) is extracted</li>
+        <li>MUX selects Immediate value</li>
+        <li>ALU performs:
+          <ul>
+            <li>Result = R1 + Imm1</li>
+          </ul>
+        </li>
+        <li>Result is written back to R0</li>
+      </ol>
+
+      <p class="section-head">Control Signals Table</p>
+      <!-- RESPONSIVE: Wrapped table in scrollable div -->
+      <div class="table-wrapper">
         <table class="styled-table">
           <thead>
-            <tr><th>Instruction</th><th>MUX Select</th><th>ALU Op</th><th>Write Enable</th></tr>
+            <tr>
+              <th>Instruction</th>
+              <th>MUX Select</th>
+              <th>ALU Operation</th>
+              <th>Write Enable</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td>Add R0, R1, R2</td><td>0 (Register)</td><td>ADD</td><td>1</td></tr>
-            <tr><td>Add R0, R1, #0x45</td><td>1 (Immediate)</td><td>ADD</td><td>1</td></tr>
+            <tr>
+              <td>Add R0, R1, R2</td>
+              <td>0 (Register)</td>
+              <td>ADD</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>Add R0, R1, #0x45</td>
+              <td>1 (Immediate)</td>
+              <td>ADD</td>
+              <td>1</td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <p class="section-head">Test Cases</p>
-      <p class="subsection-head">Test Case 1: Add R0, R1, R2 (R1=10, R2=5)</p>
-      <p><strong>Output: R0 = 15</strong></p>
-      <p class="subsection-head">Test Case 2: Add R0, R1, #0x45 (R1=10)</p>
-      <p><strong>Output: R0 = 79</strong> (10 + 69)</p>
+      <p class="section-head">Processor Explanation</p>
 
-      <div class="img-placeholder">
-        <div class="img-icon"><img src="1 (7).png" alt="Processor Datapath Circuit"></div>
+      <p class="subsection-head">Test Case 1:</p>
+      <ul>
+        <li>R1 = 10</li>
+        <li>R2 = 5</li>
+        <li>Instruction: Add R0, R1, R2</li>
+      </ul>
+      <p><strong>Output: R0 = 15</strong></p>
+
+      <p class="subsection-head">Test Case 2:</p>
+      <ul>
+        <li>R1 = 10</li>
+        <li>Immediate = 0x45 (69 decimal)</li>
+        <li>Instruction: Add R0, R1, #0x45</li>
+      </ul>
+      <p><strong>Output: R0 = 79</strong></p>
+
+      <p class="section-head">Expected Simulation Behavior</p>
+      <ul>
+        <li>Correct register values should appear at ALU inputs</li>
+        <li>MUX should switch between register and immediate</li>
+        <li>Result should be stored in destination register</li>
+        <li>Waveform/schematic should show proper data flow</li>
+      </ul>
+
+      <p class="section-head">Diagram Description Requirements for Drawing</p>
+      <ul>
+        <li>Draw Register File on left</li>
+        <li>Draw ALU in center</li>
+        <li>Draw MUX before ALU Input B</li>
+        <li>Draw Code Memory at top</li>
+        <li>Draw Control Unit connected to all blocks</li>
+        <li>Data arrows:
+          <ul>
+            <li class="arrow-item">Register outputs → ALU</li>
+            <li class="arrow-item">Immediate → MUX → ALU</li>
+          </ul>
+        </li>
+      </ul>
+
+      <div class="img-placeholder" style="min-height:200px;">
+        <div class="img-icon"><img src="1 (7).png" alt="Processor Datapath Diagram"></div>
         <div class="img-label">Processor Datapath — Register File + MUX + ALU Circuit Diagram</div>
-        <span>(Logisim: R0=00000111, R1=00000101, R2=00000010)</span>
+        <span>(Logisim implementation showing R0=00000111, R1=00000101, R2=00000010 values)</span>
       </div>
+
     </div>
   </div>
 
-</div>
+</div><!-- /page -->
 
-<script>
-const ham=document.getElementById("ham");
-const nav=document.getElementById("navlinks");
-ham.addEventListener("click",()=>{
-  ham.classList.toggle("open");nav.classList.toggle("open");
-});
-nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
-  ham.classList.remove("open");nav.classList.remove("open");
-}));
-</script>
 </body>
 </html>
