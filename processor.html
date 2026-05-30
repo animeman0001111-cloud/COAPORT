@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- RESPONSIVE: Added viewport meta tag -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Samsung Exynos 2400 Processor</title>
 
@@ -18,14 +19,14 @@ body{
     radial-gradient(circle at top left,#00111f,#050505 45%),
     radial-gradient(circle at bottom right,#001a2f,#020202 40%);
     font-family:Arial,sans-serif;
+    /* RESPONSIVE: Prevent horizontal scroll */
     overflow-x:hidden;
     position:relative;
     animation:bgMove 12s ease infinite alternate;
     margin:0;
-    padding:20px;
+    /* RESPONSIVE: Fluid padding for page content below navbar */
+    padding:80px 20px 20px;
 }
-
-/* Animated Background Motion */
 
 body::before{
     content:"";
@@ -37,6 +38,8 @@ body::before{
     left:-20px;
     animation:floatGlow 12s infinite alternate ease-in-out;
     z-index:-2;
+    /* RESPONSIVE: Prevent glow from causing overflow */
+    pointer-events:none;
 }
 
 body::after{
@@ -49,180 +52,151 @@ body::after{
     right:-20px;
     animation:floatGlow2 15s infinite alternate ease-in-out;
     z-index:-2;
+    pointer-events:none;
 }
 
 @keyframes bgMove{
-    0%{
-        background-position:left top,right bottom;
-    }
-    100%{
-        background-position:right top,left bottom;
-    }
+    0%{background-position:left top,right bottom;}
+    100%{background-position:right top,left bottom;}
 }
 
 @keyframes floatGlow{
-    0%{
-        transform:translate(0,0) scale(1);
-    }
-    100%{
-        transform:translate(120px,80px) scale(1.2);
-    }
+    0%{transform:translate(0,0) scale(1);}
+    100%{transform:translate(120px,80px) scale(1.2);}
 }
 
 @keyframes floatGlow2{
-    0%{
-        transform:translate(0,0) scale(1);
-    }
-    100%{
-        transform:translate(-100px,-60px) scale(1.1);
-    }
+    0%{transform:translate(0,0) scale(1);}
+    100%{transform:translate(-100px,-60px) scale(1.1);}
 }
-    /* NAVBAR */
 
+/* NAVBAR */
 .navbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 50px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(10px);
-border-bottom:1px solid rgba(0,255,255,0.3);
-z-index:1000;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    /* RESPONSIVE: Fluid padding */
+    padding:15px 5%;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(0,255,255,0.3);
+    z-index:1000;
+    /* RESPONSIVE: Allow wrapping */
+    flex-wrap:wrap;
+    gap:10px;
 }
 
 .logo{
-color:cyan;
-font-size:20px;
-font-weight:bold;
-letter-spacing:2px;
-text-shadow:0 0 8px cyan;
+    color:cyan;
+    /* RESPONSIVE: Fluid font size */
+    font-size:clamp(15px,2.5vw,20px);
+    font-weight:bold;
+    letter-spacing:2px;
+    text-shadow:0 0 8px cyan;
+    flex-shrink:0;
 }
 
 .nav-links{
-list-style:none;
-display:flex;
-gap:40px;
+    list-style:none;
+    display:flex;
+    /* RESPONSIVE: Fluid gap */
+    gap:clamp(12px,2.5vw,40px);
+    flex-wrap:wrap;
 }
 
 .nav-links a{
-text-decoration:none;
-color:white;
-font-size:16px;
-transition:0.3s;
-position:relative;
+    text-decoration:none;
+    color:white;
+    /* RESPONSIVE: Fluid font size */
+    font-size:clamp(12px,1.8vw,16px);
+    transition:0.3s;
+    position:relative;
+    white-space:nowrap;
 }
 
 .nav-links a:hover{
-color:cyan;
-text-shadow:0 0 8px cyan;
+    color:cyan;
+    text-shadow:0 0 8px cyan;
 }
 
 .nav-links a::after{
-content:"";
-position:absolute;
-bottom:-5px;
-left:0;
-width:0%;
-height:2px;
-background:cyan;
-transition:0.3s;
+    content:"";
+    position:absolute;
+    bottom:-5px;
+    left:0;
+    width:0%;
+    height:2px;
+    background:cyan;
+    transition:0.3s;
 }
 
 .nav-links a:hover::after{
-width:100%;
+    width:100%;
 }
 
 /* Container */
-
 .processor-container{
-    width:90vw;
+    /* RESPONSIVE: Fluid width */
+    width:min(90vw, 1200px);
     margin:40px auto;
     background:rgba(15,15,15,0.7);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
-
-    padding:14px;
-
+    /* RESPONSIVE: Fluid padding */
+    padding:clamp(10px,2vw,14px);
     border:2px solid #00bfff;
     border-radius:18px;
-
     box-shadow:
     0 0 15px #00bfff66,
     0 0 40px #008cff33,
     inset 0 0 20px #00bfff22;
-
     position:relative;
     overflow:hidden;
-
     animation:containerFloat 5s ease-in-out infinite;
 }
 
-/* Floating Motion */
-
 @keyframes containerFloat{
-    0%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-8px);
-    }
-    100%{
-        transform:translateY(0px);
-    }
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-8px);}
+    100%{transform:translateY(0px);}
 }
-
-/* Animated Neon Border */
 
 .processor-container::before{
     content:"";
     position:absolute;
     inset:-2px;
     border-radius:18px;
-
-    background:linear-gradient(
-        45deg,
-        #00bfff,
-        transparent,
-        #00bfff,
-        transparent
-    );
-
+    background:linear-gradient(45deg,#00bfff,transparent,#00bfff,transparent);
     background-size:400%;
     z-index:-1;
-
     animation:borderMove 8s linear infinite;
     opacity:0.4;
 }
 
 @keyframes borderMove{
-    0%{
-        background-position:0 0;
-    }
-    100%{
-        background-position:400% 0;
-    }
+    0%{background-position:0 0;}
+    100%{background-position:400% 0;}
 }
 
 /* Main Heading */
-
 .processor-container h1{
     text-align:center;
     color:#7FFF00;
-    font-size:35px;
+    /* RESPONSIVE: Fluid font size */
+    font-size:clamp(20px,4vw,35px);
     margin-bottom:18px;
     letter-spacing:2px;
-
     text-shadow:
     0 0 10px #7FFF00,
     0 0 20px #7FFF00;
-
     animation:glowPulse 2s infinite alternate;
-
     position:relative;
+    /* RESPONSIVE: Prevent text from overflowing */
+    word-break:break-word;
 }
 
 .processor-container h1::after{
@@ -230,71 +204,48 @@ width:100%;
     position:absolute;
     width:70%;
     height:10px;
-    background #7FFF00;
+    /* NOTE: Fixed original CSS syntax error (missing colon after 'background') */
+    background:#7FFF00;
     bottom:-6px;
     left:15%;
-
     box-shadow:0 0 10px #7FFF00;
-
     animation:lineGlow 2s infinite alternate;
 }
 
 @keyframes glowPulse{
-    from{
-        text-shadow:0 0 10px #00bfff;
-    }
-    to{
-        text-shadow:
-        0 0 20px #00bfff,
-        0 0 40px #00bfff;
-    }
+    from{text-shadow:0 0 10px #00bfff;}
+    to{text-shadow:0 0 20px #00bfff, 0 0 40px #00bfff;}
 }
 
 @keyframes lineGlow{
-    from{
-        opacity:0.4;
-    }
-    to{
-        opacity:1;
-    }
+    from{opacity:0.4;}
+    to{opacity:1;}
 }
 
 /* Cards */
-
 .card{
     background:rgba(10,10,10,0.72);
-
     border:1px solid rgba(0,191,255,0.5);
-
     margin-bottom:14px;
-    padding:12px;
-
+    /* RESPONSIVE: Fluid padding */
+    padding:clamp(10px,2vw,12px);
     color:white;
-
     border-radius:14px;
-
     position:relative;
     overflow:hidden;
-
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
-
     box-shadow:
     0 0 10px rgba(0,191,255,0.15),
     inset 0 0 10px rgba(0,191,255,0.08);
-
     transition:
     transform 0.25s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
-
     transform-style:preserve-3d;
-
     opacity:0;
     transform:translateY(40px);
 }
-
-/* Motion Graphic Shine */
 
 .card::before{
     content:"";
@@ -303,24 +254,14 @@ width:100%;
     left:-40%;
     width:50%;
     height:300%;
-
-    background:linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,0.15),
-        transparent
-    );
-
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.15),transparent);
     transform:rotate(25deg);
-
     transition:0.8s;
 }
 
 .card:hover::before{
     left:140%;
 }
-
-/* Hover Effect */
 
 .card:hover{
     transform:
@@ -329,9 +270,7 @@ width:100%;
     rotateY(-4deg)
     translateY(-6px)
     scale(1.02);
-
     border-color:#00e1ff;
-
     box-shadow:
     0 0 20px #00bfff88,
     0 0 50px #00bfff33,
@@ -339,17 +278,13 @@ width:100%;
 }
 
 /* Section Headings */
-
 .card h3{
     color:#00bfff;
-
     border-bottom:1px solid rgba(0,191,255,0.4);
-
     padding-bottom:5px;
     margin-bottom:10px;
-
-    font-size:15px;
-
+    /* RESPONSIVE: Fluid font size */
+    font-size:clamp(13px,2vw,15px);
     position:relative;
     overflow:hidden;
 }
@@ -362,9 +297,7 @@ width:100%;
     width:0%;
     height:2px;
     background:#00bfff;
-
     box-shadow:0 0 10px #00bfff;
-
     transition:0.5s;
 }
 
@@ -373,10 +306,10 @@ width:100%;
 }
 
 /* Paragraphs & Lists */
-
 .card p,
 .card li{
-    font-size:12px;
+    /* RESPONSIVE: Fluid font size */
+    font-size:clamp(11px,1.5vw,12px);
     line-height:1.7;
     transition:0.3s;
 }
@@ -392,68 +325,139 @@ width:100%;
 }
 
 /* Diagram */
-
 pre{
     color:#00ff99;
-    font-size:11px;
-    overflow:auto;
-
+    /* RESPONSIVE: Fluid font size, allow horizontal scroll within pre only */
+    font-size:clamp(9px,1.2vw,11px);
+    overflow-x:auto;
     text-shadow:0 0 8px #00ff99;
-
     background:rgba(0,0,0,0.4);
     padding:10px;
     border-radius:10px;
-
     border:1px solid rgba(0,255,153,0.25);
-
     box-shadow:
     inset 0 0 10px rgba(0,255,153,0.08),
     0 0 10px rgba(0,255,153,0.12);
+    /* RESPONSIVE: Ensure pre doesn't overflow container */
+    max-width:100%;
+    white-space:pre;
 }
 
 /* Fade Up Animation */
-
 .card.show{
     opacity:1;
     transform:translateY(0);
-
     transition:
     opacity 0.8s ease,
     transform 0.8s ease;
 }
 
 /* Ripple */
-
 .ripple{
     position:absolute;
     border-radius:50%;
     transform:scale(0);
-
     animation:rippleEffect 0.6s linear;
-
     background:rgba(0,191,255,0.4);
-
     pointer-events:none;
 }
 
 @keyframes rippleEffect{
-    to{
-        transform:scale(4);
-        opacity:0;
-    }
+    to{transform:scale(4);opacity:0;}
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE: MEDIA QUERIES
+   ============================================ */
 
-@media(max-width:500px){
+/* Tablet */
+@media(max-width:768px){
+
+    body{
+        padding:70px 15px 15px;
+    }
+
+    .navbar{
+        padding:12px 4%;
+        gap:8px;
+    }
+
+    .nav-links{
+        gap:10px;
+    }
 
     .processor-container{
-        width:92%;
+        width:95%;
+        margin:20px auto;
+    }
+
+    /* RESPONSIVE: Disable 3D tilt on touch devices (can cause stuck hover states) */
+    .card:hover{
+        transform:translateY(-4px) scale(1.01);
     }
 
 }
 
-/* ENHANCED CSS END */
+/* Mobile */
+@media(max-width:480px){
+
+    body{
+        padding:130px 10px 10px;
+    }
+
+    .navbar{
+        padding:10px 4%;
+        justify-content:center;
+    }
+
+    .logo{
+        width:100%;
+        text-align:center;
+    }
+
+    .nav-links{
+        justify-content:center;
+        width:100%;
+        gap:8px;
+    }
+
+    .nav-links a{
+        font-size:11px;
+    }
+
+    .processor-container{
+        width:98%;
+        margin:15px auto;
+        padding:10px;
+    }
+
+    .processor-container h1{
+        font-size:clamp(16px,5vw,22px);
+        letter-spacing:1px;
+    }
+
+    .card{
+        padding:10px;
+    }
+
+    .card:hover{
+        transform:none;
+    }
+
+    pre{
+        font-size:9px;
+    }
+
+}
+
+/* Responsive: large screens */
+@media(min-width:1400px){
+
+    .processor-container{
+        width:80%;
+    }
+
+}
 
 </style>
 </head>
@@ -461,17 +465,15 @@ pre{
 <body>
 
 <nav class="navbar">
-
-<div class="logo">COA PROJECT</div>
-
-<ul class="nav-links">
-<li><a href="index.html">Home</a></li>
-<li><a href="test.html">Play Book</a></li>
-<li><a href="processor.html">Processor</a></li>
-<li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
-</ul>
-
+  <div class="logo">COA PROJECT</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="test.html">Play Book</a></li>
+    <li><a href="processor.html">Processor</a></li>
+    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
+  </ul>
 </nav>
+
 <div class="processor-container">
 
     <h1>Samsung Exynos 2400 Processor</h1>
@@ -494,71 +496,47 @@ pre{
             <li>3 Cortex-A720 balanced cores</li>
             <li>4 Cortex-A520 efficiency cores</li>
         </ul>
-        <p>
-            The hybrid architecture balances high performance, multitasking, and battery efficiency.
-        </p>
+        <p>The hybrid architecture balances high performance, multitasking, and battery efficiency.</p>
     </div>
 
     <div class="card">
         <h3>ALU and Control Unit</h3>
-        <p>
-            The Arithmetic Logic Unit (ALU) performs mathematical and logical operations such as:
-        </p>
-
+        <p>The Arithmetic Logic Unit (ALU) performs mathematical and logical operations such as:</p>
         <ul>
             <li>Addition and subtraction</li>
             <li>Logical comparisons</li>
             <li>Bitwise operations</li>
             <li>Real-time data processing tasks</li>
         </ul>
-
-        <p>
-            The Control Unit manages instruction execution, memory handling, and communication
-            between internal processor components.
-        </p>
+        <p>The Control Unit manages instruction execution, memory handling, and communication between internal processor components.</p>
     </div>
 
     <div class="card">
         <h3>Memory Organization</h3>
-
         <ul>
             <li>LPDDR5X memory support</li>
             <li>High-speed memory access</li>
             <li>Efficient memory bandwidth management</li>
             <li>Reduced latency for faster processing</li>
         </ul>
-
-        <p>
-            Advanced memory organization improves efficiency and enables smooth multitasking performance.
-        </p>
+        <p>Advanced memory organization improves efficiency and enables smooth multitasking performance.</p>
     </div>
 
     <div class="card">
-        <h3>System Bus & Communication</h3>
-
-        <p>
-            The processor uses high-speed communication channels to transfer data between:
-        </p>
-
+        <h3>System Bus &amp; Communication</h3>
+        <p>The processor uses high-speed communication channels to transfer data between:</p>
         <ul>
             <li>CPU and GPU</li>
             <li>AI Engine</li>
             <li>Memory controller</li>
             <li>5G modem and storage devices</li>
         </ul>
-
-        <p>
-            Faster communication improves overall smartphone responsiveness and performance.
-        </p>
+        <p>Faster communication improves overall smartphone responsiveness and performance.</p>
     </div>
 
     <div class="card">
         <h3>GPU (Graphics Processing Unit)</h3>
-
-        <p>
-            The Samsung Exynos 2400 includes the Xclipse 940 GPU with:
-        </p>
-
+        <p>The Samsung Exynos 2400 includes the Xclipse 940 GPU with:</p>
         <ul>
             <li>Hardware-accelerated ray tracing</li>
             <li>Advanced gaming optimization</li>
@@ -569,11 +547,7 @@ pre{
 
     <div class="card">
         <h3>AI Engine</h3>
-
-        <p>
-            The integrated AI Engine accelerates machine learning tasks such as:
-        </p>
-
+        <p>The integrated AI Engine accelerates machine learning tasks such as:</p>
         <ul>
             <li>Voice recognition</li>
             <li>Image enhancement</li>
@@ -584,7 +558,6 @@ pre{
 
     <div class="card">
         <h3>Instruction Cycle (Working Principle)</h3>
-
         <ul>
             <li>Fetch instruction from memory</li>
             <li>Decode instruction</li>
@@ -592,15 +565,11 @@ pre{
             <li>Store result back to memory</li>
             <li>Repeat cycle continuously</li>
         </ul>
-
-        <p>
-            This process allows the processor to execute billions of instructions every second.
-        </p>
+        <p>This process allows the processor to execute billions of instructions every second.</p>
     </div>
 
     <div class="card">
         <h3>Simple Architecture Diagram</h3>
-
 <pre>
         +----------------------+
         | Samsung Exynos 2400  |
@@ -613,7 +582,6 @@ pre{
 |   GPU  |   | Engine  |   | Control |
 +---------+   +---------+   +---------+
 </pre>
-
     </div>
 
 </div>
@@ -623,21 +591,14 @@ pre{
 /* ENHANCED JS START */
 
 /* Fade-Up Reveal Animation */
-
 const cards = document.querySelectorAll('.card');
 
 const observer = new IntersectionObserver(entries => {
-
     entries.forEach(entry => {
-
         if(entry.isIntersecting){
-
             entry.target.classList.add('show');
-
         }
-
     });
-
 },{
     threshold:0.15
 });
@@ -646,125 +607,88 @@ cards.forEach(card => {
     observer.observe(card);
 });
 
-/* 3D Mouse Tilt */
+/* 3D Mouse Tilt — only on non-touch devices */
+// RESPONSIVE: Check for touch capability before enabling 3D tilt
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-cards.forEach(card => {
+if(!isTouchDevice){
 
-    card.addEventListener('mousemove', e => {
+    cards.forEach(card => {
 
-        const rect = card.getBoundingClientRect();
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / 18);
+            const rotateY = ((centerX - x) / 18);
+            card.style.transform = `
+            perspective(1000px)
+            rotateX(${rotateX}deg)
+            rotateY(${rotateY}deg)
+            scale(1.02)
+            `;
+        });
 
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `
+            perspective(1000px)
+            rotateX(0deg)
+            rotateY(0deg)
+            scale(1)
+            `;
+        });
 
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = ((y - centerY) / 18);
-        const rotateY = ((centerX - x) / 18);
-
-        card.style.transform = `
-        perspective(1000px)
-        rotateX(${rotateX}deg)
-        rotateY(${rotateY}deg)
-        scale(1.02)
-        `;
     });
 
-    card.addEventListener('mouseleave', () => {
-
-        card.style.transform = `
-        perspective(1000px)
-        rotateX(0deg)
-        rotateY(0deg)
-        scale(1)
-        `;
-    });
-
-});
+}
 
 /* Ripple Effect */
-
 cards.forEach(card => {
-
     card.addEventListener('click', function(e){
-
         const ripple = document.createElement('span');
-
         ripple.classList.add('ripple');
-
         const rect = card.getBoundingClientRect();
-
         ripple.style.left = `${e.clientX - rect.left}px`;
         ripple.style.top = `${e.clientY - rect.top}px`;
-
         this.appendChild(ripple);
-
         setTimeout(() => {
             ripple.remove();
         },600);
-
     });
-
 });
 
 /* Floating Motion Graphics Particles */
-
 for(let i=0;i<18;i++){
-
     const particle = document.createElement('div');
-
     particle.style.position = 'fixed';
-
     particle.style.width = Math.random()*4 + 2 + 'px';
     particle.style.height = particle.style.width;
-
     particle.style.background = 'rgba(0,191,255,0.35)';
     particle.style.borderRadius = '50%';
-
     particle.style.left = Math.random()*window.innerWidth + 'px';
     particle.style.top = Math.random()*window.innerHeight + 'px';
-
     particle.style.pointerEvents = 'none';
-
     particle.style.zIndex = '-1';
-
     particle.style.boxShadow = '0 0 10px #00bfff';
-
     particle.style.animation = `
     floatParticle
     ${Math.random()*10 + 8}s
     linear infinite
     `;
-
     document.body.appendChild(particle);
-
 }
 
 /* Dynamic Particle Animation */
-
 const style = document.createElement('style');
-
 style.innerHTML = `
 @keyframes floatParticle{
-
-    0%{
-        transform:translateY(0px);
-        opacity:0;
-    }
-
-    50%{
-        opacity:1;
-    }
-
-    100%{
-        transform:translateY(-120vh);
-        opacity:0;
-    }
-
+    0%{transform:translateY(0px);opacity:0;}
+    50%{opacity:1;}
+    100%{transform:translateY(-120vh);opacity:0;}
 }
 `;
-
 document.head.appendChild(style);
 
 /* ENHANCED JS END */
