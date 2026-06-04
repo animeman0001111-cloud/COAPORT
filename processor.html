@@ -2,698 +2,499 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- RESPONSIVE: Added viewport meta tag -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Samsung Exynos 2400 Processor</title>
-
+<title>Chapter 1 – Samsung Exynos 2400</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Source+Code+Pro:wght@400;600&display=swap');
 
-/* ENHANCED CSS START */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html{
-    scroll-behavior:smooth;
-}
+  :root {
+    --ink: #1a1a1a;
+    --muted: #555;
+    --light: #888;
+    --rule: #d0d0d0;
+    --accent: #1a3a5c;
+    --accent2: #c0392b;
+    --bg: #faf9f7;
+    --paper: #ffffff;
+    --highlight: #f0f4f8;
+  }
 
-body{
-    background:
-    radial-gradient(circle at top left,#00111f,#050505 45%),
-    radial-gradient(circle at bottom right,#001a2f,#020202 40%);
-    font-family:Arial,sans-serif;
-    /* RESPONSIVE: Prevent horizontal scroll */
-    overflow-x:hidden;
-    position:relative;
-    animation:bgMove 12s ease infinite alternate;
-    margin:0;
-    /* RESPONSIVE: Fluid padding for page content below navbar */
-    padding:80px 20px 20px;
-}
+  html { scroll-behavior: smooth; }
 
-body::before{
-    content:"";
-    position:fixed;
-    width:100vw;
-    height:100vh;
-    background:radial-gradient(circle,#00bfff33,transparent 70%);
-    top:-20px;
-    left:-20px;
-    animation:floatGlow 12s infinite alternate ease-in-out;
-    z-index:-2;
-    /* RESPONSIVE: Prevent glow from causing overflow */
-    pointer-events:none;
-}
+  body {
+    background: var(--bg);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    font-size: 13.5px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
 
-body::after{
-    content:"";
-    position:fixed;
-    width:100vw;
-    height:100vh;
-    background:radial-gradient(circle,#0066ff22,transparent 70%);
-    bottom:-20px;
-    right:-20px;
-    animation:floatGlow2 15s infinite alternate ease-in-out;
-    z-index:-2;
-    pointer-events:none;
-}
+  /* ─── PAGE WRAPPER ─── */
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 60px 70px 80px;
+    box-shadow: 0 0 0 1px #e8e8e8, 0 4px 40px rgba(0,0,0,0.06);
+    min-height: 100vh;
+  }
 
-@keyframes bgMove{
-    0%{background-position:left top,right bottom;}
-    100%{background-position:right top,left bottom;}
-}
+  /* ─── CHAPTER HEADER ─── */
+  .chapter-header {
+    text-align: center;
+    padding: 32px 0 28px;
+    border-bottom: 2.5px solid var(--ink);
+    margin-bottom: 36px;
+  }
+  .chapter-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10.5px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .chapter-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .chapter-subtitle {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+    margin-top: 14px;
+  }
 
-@keyframes floatGlow{
-    0%{transform:translate(0,0) scale(1);}
-    100%{transform:translate(120px,80px) scale(1.2);}
-}
+  /* ─── SECTION ─── */
+  .section {
+    margin-top: 30px;
+    padding-top: 2px;
+  }
 
-@keyframes floatGlow2{
-    0%{transform:translate(0,0) scale(1);}
-    100%{transform:translate(-100px,-60px) scale(1.1);}
-}
+  .section-heading {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1.5px solid var(--accent);
+    padding-bottom: 5px;
+    margin-bottom: 14px;
+  }
+  .section-heading .num {
+    color: var(--accent2);
+    margin-right: 8px;
+    font-size: 11px;
+  }
 
-/* NAVBAR */
-.navbar{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    /* RESPONSIVE: Fluid padding */
-    padding:15px 5%;
-    background:rgba(0,0,0,0.4);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid rgba(0,255,255,0.3);
-    z-index:1000;
-    /* RESPONSIVE: Allow wrapping */
-    flex-wrap:wrap;
-    gap:10px;
-}
+  p {
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
 
-.logo{
-    color:cyan;
-    /* RESPONSIVE: Fluid font size */
-    font-size:clamp(15px,2.5vw,20px);
-    font-weight:bold;
-    letter-spacing:2px;
-    text-shadow:0 0 8px cyan;
-    flex-shrink:0;
-}
+  strong, b { color: var(--ink); font-weight: 600; }
 
-.nav-links{
-    list-style:none;
-    display:flex;
-    /* RESPONSIVE: Fluid gap */
-    gap:clamp(12px,2.5vw,40px);
-    flex-wrap:wrap;
-}
+  /* ─── HIGHLIGHT INLINE ─── */
+  .hl { color: var(--accent); font-weight: 600; }
+  .hl-red { color: var(--accent2); font-weight: 600; }
 
-.nav-links a{
-    text-decoration:none;
-    color:white;
-    /* RESPONSIVE: Fluid font size */
-    font-size:clamp(12px,1.8vw,16px);
-    transition:0.3s;
-    position:relative;
-    white-space:nowrap;
-}
+  /* ─── LISTS ─── */
+  ul {
+    padding-left: 20px;
+    margin: 8px 0 12px;
+  }
+  ul li {
+    margin-bottom: 5px;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  ul li::marker { color: var(--accent2); }
 
-.nav-links a:hover{
-    color:cyan;
-    text-shadow:0 0 8px cyan;
-}
+  /* ─── SPECS TABLE ─── */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 12px;
+    font-size: 12.5px;
+  }
+  .spec-table th {
+    background: var(--highlight);
+    color: var(--accent);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border: 1px solid var(--rule);
+    text-align: left;
+  }
+  .spec-table td {
+    padding: 7px 12px;
+    border: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  .spec-table tr:nth-child(even) td { background: #fafafa; }
+  .spec-table td:first-child { font-weight: 600; color: var(--accent); width: 38%; }
 
-.nav-links a::after{
-    content:"";
-    position:absolute;
-    bottom:-5px;
-    left:0;
-    width:0%;
-    height:2px;
-    background:cyan;
-    transition:0.3s;
-}
+  /* ─── ARCHITECTURE DIAGRAM ─── */
+  .diagram-box {
+    border: 1.5px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px 16px 16px;
+    margin: 20px 0 16px;
+    background: #fafbfc;
+  }
+  .diagram-box .diagram-caption {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 10px;
+  }
+  .diagram-box svg { display: block; margin: 0 auto; }
 
-.nav-links a:hover::after{
-    width:100%;
-}
+  /* ─── CALLOUT BOX ─── */
+  .callout {
+    border-left: 3.5px solid var(--accent);
+    background: var(--highlight);
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 12.5px;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout strong { color: var(--accent); }
 
-/* Container */
-.processor-container{
-    /* RESPONSIVE: Fluid width */
-    width:min(90vw, 1200px);
-    margin:40px auto;
-    background:rgba(15,15,15,0.7);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    /* RESPONSIVE: Fluid padding */
-    padding:clamp(10px,2vw,14px);
-    border:2px solid #00bfff;
-    border-radius:18px;
-    box-shadow:
-    0 0 15px #00bfff66,
-    0 0 40px #008cff33,
-    inset 0 0 20px #00bfff22;
-    position:relative;
-    overflow:hidden;
-    animation:containerFloat 5s ease-in-out infinite;
-}
+  /* ─── FOOTNOTE LINE ─── */
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 28px 0 0;
+  }
 
-@keyframes containerFloat{
-    0%{transform:translateY(0px);}
-    50%{transform:translateY(-8px);}
-    100%{transform:translateY(0px);}
-}
+  /* ─── PAGE FOOTER ─── */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 14px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
 
-.processor-container::before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    border-radius:18px;
-    background:linear-gradient(45deg,#00bfff,transparent,#00bfff,transparent);
-    background-size:400%;
-    z-index:-1;
-    animation:borderMove 8s linear infinite;
-    opacity:0.4;
-}
-
-@keyframes borderMove{
-    0%{background-position:0 0;}
-    100%{background-position:400% 0;}
-}
-
-/* Main Heading */
-.processor-container h1{
-    text-align:center;
-    color:#7FFF00;
-    /* RESPONSIVE: Fluid font size */
-    font-size:clamp(20px,4vw,35px);
-    margin-bottom:18px;
-    letter-spacing:2px;
-    text-shadow:
-    0 0 10px #7FFF00,
-    0 0 20px #7FFF00;
-    animation:glowPulse 2s infinite alternate;
-    position:relative;
-    /* RESPONSIVE: Prevent text from overflowing */
-    word-break:break-word;
-}
-
-.processor-container h1::after{
-    content:"";
-    position:absolute;
-    width:70%;
-    height:10px;
-    /* NOTE: Fixed original CSS syntax error (missing colon after 'background') */
-    background:#7FFF00;
-    bottom:-6px;
-    left:15%;
-    box-shadow:0 0 10px #7FFF00;
-    animation:lineGlow 2s infinite alternate;
-}
-
-@keyframes glowPulse{
-    from{text-shadow:0 0 10px #00bfff;}
-    to{text-shadow:0 0 20px #00bfff, 0 0 40px #00bfff;}
-}
-
-@keyframes lineGlow{
-    from{opacity:0.4;}
-    to{opacity:1;}
-}
-
-/* Cards */
-.card{
-    background:rgba(10,10,10,0.72);
-    border:1px solid rgba(0,191,255,0.5);
-    margin-bottom:14px;
-    /* RESPONSIVE: Fluid padding */
-    padding:clamp(10px,2vw,12px);
-    color:white;
-    border-radius:14px;
-    position:relative;
-    overflow:hidden;
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
-    box-shadow:
-    0 0 10px rgba(0,191,255,0.15),
-    inset 0 0 10px rgba(0,191,255,0.08);
-    transition:
-    transform 0.25s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-    transform-style:preserve-3d;
-    opacity:0;
-    transform:translateY(40px);
-}
-
-.card::before{
-    content:"";
-    position:absolute;
-    top:-100%;
-    left:-40%;
-    width:50%;
-    height:300%;
-    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.15),transparent);
-    transform:rotate(25deg);
-    transition:0.8s;
-}
-
-.card:hover::before{
-    left:140%;
-}
-
-.card:hover{
-    transform:
-    perspective(1000px)
-    rotateX(4deg)
-    rotateY(-4deg)
-    translateY(-6px)
-    scale(1.02);
-    border-color:#00e1ff;
-    box-shadow:
-    0 0 20px #00bfff88,
-    0 0 50px #00bfff33,
-    inset 0 0 15px #00bfff22;
-}
-
-/* Section Headings */
-.card h3{
-    color:#00bfff;
-    border-bottom:1px solid rgba(0,191,255,0.4);
-    padding-bottom:5px;
-    margin-bottom:10px;
-    /* RESPONSIVE: Fluid font size */
-    font-size:clamp(13px,2vw,15px);
-    position:relative;
-    overflow:hidden;
-}
-
-.card h3::after{
-    content:"";
-    position:absolute;
-    left:0;
-    bottom:-1px;
-    width:0%;
-    height:2px;
-    background:#00bfff;
-    box-shadow:0 0 10px #00bfff;
-    transition:0.5s;
-}
-
-.card:hover h3::after{
-    width:100%;
-}
-
-/* Paragraphs & Lists */
-.card p,
-.card li{
-    /* RESPONSIVE: Fluid font size */
-    font-size:clamp(11px,1.5vw,12px);
-    line-height:1.7;
-    transition:0.3s;
-}
-
-.card li:hover{
-    color:#00d9ff;
-    text-shadow:0 0 8px #00bfff;
-    transform:translateX(4px);
-}
-
-.card ul{
-    padding-left:18px;
-}
-
-/* Diagram */
-pre{
-    color:#00ff99;
-    /* RESPONSIVE: Fluid font size, allow horizontal scroll within pre only */
-    font-size:clamp(9px,1.2vw,11px);
-    overflow-x:auto;
-    text-shadow:0 0 8px #00ff99;
-    background:rgba(0,0,0,0.4);
-    padding:10px;
-    border-radius:10px;
-    border:1px solid rgba(0,255,153,0.25);
-    box-shadow:
-    inset 0 0 10px rgba(0,255,153,0.08),
-    0 0 10px rgba(0,255,153,0.12);
-    /* RESPONSIVE: Ensure pre doesn't overflow container */
-    max-width:100%;
-    white-space:pre;
-}
-
-/* Fade Up Animation */
-.card.show{
-    opacity:1;
-    transform:translateY(0);
-    transition:
-    opacity 0.8s ease,
-    transform 0.8s ease;
-}
-
-/* Ripple */
-.ripple{
-    position:absolute;
-    border-radius:50%;
-    transform:scale(0);
-    animation:rippleEffect 0.6s linear;
-    background:rgba(0,191,255,0.4);
-    pointer-events:none;
-}
-
-@keyframes rippleEffect{
-    to{transform:scale(4);opacity:0;}
-}
-
-/* ============================================
-   RESPONSIVE: MEDIA QUERIES
-   ============================================ */
-
-/* Tablet */
-@media(max-width:768px){
-
-    body{
-        padding:70px 15px 15px;
-    }
-
-    .navbar{
-        padding:12px 4%;
-        gap:8px;
-    }
-
-    .nav-links{
-        gap:10px;
-    }
-
-    .processor-container{
-        width:95%;
-        margin:20px auto;
-    }
-
-    /* RESPONSIVE: Disable 3D tilt on touch devices (can cause stuck hover states) */
-    .card:hover{
-        transform:translateY(-4px) scale(1.01);
-    }
-
-}
-
-/* Mobile */
-@media(max-width:480px){
-
-    body{
-        padding:130px 10px 10px;
-    }
-
-    .navbar{
-        padding:10px 4%;
-        justify-content:center;
-    }
-
-    .logo{
-        width:100%;
-        text-align:center;
-    }
-
-    .nav-links{
-        justify-content:center;
-        width:100%;
-        gap:8px;
-    }
-
-    .nav-links a{
-        font-size:11px;
-    }
-
-    .processor-container{
-        width:98%;
-        margin:15px auto;
-        padding:10px;
-    }
-
-    .processor-container h1{
-        font-size:clamp(16px,5vw,22px);
-        letter-spacing:1px;
-    }
-
-    .card{
-        padding:10px;
-    }
-
-    .card:hover{
-        transform:none;
-    }
-
-    pre{
-        font-size:9px;
-    }
-
-}
-
-/* Responsive: large screens */
-@media(min-width:1400px){
-
-    .processor-container{
-        width:80%;
-    }
-
-}
-
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 700px) {
+    .page-wrap { padding: 36px 22px 50px; }
+    .chapter-title { font-size: 22px; }
+    .diagram-box svg { width: 100% !important; height: auto !important; }
+  }
 </style>
 </head>
-
 <body>
 
-<nav class="navbar">
-  <div class="logo">COA PROJECT</div>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="test.html">Play Book</a></li>
-    <li><a href="processor.html">Processor</a></li>
-    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
-  </ul>
-</nav>
+<div class="page-wrap">
 
-<div class="processor-container">
+  <!-- CHAPTER HEADER -->
+  <div class="chapter-header">
+    <div class="chapter-label">Chapter 1</div>
+    <div class="chapter-title">Overview of Modern Processors:<br>Samsung Exynos 2400</div>
+    <div class="chapter-subtitle">Computer Organisation &amp; Architecture — Processor Deep-Dive Study</div>
+  </div>
 
-    <h1>Samsung Exynos 2400 Processor</h1>
+  <!-- 1. INTRODUCTION -->
+  <div class="section">
+    <div class="section-heading"><span class="num">1.</span> Introduction</div>
+    <p>
+      The <span class="hl">Samsung Exynos 2400</span> is a high-performance flagship mobile processor (System-on-Chip) developed by Samsung Semiconductor for the Galaxy S24 series smartphones in select regions. It is fabricated on Samsung's <span class="hl">4nm LPP+ process node</span> and integrates a 10-core CPU cluster, a GPU, a dedicated NPU, an ISP, a DSP, and a 5G modem onto a single die.
+    </p>
+    <p>
+      The Exynos 2400 represents Samsung's most ambitious SoC to date, featuring heterogeneous multi-core design based on <span class="hl">ARM's big.LITTLE architecture</span> (ARMv9-A ISA), an AMD RDNA 3-based Xclipse 940 GPU capable of ray tracing, and an NPU delivering <span class="hl">34.7 TOPS</span> of AI performance.
+    </p>
+  </div>
 
-    <div class="card">
-        <h3>Introduction</h3>
-        <p>
-            The Samsung Exynos 2400 Processor is a high-performance mobile chipset developed by Samsung using advanced 4nm technology.
-            It is designed for flagship smartphones, delivering powerful CPU performance, advanced graphics,
-            AI processing, and excellent power efficiency.
-        </p>
+  <hr class="section-rule">
+
+  <!-- 2. ALU AND CONTROL UNIT -->
+  <div class="section">
+    <div class="section-heading"><span class="num">2.</span> ALU and Control Unit</div>
+    <p>
+      The Exynos 2400 implements multiple CPU cores based on ARM architecture (ARMv9 cores). Each core includes an <span class="hl">Arithmetic Logic Unit (ALU)</span> that performs operations like addition, subtraction, comparisons, and logical functions. The prime Cortex-X4 core features <strong>multiple ALUs and a dedicated Multiply-Accumulate (MAC) unit</strong> operating in parallel inside an out-of-order superscalar pipeline.
+    </p>
+    <p>
+      The <span class="hl">Control Unit (CU)</span> manages instruction fetch, decode, dispatch, and retirement. In the Cortex-X4 prime core, this is handled via a <strong>wide 8-wide instruction decode pipeline</strong> with advanced branch prediction, speculative execution, and out-of-order execution — maximising throughput and minimising data hazards.
+    </p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- 3. MEMORY ORGANISATION -->
+  <div class="section">
+    <div class="section-heading"><span class="num">3.</span> Memory Organisation</div>
+    <p>The Exynos 2400 uses a <span class="hl">hierarchical memory system</span> rooted in Modified Harvard Architecture:</p>
+    <ul>
+      <li><strong>L1-I Cache</strong> (per core — instructions only): 32–64 KB depending on core type</li>
+      <li><strong>L1-D Cache</strong> (per core — data only): 32–48 KB depending on core type</li>
+      <li><strong>L2 Cache</strong> (unified, shared within clusters): 1 MB (prime) / 4 MB (perf+eff)</li>
+      <li><strong>L3 Last-Level Cache (LLC)</strong> (shared across all CPU cores + GPU): ~12 MB</li>
+      <li><strong>LPDDR5X Main RAM</strong>: up to 12 GB at 68 GB/s bandwidth</li>
+    </ul>
+    <p>
+      The separation of L1-I and L1-D caches allows simultaneous instruction fetch and data access, eliminating the Von Neumann bottleneck at the most performance-critical level. This structure improves throughput and reduces memory latency significantly.
+    </p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- 4. SYSTEM BUS -->
+  <div class="section">
+    <div class="section-heading"><span class="num">4.</span> System Bus and Interconnections</div>
+    <p>
+      Communication inside the Exynos 2400 is achieved through a <span class="hl">mesh-based high-speed internal interconnect (CMN-700 / CoreLink CCI-600)</span>. Samsung uses an advanced interconnect fabric to connect the CPU cluster, GPU (Xclipse 940), NPU, ISP, DSP, and modem to LPDDR5X DRAM. This supports fast data transfer between components and enables true parallel processing.
+    </p>
+    <ul>
+      <li><strong>Instruction bus</strong> — fetches instructions from L1-I cache → decode pipeline</li>
+      <li><strong>Data bus</strong> — moves operands via L1-D cache ↔ execution units</li>
+      <li><strong>Cache coherence bus</strong> — MESI protocol across all cores via CMN-700 mesh</li>
+      <li><strong>AXI/ACE system fabric</strong> — connects CPU, GPU, NPU, ISP → DRAM controller</li>
+    </ul>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- 5. TYPE OF ARCHITECTURE -->
+  <div class="section">
+    <div class="section-heading"><span class="num">5.</span> Type of Architecture</div>
+    <p>The Exynos 2400 follows a <span class="hl">Modified Harvard Architecture</span>:</p>
+    <ul>
+      <li>Separate instruction and data caches at L1 level (Harvard feature)</li>
+      <li>Unified shared memory at L2/L3 and DRAM (Von Neumann at system level)</li>
+    </ul>
+    <p><strong>Salient features:</strong></p>
+    <ul>
+      <li>Heterogeneous 10-core CPU (1+2+3+4 big.LITTLE cluster design)</li>
+      <li>ARMv9-A ISA with SVE2, MTE, and TrustZone security</li>
+      <li>Out-of-order superscalar execution; 8-wide decode in prime core</li>
+      <li>Integrated Xclipse 940 GPU (AMD RDNA 3) with hardware ray tracing</li>
+      <li>Tri-core NPU — 34.7 TOPS for on-device AI</li>
+      <li>Integrated 5G sub-6 GHz + mmWave modem on the same die</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Key Insight:</strong> The Modified Harvard Architecture allows the Cortex-X4 to simultaneously fetch the next instruction AND read/write data operands — something impossible on a classic single-bus Von Neumann design. This is critical for sustaining the 8-wide decode pipeline at 3.21 GHz.
     </div>
+  </div>
 
-    <div class="card">
-        <h3>CPU Architecture</h3>
-        <ul>
-            <li>10-Core CPU architecture</li>
-            <li>1 Cortex-X4 Performance core</li>
-            <li>2 Cortex-A720 high-performance cores</li>
-            <li>3 Cortex-A720 balanced cores</li>
-            <li>4 Cortex-A520 efficiency cores</li>
-        </ul>
-        <p>The hybrid architecture balances high performance, multitasking, and battery efficiency.</p>
-    </div>
+  <hr class="section-rule">
 
-    <div class="card">
-        <h3>ALU and Control Unit</h3>
-        <p>The Arithmetic Logic Unit (ALU) performs mathematical and logical operations such as:</p>
-        <ul>
-            <li>Addition and subtraction</li>
-            <li>Logical comparisons</li>
-            <li>Bitwise operations</li>
-            <li>Real-time data processing tasks</li>
-        </ul>
-        <p>The Control Unit manages instruction execution, memory handling, and communication between internal processor components.</p>
-    </div>
+  <!-- 6. ARCHITECTURE DIAGRAM -->
+  <div class="section">
+    <div class="section-heading"><span class="num">6.</span> Simple Architecture Diagram</div>
 
-    <div class="card">
-        <h3>Memory Organization</h3>
-        <ul>
-            <li>LPDDR5X memory support</li>
-            <li>High-speed memory access</li>
-            <li>Efficient memory bandwidth management</li>
-            <li>Reduced latency for faster processing</li>
-        </ul>
-        <p>Advanced memory organization improves efficiency and enables smooth multitasking performance.</p>
-    </div>
+    <div class="diagram-box">
+      <svg width="560" height="420" viewBox="0 0 560 420" xmlns="http://www.w3.org/2000/svg" style="font-family:'Source Code Pro',monospace;">
+        <defs>
+          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#1a3a5c"/>
+          </marker>
+          <marker id="arrR" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#c0392b"/>
+          </marker>
+        </defs>
 
-    <div class="card">
-        <h3>System Bus &amp; Communication</h3>
-        <p>The processor uses high-speed communication channels to transfer data between:</p>
-        <ul>
-            <li>CPU and GPU</li>
-            <li>AI Engine</li>
-            <li>Memory controller</li>
-            <li>5G modem and storage devices</li>
-        </ul>
-        <p>Faster communication improves overall smartphone responsiveness and performance.</p>
-    </div>
+        <!-- Title -->
+        <text x="280" y="18" text-anchor="middle" font-size="10" font-weight="600" fill="#1a3a5c" letter-spacing="1">SAMSUNG EXYNOS 2400 — ARCHITECTURE OVERVIEW</text>
 
-    <div class="card">
-        <h3>GPU (Graphics Processing Unit)</h3>
-        <p>The Samsung Exynos 2400 includes the Xclipse 940 GPU with:</p>
-        <ul>
-            <li>Hardware-accelerated ray tracing</li>
-            <li>Advanced gaming optimization</li>
-            <li>High-resolution graphics rendering</li>
-            <li>Professional video and multimedia support</li>
-        </ul>
-    </div>
+        <!-- ── CPU Cluster box ── -->
+        <rect x="20" y="30" width="520" height="160" rx="6" fill="#f0f4f8" stroke="#1a3a5c" stroke-width="1.5"/>
+        <text x="30" y="46" font-size="8" font-weight="600" fill="#1a3a5c" letter-spacing="1">CPU CLUSTER (10-CORE · ARMv9-A)</text>
 
-    <div class="card">
-        <h3>AI Engine</h3>
-        <p>The integrated AI Engine accelerates machine learning tasks such as:</p>
-        <ul>
-            <li>Voice recognition</li>
-            <li>Image enhancement</li>
-            <li>Real-time language translation</li>
-            <li>Smart camera optimization</li>
-        </ul>
-    </div>
+        <!-- Prime core -->
+        <rect x="30" y="54" width="148" height="50" rx="4" fill="#fff" stroke="#1a3a5c" stroke-width="1.2"/>
+        <text x="104" y="70" text-anchor="middle" font-size="8" fill="#1a3a5c" font-weight="600">CORTEX-X4 (×1)</text>
+        <text x="104" y="82" text-anchor="middle" font-size="7.5" fill="#555">Prime Core · 3.21 GHz</text>
+        <text x="104" y="93" text-anchor="middle" font-size="7" fill="#888">ALU · MAC · CU · OoO 8-wide</text>
+        <!-- L1-I and L1-D for prime -->
+        <rect x="32" y="108" width="66" height="22" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+        <text x="65" y="122" text-anchor="middle" font-size="7" fill="#2e7d32">L1-I 64KB</text>
+        <rect x="110" y="108" width="66" height="22" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1"/>
+        <text x="143" y="122" text-anchor="middle" font-size="7" fill="#1565c0">L1-D 48KB</text>
 
-    <div class="card">
-        <h3>Instruction Cycle (Working Principle)</h3>
-        <ul>
-            <li>Fetch instruction from memory</li>
-            <li>Decode instruction</li>
-            <li>Execute operation using ALU</li>
-            <li>Store result back to memory</li>
-            <li>Repeat cycle continuously</li>
-        </ul>
-        <p>This process allows the processor to execute billions of instructions every second.</p>
-    </div>
+        <!-- A720 perf cores -->
+        <rect x="192" y="54" width="148" height="50" rx="4" fill="#fff" stroke="#1a3a5c" stroke-width="1.2"/>
+        <text x="266" y="70" text-anchor="middle" font-size="8" fill="#1a3a5c" font-weight="600">CORTEX-A720 (×5)</text>
+        <text x="266" y="82" text-anchor="middle" font-size="7.5" fill="#555">Perf Cores · 2.9 / 2.6 GHz</text>
+        <text x="266" y="93" text-anchor="middle" font-size="7" fill="#888">ALU · CU · Out-of-Order</text>
+        <rect x="194" y="108" width="66" height="22" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+        <text x="227" y="122" text-anchor="middle" font-size="7" fill="#2e7d32">L1-I 32KB</text>
+        <rect x="272" y="108" width="66" height="22" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1"/>
+        <text x="305" y="122" text-anchor="middle" font-size="7" fill="#1565c0">L1-D 32KB</text>
 
-    <div class="card">
-        <h3>Simple Architecture Diagram</h3>
-<pre>
-        +----------------------+
-        | Samsung Exynos 2400  |
-        +----------------------+
-             |    |     |
-     --------     |     --------
-     |             |            |
-+---------+   +---------+   +---------+
-| Xclipse|   |   AI    |   | Memory  |
-|   GPU  |   | Engine  |   | Control |
-+---------+   +---------+   +---------+
-</pre>
+        <!-- A520 eff cores -->
+        <rect x="354" y="54" width="148" height="50" rx="4" fill="#fff" stroke="#1a3a5c" stroke-width="1.2"/>
+        <text x="428" y="70" text-anchor="middle" font-size="8" fill="#1a3a5c" font-weight="600">CORTEX-A520 (×4)</text>
+        <text x="428" y="82" text-anchor="middle" font-size="7.5" fill="#555">Eff Cores · 1.95 GHz</text>
+        <text x="428" y="93" text-anchor="middle" font-size="7" fill="#888">ALU · CU · In-Order Pipeline</text>
+        <rect x="356" y="108" width="66" height="22" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+        <text x="389" y="122" text-anchor="middle" font-size="7" fill="#2e7d32">L1-I 32KB</text>
+        <rect x="434" y="108" width="66" height="22" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1"/>
+        <text x="467" y="122" text-anchor="middle" font-size="7" fill="#1565c0">L1-D 32KB</text>
+
+        <!-- L2 caches -->
+        <rect x="30" y="144" width="148" height="20" rx="3" fill="#fff9c4" stroke="#f9a825" stroke-width="1"/>
+        <text x="104" y="156" text-anchor="middle" font-size="7.5" fill="#e65100">L2 Cache — 1 MB (Prime)</text>
+        <rect x="192" y="144" width="310" height="20" rx="3" fill="#fff9c4" stroke="#f9a825" stroke-width="1"/>
+        <text x="347" y="156" text-anchor="middle" font-size="7.5" fill="#e65100">L2 Cache — 4 MB (Perf + Eff Cluster)</text>
+
+        <!-- Arrow CPU → L3 -->
+        <line x1="280" y1="192" x2="280" y2="216" stroke="#1a3a5c" stroke-width="1.2" marker-end="url(#arr)"/>
+
+        <!-- L3 LLC -->
+        <rect x="100" y="216" width="360" height="32" rx="5" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/>
+        <text x="280" y="230" text-anchor="middle" font-size="8.5" font-weight="600" fill="#4a148c">L3 LAST-LEVEL CACHE (LLC) — ~12 MB</text>
+        <text x="280" y="243" text-anchor="middle" font-size="7.5" fill="#6a1b9a">Shared · CPU + Xclipse 940 GPU</text>
+
+        <!-- Arrow L3 → LPDDR5X -->
+        <line x1="280" y1="249" x2="280" y2="272" stroke="#1a3a5c" stroke-width="1.2" marker-end="url(#arr)"/>
+
+        <!-- LPDDR5X -->
+        <rect x="100" y="272" width="360" height="30" rx="5" fill="#e8eaf6" stroke="#303f9f" stroke-width="1.5"/>
+        <text x="280" y="286" text-anchor="middle" font-size="8.5" font-weight="600" fill="#1a237e">LPDDR5X MAIN MEMORY</text>
+        <text x="280" y="298" text-anchor="middle" font-size="7.5" fill="#283593">Up to 12 GB  ·  68 GB/s bandwidth</text>
+
+        <!-- Arrow down to SoC components -->
+        <line x1="280" y1="302" x2="280" y2="322" stroke="#1a3a5c" stroke-width="1.2" marker-end="url(#arr)"/>
+
+        <!-- Bottom SoC row -->
+        <rect x="20" y="322" width="108" height="40" rx="4" fill="#fce4ec" stroke="#c62828" stroke-width="1.2"/>
+        <text x="74" y="338" text-anchor="middle" font-size="8" font-weight="600" fill="#b71c1c">Xclipse 940</text>
+        <text x="74" y="350" text-anchor="middle" font-size="7" fill="#c62828">GPU · AMD RDNA 3</text>
+        <text x="74" y="360" text-anchor="middle" font-size="6.5" fill="#e57373">Ray Tracing</text>
+
+        <rect x="138" y="322" width="100" height="40" rx="4" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.2"/>
+        <text x="188" y="338" text-anchor="middle" font-size="8" font-weight="600" fill="#1b5e20">NPU (3-core)</text>
+        <text x="188" y="350" text-anchor="middle" font-size="7" fill="#2e7d32">34.7 TOPS AI</text>
+        <text x="188" y="360" text-anchor="middle" font-size="6.5" fill="#66bb6a">On-device AI</text>
+
+        <rect x="248" y="322" width="100" height="40" rx="4" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.2"/>
+        <text x="298" y="338" text-anchor="middle" font-size="8" font-weight="600" fill="#0d47a1">5G Modem</text>
+        <text x="298" y="350" text-anchor="middle" font-size="7" fill="#1565c0">Sub-6 + mmWave</text>
+        <text x="298" y="360" text-anchor="middle" font-size="6.5" fill="#64b5f6">Integrated</text>
+
+        <rect x="358" y="322" width="100" height="40" rx="4" fill="#fff3e0" stroke="#e65100" stroke-width="1.2"/>
+        <text x="408" y="338" text-anchor="middle" font-size="8" font-weight="600" fill="#bf360c">ISP + DSP</text>
+        <text x="408" y="350" text-anchor="middle" font-size="7" fill="#e65100">200MP Camera</text>
+        <text x="408" y="360" text-anchor="middle" font-size="6.5" fill="#ffb74d">4K Video</text>
+
+        <rect x="468" y="322" width="90" height="40" rx="4" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.2"/>
+        <text x="513" y="338" text-anchor="middle" font-size="8" font-weight="600" fill="#4a148c">Security</text>
+        <text x="513" y="350" text-anchor="middle" font-size="7" fill="#7b1fa2">TrustZone</text>
+        <text x="513" y="360" text-anchor="middle" font-size="6.5" fill="#ce93d8">MTE / SVE2</text>
+
+        <!-- Legend -->
+        <rect x="20" y="376" width="10" height="8" rx="2" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+        <text x="34" y="384" font-size="7.5" fill="#555">Instruction Cache (Harvard)</text>
+        <rect x="170" y="376" width="10" height="8" rx="2" fill="#e3f2fd" stroke="#1565c0" stroke-width="1"/>
+        <text x="184" y="384" font-size="7.5" fill="#555">Data Cache (Harvard)</text>
+        <rect x="310" y="376" width="10" height="8" rx="2" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1"/>
+        <text x="324" y="384" font-size="7.5" fill="#555">Unified / Von Neumann level</text>
+
+        <text x="280" y="412" text-anchor="middle" font-size="7" fill="#aaa">Modified Harvard Architecture — L1 separated · L2/L3 unified — Samsung 4nm LPP+</text>
+      </svg>
+      <div class="diagram-caption">Fig. 1.1 — Samsung Exynos 2400 Simplified Architecture Diagram (Modified Harvard)</div>
     </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- 7. KEY SPECIFICATIONS TABLE -->
+  <div class="section">
+    <div class="section-heading"><span class="num">7.</span> Key Specifications</div>
+
+    <table class="spec-table">
+      <tr>
+        <th>Parameter</th>
+        <th>Specification</th>
+      </tr>
+      <tr>
+        <td>Process Node</td>
+        <td>Samsung 4nm LPP+ (2nd Gen 4nm)</td>
+      </tr>
+      <tr>
+        <td>CPU Cores</td>
+        <td>10 cores — 1× Cortex-X4 (3.21 GHz) + 2× A720 (2.9 GHz) + 3× A720 (2.6 GHz) + 4× A520 (1.95 GHz)</td>
+      </tr>
+      <tr>
+        <td>ISA</td>
+        <td>ARMv9-A with SVE2, MTE, TrustZone, PAC/BTI</td>
+      </tr>
+      <tr>
+        <td>GPU</td>
+        <td>Xclipse 940 (AMD RDNA 3) — ray tracing, variable rate shading</td>
+      </tr>
+      <tr>
+        <td>NPU</td>
+        <td>Tri-core NPU — 34.7 TOPS AI performance</td>
+      </tr>
+      <tr>
+        <td>Architecture Type</td>
+        <td>Modified Harvard (separate L1-I/D → unified L2/L3)</td>
+      </tr>
+      <tr>
+        <td>Cache Hierarchy</td>
+        <td>L1-I/D per core → L2 cluster → ~12 MB L3 LLC</td>
+      </tr>
+      <tr>
+        <td>Main Memory</td>
+        <td>LPDDR5X, up to 12 GB, 68 GB/s bandwidth</td>
+      </tr>
+      <tr>
+        <td>Modem</td>
+        <td>Integrated 5G — Sub-6 GHz + mmWave, Cat 26</td>
+      </tr>
+      <tr>
+        <td>Camera / ISP</td>
+        <td>200MP single / 108MP + 12MP + 12MP triple; 8K video</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- 8. OTHER IMPORTANT INFO -->
+  <div class="section">
+    <div class="section-heading"><span class="num">8.</span> Other Important Information</div>
+    <ul>
+      <li>Built on <span class="hl">4nm technology</span>, making it highly power-efficient compared to previous generation 5nm chips.</li>
+      <li>Uses <span class="hl">ARMv9-A architecture</span> for better security, performance, and expanded AI capabilities.</li>
+      <li>Supports advanced camera processing via the <span class="hl">multi-core ISP</span> capable of 200MP stills and 8K video recording.</li>
+      <li>The integrated <span class="hl">Xclipse 940 GPU</span> (AMD RDNA 3) brings PC-class graphics features like ray tracing and hardware-accelerated mesh shading to mobile.</li>
+      <li>Includes <span class="hl">34.7 TOPS AI</span> capabilities for tasks like on-device translation, photo enhancement, generative AI, and computational photography.</li>
+      <li>The <span class="hl">Modified Harvard Architecture</span> ensures the CPU never suffers the Von Neumann bottleneck at the L1 cache level — critical for sustaining 10-core parallel execution at peak performance.</li>
+    </ul>
+  </div>
+
+  <!-- PAGE FOOTER -->
+  <div class="page-footer">
+    <span>COMPUTER ORGANISATION &amp; ARCHITECTURE</span>
+    <span>SAMSUNG EXYNOS 2400 — CHAPTER 1</span>
+    <span>PAGE 1</span>
+  </div>
 
 </div>
-
-<script>
-
-/* ENHANCED JS START */
-
-/* Fade-Up Reveal Animation */
-const cards = document.querySelectorAll('.card');
-
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting){
-            entry.target.classList.add('show');
-        }
-    });
-},{
-    threshold:0.15
-});
-
-cards.forEach(card => {
-    observer.observe(card);
-});
-
-/* 3D Mouse Tilt — only on non-touch devices */
-// RESPONSIVE: Check for touch capability before enabling 3D tilt
-const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-if(!isTouchDevice){
-
-    cards.forEach(card => {
-
-        card.addEventListener('mousemove', e => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / 18);
-            const rotateY = ((centerX - x) / 18);
-            card.style.transform = `
-            perspective(1000px)
-            rotateX(${rotateX}deg)
-            rotateY(${rotateY}deg)
-            scale(1.02)
-            `;
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `
-            perspective(1000px)
-            rotateX(0deg)
-            rotateY(0deg)
-            scale(1)
-            `;
-        });
-
-    });
-
-}
-
-/* Ripple Effect */
-cards.forEach(card => {
-    card.addEventListener('click', function(e){
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        const rect = card.getBoundingClientRect();
-        ripple.style.left = `${e.clientX - rect.left}px`;
-        ripple.style.top = `${e.clientY - rect.top}px`;
-        this.appendChild(ripple);
-        setTimeout(() => {
-            ripple.remove();
-        },600);
-    });
-});
-
-/* Floating Motion Graphics Particles */
-for(let i=0;i<18;i++){
-    const particle = document.createElement('div');
-    particle.style.position = 'fixed';
-    particle.style.width = Math.random()*4 + 2 + 'px';
-    particle.style.height = particle.style.width;
-    particle.style.background = 'rgba(0,191,255,0.35)';
-    particle.style.borderRadius = '50%';
-    particle.style.left = Math.random()*window.innerWidth + 'px';
-    particle.style.top = Math.random()*window.innerHeight + 'px';
-    particle.style.pointerEvents = 'none';
-    particle.style.zIndex = '-1';
-    particle.style.boxShadow = '0 0 10px #00bfff';
-    particle.style.animation = `
-    floatParticle
-    ${Math.random()*10 + 8}s
-    linear infinite
-    `;
-    document.body.appendChild(particle);
-}
-
-/* Dynamic Particle Animation */
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes floatParticle{
-    0%{transform:translateY(0px);opacity:0;}
-    50%{opacity:1;}
-    100%{transform:translateY(-120vh);opacity:0;}
-}
-`;
-document.head.appendChild(style);
-
-/* ENHANCED JS END */
-
-</script>
 
 </body>
 </html>
