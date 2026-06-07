@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COA Chapter 5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+
+html { scroll-behavior: smooth; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(circle at top left, #00111f, #050505 45%),
+              radial-gradient(circle at bottom right, #001a2f, #020202 40%);
+  font-family: 'Exo 2', Arial, sans-serif;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  padding: 80px 20px 20px;
+}
+body::before {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #00bfff33, transparent 70%);
+  top: -20px; left: -20px;
+  animation: floatGlow 12s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #0066ff22, transparent 70%);
+  bottom: -20px; right: -20px;
+  animation: floatGlow2 15s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+
+@keyframes floatGlow { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(120px,80px) scale(1.2); } }
+@keyframes floatGlow2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-100px,-60px) scale(1.1); } }
+@keyframes greenGlow { from { text-shadow: 0 0 10px #7FFF00; } to { text-shadow: 0 0 24px #7FFF00, 0 0 48px #7FFF00; } }
+@keyframes lineGlow { from { opacity: 0.4; } to { opacity: 1; } }
+@keyframes borderMove { 0% { background-position: 0 0; } 100% { background-position: 400% 0; } }
+@keyframes containerFloat { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+@keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+@keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
+@keyframes flowDash { to { stroke-dashoffset: -20; } }
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; width: 100%;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 5%;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,255,255,0.3);
+  z-index: 1000; flex-wrap: wrap; gap: 10px;
+}
+.logo {
+  font-family: 'Orbitron', monospace;
+  color: cyan; font-size: clamp(13px, 2.2vw, 18px); font-weight: bold;
+  letter-spacing: 3px; text-shadow: 0 0 8px cyan; flex-shrink: 0;
+}
+.nav-links { list-style: none; display: flex; gap: clamp(12px, 2.5vw, 40px); flex-wrap: wrap; }
+.nav-links a {
+  text-decoration: none; color: white; font-size: clamp(12px, 1.8vw, 15px);
+  transition: 0.3s; position: relative; white-space: nowrap; font-family: 'Exo 2', sans-serif;
+}
+.nav-links a:hover { color: cyan; text-shadow: 0 0 8px cyan; }
+.nav-links a::after {
+  content: ""; position: absolute; bottom: -5px; left: 0;
+  width: 0%; height: 2px; background: cyan; transition: 0.3s;
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* FRAME */
+.frame {
+  width: min(95%, 1200px); margin: 20px auto;
+  padding: clamp(10px, 2vw, 18px);
+  background: rgba(15,15,15,0.75); backdrop-filter: blur(14px);
+  border: 2px solid #00bfff; border-radius: 18px;
+  box-shadow: 0 0 15px #00bfff66, 0 0 40px #008cff33, inset 0 0 20px #00bfff22;
+  position: relative; overflow: hidden;
+  animation: containerFloat 5s ease-in-out infinite;
+}
+.frame::before {
+  content: ""; position: absolute; inset: -2px; border-radius: 18px;
+  background: linear-gradient(45deg, #00bfff, transparent, #00bfff, transparent);
+  background-size: 400%; z-index: -1;
+  animation: borderMove 8s linear infinite; opacity: 0.4;
+}
+.frame::after {
+  content: ""; position: absolute; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, #00bfff55, transparent);
+  animation: scanLine 4s linear infinite; z-index: 0; pointer-events: none;
+}
+
+/* PAGE TITLE */
+.title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(28px, 6vw, 52px);
+  margin-top: clamp(80px, 10vw, 100px);
+  color: #7FFF00; letter-spacing: 4px;
+  animation: greenGlow 2s infinite alternate;
+  position: relative; word-break: break-word; padding: 0 20px;
+}
+.title::after {
+  content: ""; position: absolute; width: 60%; height: 8px;
+  background: #00bfff; bottom: -8px; left: 20%;
+  box-shadow: 0 0 10px #00bfff; animation: lineGlow 2s infinite alternate;
+}
+
+/* SECTION */
+.section-divider {
+  width: 90%; margin: 60px auto 0 auto; border: none;
+  border-top: 1px solid rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+}
+.section-title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(16px, 3.5vw, 32px);
+  margin-top: 40px; color: #7FFF00;
+  animation: greenGlow 2s infinite alternate;
+  padding: 0 20px; word-break: break-word;
+}
+
+/* CARD */
+.card {
+  background: rgba(10,10,10,0.72); border: 1px solid rgba(0,191,255,0.5);
+  margin-bottom: 14px; padding: clamp(10px,2vw,18px); color: white;
+  border-radius: 14px; position: relative; overflow: hidden;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(0,191,255,0.15), inset 0 0 10px rgba(0,191,255,0.08);
+  transition: transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+  transform-style: preserve-3d; opacity: 0; transform: translateY(40px);
+}
+.card::before {
+  content: ""; position: absolute; top: -100%; left: -40%; width: 50%; height: 300%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: rotate(25deg); transition: 0.8s;
+}
+.card:hover::before { left: 140%; }
+.card:hover {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-5px) scale(1.015);
+  border-color: #00e1ff;
+  box-shadow: 0 0 20px #00bfff88, 0 0 50px #00bfff33, inset 0 0 15px #00bfff22;
+}
+.card.show { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+
+/* CONTENT */
+.content { line-height: 1.9; color: #d8faff; font-size: clamp(13px,1.8vw,15px); }
+.content p { margin-bottom: 14px; }
+.highlight { color: cyan; font-weight: 600; }
+.content h2 {
+  color: #00bfff; font-size: clamp(13px,2vw,16px);
+  margin: 22px 0 8px 0; text-shadow: 0 0 6px #00bfff;
+  border-left: 3px solid #00bfff; padding-left: 10px;
+  border-bottom: 1px solid rgba(0,191,255,0.3); padding-bottom: 4px;
+  position: relative; overflow: hidden;
+}
+.content h2::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .content h2::after { width: 100%; }
+.content ul { padding-left: 22px; margin: 10px 0 14px 0; }
+.content ul li { margin-bottom: 7px; font-size: clamp(11px,1.5vw,13.5px); line-height: 1.7; transition: 0.3s; }
+.content ul li:hover { color: #00d9ff; text-shadow: 0 0 8px #00bfff; transform: translateX(4px); }
+
+/* TABLE */
+.content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.content table th {
+  background: rgba(0,191,255,0.15); color: #00bfff;
+  padding: 10px 14px; text-align: left;
+  border: 1px solid rgba(0,191,255,0.3); font-size: clamp(11px,1.5vw,13px);
+}
+.content table td {
+  padding: 9px 14px; border: 1px solid rgba(0,191,255,0.2);
+  color: #d8faff; font-size: clamp(11px,1.4vw,13px); transition: 0.3s;
+}
+.content table tr:nth-child(even) td { background: rgba(0,191,255,0.05); }
+.content table tr:hover td { color: #00d9ff; background: rgba(0,191,255,0.08); }
+
+/* CARD TITLE */
+.card-title {
+  font-family: 'Orbitron', monospace;
+  color: #00bfff; border-bottom: 1px solid rgba(0,191,255,0.4);
+  padding-bottom: 6px; margin-bottom: 14px; font-size: clamp(12px,1.8vw,15px);
+  position: relative; overflow: hidden; letter-spacing: 1px;
+}
+.card-title::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .card-title::after { width: 100%; }
+
+/* DIAGRAM */
+.diagram-wrapper {
+  margin: 16px 0; border: 1px solid rgba(0,255,153,0.3);
+  border-radius: 14px; padding: 20px;
+  background: rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 20px rgba(0,255,153,0.06), 0 0 16px rgba(0,255,153,0.15);
+  overflow-x: auto;
+}
+.diagram-wrapper svg { display: block; margin: 0 auto; overflow: visible; }
+
+/* Pipeline timing table */
+.pipeline-table {
+  width: 100%; border-collapse: collapse; margin: 16px 0;
+  font-family: 'Exo 2', monospace; font-size: clamp(10px,1.4vw,13px);
+  overflow-x: auto; display: block;
+}
+.pipeline-table th {
+  background: rgba(0,191,255,0.2); color: #00bfff;
+  padding: 8px 10px; text-align: center;
+  border: 1px solid rgba(0,191,255,0.3); white-space: nowrap;
+}
+.pipeline-table td {
+  padding: 7px 10px; border: 1px solid rgba(0,191,255,0.2);
+  color: #d8faff; text-align: center; white-space: nowrap;
+}
+.pipeline-table td.stage-f { background: rgba(0,191,255,0.18); color:#00d9ff; font-weight:600; }
+.pipeline-table td.stage-d { background: rgba(255,200,0,0.12); color:#ffdd44; font-weight:600; }
+.pipeline-table td.stage-fo { background: rgba(0,255,100,0.12); color:#44ff99; font-weight:600; }
+.pipeline-table td.stage-e { background: rgba(255,100,0,0.12); color:#ff8844; font-weight:600; }
+.pipeline-table td.stage-w { background: rgba(180,0,255,0.12); color:#cc88ff; font-weight:600; }
+.pipeline-table td.stage-flush { background: rgba(255,50,50,0.18); color:#ff5555; font-style:italic; }
+.pipeline-table td.stage-penalty { background: rgba(255,100,0,0.25); color:#ffaa44; font-weight:bold; }
+.pipeline-table tr:nth-child(even) td { background: rgba(0,191,255,0.03); }
+.pipeline-table tr:hover td { color:#00d9ff; }
+
+/* RIPPLE */
+.ripple {
+  position: absolute; border-radius: 50%; transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  background: rgba(0,191,255,0.4); pointer-events: none;
+}
+
+.chip-badge {
+  display: inline-block; background: linear-gradient(135deg, #002244, #001133);
+  border: 1px solid #00bfff; border-radius: 8px;
+  padding: 3px 10px; font-size: 11px; color: #00bfff;
+  letter-spacing: 1px; margin-left: 8px; vertical-align: middle;
+  box-shadow: 0 0 8px #00bfff55;
+}
+
+.bottom { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+.bottom .card { flex: 1; min-width: min(280px, 100%); margin-bottom: 0; }
+.page-bottom-spacer { height: 60px; }
+
+@media (max-width: 768px) {
+  body { padding: 70px 15px 15px; }
+  .navbar { padding: 12px 4%; gap: 8px; }
+  .card:hover { transform: translateY(-4px) scale(1.01); }
+}
+@media (max-width: 480px) {
+  body { padding: 130px 10px 10px; }
+  .navbar { padding: 10px 4%; justify-content: center; }
+  .logo { width: 100%; text-align: center; }
+  .nav-links { justify-content: center; width: 100%; gap: 8px; }
+  .title { margin-top: 140px; }
+  .card:hover { transform: none; }
+  .bottom { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">COA PROJECT</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="test.html">Play Book</a></li>
+    <li><a href="processor.html">Processor</a></li>
+    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════ CHAPTER 5 ═══════════════════════════ -->
+<h1 class="title">Chapter 5</h1>
+
+<!-- ────────────────────────────────────────────────────────
+     PROBLEM 1 — 5-Stage Pipeline with Branch (12 instructions)
+     ──────────────────────────────────────────────────────── -->
+<h2 class="section-title" style="margin-top:60px;">Problem 1 — 5-Stage Pipeline with Branch Penalty</h2>
+
+<div class="frame" style="margin-top:30px;">
+
+  <div class="card" style="opacity:1;transform:none;">
+    <div class="card-title">Problem Statement</div>
+    <div class="content">
+      <p>Consider an instruction pipeline with five stages without any branch prediction:</p>
+      <ul>
+        <li><span class="highlight">FI</span> — Fetch Instruction</li>
+        <li><span class="highlight">DI</span> — Decode Instruction</li>
+        <li><span class="highlight">FO</span> — Fetch Operand</li>
+        <li><span class="highlight">EI</span> — Execute Instruction</li>
+        <li><span class="highlight">WO</span> — Write Operand</li>
+      </ul>
+      <p>Stage delays: <span class="highlight">FI=5 ns, DI=7 ns, FO=10 ns, EI=8 ns, WO=6 ns</span>. Buffer delay = 1 ns between every two stages. A program of 12 instructions (I₁–I₁₂) is executed. I₄ is the only branch instruction with branch target I₉ — meaning I₅, I₆, I₇, I₈ are flushed. Calculate the total time to complete the program.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Solution — Clock Cycle Calculation</div>
+    <div class="content">
+      <p><span class="highlight">Clock cycle time = max{5, 7, 10, 8, 6} + 1 ns buffer = 10 + 1 = 11 ns</span></p>
+      <h2>Clock Cycles Breakdown</h2>
+      <ul>
+        <li>I₁ requires <span class="highlight">5 cycles</span> (first instruction fills all stages)</li>
+        <li>I₂, I₃, I₄ = <span class="highlight">3 cycles each</span> (steady throughput — 1 per cycle)</li>
+        <li>Branch penalty (I₅, I₆, I₇ flushed, I₈ target = I₉ enters) = <span class="highlight">3 penalty cycles</span></li>
+        <li>I₈, I₉, I₁₀, I₁₁, I₁₂ = <span class="highlight">4 cycles</span> (remaining instructions after branch)</li>
+      </ul>
+      <p><span class="highlight">Total clock cycles = 15</span><br>
+         <span class="highlight">Total time = 15 × 11 ns = 165 ns</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipeline Timing Diagram — 12 Instructions with Branch at I₄</div>
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+          <tr>
+            <th>Instruction</th>
+            <th>Cycle 1</th><th>Cycle 2</th><th>Cycle 3</th><th>Cycle 4</th>
+            <th>Cycle 5</th><th>Cycle 6</th><th>Cycle 7</th><th>Cycle 8</th>
+            <th>Cycle 9</th><th>Cycle 10</th><th>Cycle 11</th><th>Cycle 12</th>
+            <th>Cycle 13</th><th>Cycle 14</th><th>Cycle 15</th>
+          </tr>
+          <tr>
+            <td><b>I₁</b></td>
+            <td class="stage-f">F₁</td><td class="stage-d">D₁</td><td class="stage-fo">Fo₁</td>
+            <td class="stage-e">E₁</td><td class="stage-w">W₁</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₂</b></td>
+            <td></td><td class="stage-f">F₂</td><td class="stage-d">D₂</td><td class="stage-fo">Fo₂</td>
+            <td class="stage-e">E₂</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₃</b></td>
+            <td></td><td></td><td class="stage-f">F₃</td><td class="stage-d">D₃</td>
+            <td class="stage-fo">Fo₃</td><td class="stage-e">E₃</td><td class="stage-w">W₃</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₄ (Branch)</b></td>
+            <td></td><td></td><td></td><td class="stage-f">F₄</td>
+            <td class="stage-d">D₄</td><td class="stage-fo">Fo₄</td><td class="stage-e">E₄</td><td class="stage-w">W₄</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₅ (flushed)</b></td>
+            <td></td><td></td><td></td><td></td>
+            <td class="stage-flush">F₅</td><td class="stage-flush">D₅</td><td class="stage-flush">Fo₅</td><td class="stage-flush">E₅</td><td class="stage-flush">W₅</td>
+            <td colspan="5" class="stage-penalty">← Flushed (Branch Penalty) →</td>
+          </tr>
+          <tr>
+            <td><b>I₆ (flushed)</b></td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="stage-flush">F₆</td><td class="stage-flush">Fo₆</td><td class="stage-flush">E₆</td><td class="stage-flush">W₆</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₇ (flushed)</b></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td class="stage-flush">F₇</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₈ = I₉ (Target)</b></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td colspan="2" class="stage-penalty">Branch Penalty</td>
+            <td class="stage-f">F₉</td><td class="stage-d">D₉</td><td class="stage-fo">Fo₉</td>
+            <td class="stage-e">E₉</td><td class="stage-w">W₉</td><td></td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₉</b></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td></td><td class="stage-f">F₁₀</td><td class="stage-d">D₁₀</td>
+            <td class="stage-fo">Fo₁₀</td><td class="stage-e">E₁₀</td><td class="stage-w">W₁₀</td><td></td>
+          </tr>
+          <tr>
+            <td><b>I₁₀</b></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td></td><td></td><td class="stage-f">F₁₁</td><td class="stage-d">D₁₁</td>
+            <td class="stage-fo">Fo₁₁</td><td class="stage-e">E₁₁</td><td class="stage-w">W₁₁</td>
+          </tr>
+          <tr>
+            <td><b>I₁₁</b></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td class="stage-f">F₁₂</td>
+            <td class="stage-d">D₁₂</td><td class="stage-fo">Fo₁₂</td><td class="stage-w">W₁₂</td>
+          </tr>
+        </table>
+      </div>
+      <p style="margin-top:10px;">
+        <span class="highlight">Total clock cycles = 15 &nbsp;|&nbsp; Time = 15 × 11 ns = 165 ns</span>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ────────────────────────────────────────────────────────
+     PROBLEM 2 — Hazard Detection
+     ──────────────────────────────────────────────────────── -->
+<hr class="section-divider">
+<h2 class="section-title">Problem 2 — Data Hazards and Pipeline Stalls</h2>
+
+<div class="frame" style="margin-top:30px;">
+
+  <div class="card">
+    <div class="card-title">Problem Statement — Hazard Identification</div>
+    <div class="content">
+      <p>Identify hazards in the following instruction sets and draw timing diagrams illustrating pipeline stalls:</p>
+      <table>
+        <tr>
+          <th>Case</th><th>Instructions</th><th>Hazard Type</th>
+        </tr>
+        <tr>
+          <td>(i)</td><td>A = 3 + A &nbsp;|&nbsp; B = 4 × A</td><td>RAW data hazard — B depends on A</td>
+        </tr>
+        <tr>
+          <td>(ii)</td><td>A = 5 + C &nbsp;|&nbsp; B = 20 + C</td><td>No hazard — independent operands</td>
+        </tr>
+        <tr>
+          <td>(iii)</td><td>Mul R4,R3,R2 &nbsp;|&nbsp; Add R6,R4,R5</td><td>RAW hazard — Add needs Mul result</td>
+        </tr>
+        <tr>
+          <td>(iv)</td><td>Mul R4,R3,R2 &nbsp;|&nbsp; Add R5,R4,R5</td><td>RAW hazard — same as (iii)</td>
+        </tr>
+      </table>
+      <h2>Case (i) — Without Operand Forwarding</h2>
+      <p>I₁ produces result in W stage (cycle 6). I₂ needs the value in its FO stage — must wait until after I₁'s W. This creates <span class="highlight">2 stall cycles</span>.</p>
+      <h2>Case (i) — With Operand Forwarding</h2>
+      <p>With forwarding, the ALU result is fed directly from EI output back to the FO input, eliminating the stall. I₂ can proceed one cycle earlier, resolving the hazard without a bubble.</p>
+    </div>
+  </div>
+ <div class="card">
+    <div class="card-title">Pipeline Timing Diagram — 12 Instructions with Branch at I₄</div>
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+    
+    <caption>(ii) Without Operand Forwarding</caption>
+    <tr>
+        <th>Clock Cycles</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+    </tr>
+    <tr>
+        <td>I1</td>
+        <td>F1</td>
+        <td>D1</td>
+        <td>FO1</td>
+        <td>E1</td>
+        <td></td>
+        <td>W1</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>I2</td>
+        <td></td>
+        <td>F2</td>
+        <td>D2</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>FO2</td>
+        <td>W2</td>
+    </tr>
+</table>
+
+<!-- With Operand Forwarding -->
+   <table class="pipeline-table">
+    <caption>With Operand Forwarding</caption>
+    <tr>
+        <th>Clock Cycles</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+    </tr>
+    <tr>
+        <td>I1</td>
+        <td>F1</td>
+        <td>D1</td>
+        <td>FO1</td>
+        <td>E1</td>
+        <td>W1</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>I2</td>
+        <td></td>
+        <td>F2</td>
+        <td>D2</td>
+        <td>-</td>
+        <td>FO2</td>
+        <td>E2</td>
+        <td>W2</td>
+    </tr>
+</table>
+
+<!-- (iii) No Hazard -->
+   <table class="pipeline-table">
+    <caption>(iii) No Hazard</caption>
+    <tr>
+        <th>Clock Cycles</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+    </tr>
+    <tr>
+        <td>I1</td>
+        <td>F1</td>
+        <td>D1</td>
+        <td>FO1</td>
+        <td>E1</td>
+        <td>W1</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>I2</td>
+        <td>F1</td>
+        <td>F1</td>
+        <td>FO1</td>
+        <td>E1</td>
+        <td>E1</td>
+        <td>W1</td>
+        <td></td>
+    </tr>
+</table>
+
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Problem 3 — Assembly Language Pipeline Hazards</div>
+    <div class="content">
+      <p>Consider the assembly program:</p>
+      <ul>
+        <li><span class="highlight">I₁:</span> Move R3, K#</li>
+        <li><span class="highlight">I₂:</span> Load R8, (R3) &nbsp;&nbsp;← depends on R3 from I₁</li>
+        <li><span class="highlight">I₃:</span> Add R3, #4</li>
+        <li><span class="highlight">I₄:</span> Load R9, (R3) &nbsp;&nbsp;← depends on R3 from I₃</li>
+        <li><span class="highlight">I₅:</span> BLE R8, R9, L3 &nbsp;&nbsp;← branch, depends on R8 and R9</li>
+      </ul>
+      <p>Memory access time may take <span class="highlight">3 clock cycles</span>. Multiple hazards exist:</p>
+      <ul>
+        <li>I₂ depends on R3 produced by I₁ → <span class="highlight">RAW hazard</span></li>
+        <li>I₄ depends on R3 produced by I₃ → <span class="highlight">RAW hazard</span></li>
+        <li>I₅ depends on R8 (from I₂, memory load) and R9 (from I₄) → <span class="highlight">Load-use hazard (multi-cycle memory)</span></li>
+      </ul>
+      <p><span class="highlight">Handling strategies:</span> pipeline stalling (insert bubbles), operand forwarding where possible, and compiler-based instruction reordering to fill delay slots.</p>
+    </div>
+  </div>
+ <div class="card">
+    <div class="card-title">Pipeline Timing Diagram — 12 Instructions with Branch at I₄</div>
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+
+    <tr>
+        <th rowspan="2">Clock<br>Cycles</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+        <th>10</th>
+        <th>11</th>
+        <th>12</th>
+        <th>13</th>
+        <th>14</th>
+        <th>15</th>
+        <th>16</th>
+        <th>17</th>
+        <th>18</th>
+        <th>19</th>
+    </tr>
+
+    <tr></tr>
+
+    <tr>
+        <td>I1</td>
+        <td>F1</td>
+        <td>D1</td>
+        <td>FO1</td>
+        <td>E1</td>
+        <td>W1</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I2</td>
+        <td></td>
+        <td>F2</td>
+        <td>D2</td>
+        <td>-</td>
+        <td>-</td>
+        <td></td>
+        <td>FO2</td>
+        <td>E2</td>
+        <td>W2</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I3</td>
+        <td></td>
+        <td></td>
+        <td>F3</td>
+        <td>-</td>
+        <td>-</td>
+        <td>D3</td>
+        <td>-</td>
+        <td>-</td>
+        <td>FO3</td>
+        <td>E3</td>
+        <td>W3</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>F4</td>
+        <td>-</td>
+        <td>-</td>
+        <td>D4</td>
+        <td>-</td>
+        <td>-</td>
+        <td>FO4</td>
+        <td></td>
+        <td>E4</td>
+        <td>W4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I5</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>F5</td>
+        <td>-</td>
+        <td>-</td>
+        <td>DD5</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>FO5</td>
+        <td>E5</td>
+        <td>W5</td>
+        <td></td>
+    </tr>
+</table>
+
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Problem 4 — 5-Stage Pipeline Interstage Buffers</div>
+    <div class="content">
+	 <table class="pipeline-table">
+
+    <tr>
+        <th>Clock Cycles</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+    </tr>
+
+    <tr>
+        <td>I1</td>
+        <td>F1</td>
+        <td>D1</td>
+        <td>FO1<br>(Operands 20, 2000)</td>
+        <td>E1<br>(Add)</td>
+        <td>W1<br>(R1 = 2020)</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I2</td>
+        <td></td>
+        <td>F2</td>
+        <td>D2</td>
+        <td>FO2<br>(Operands 50, 3)</td>
+        <td>E2<br>(Mul)</td>
+        <td>W2<br>(R3 = 150)</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I3</td>
+        <td></td>
+        <td></td>
+        <td>F3</td>
+        <td>D3</td>
+        <td>-</td>
+        <td>FO3<br>(Operands 2020, 3A)</td>
+        <td>E3<br>And</td>
+        <td>W3<br>(R4 = 020)</td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>I4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>F4</td>
+        <td>-</td>
+        <td>D4</td>
+        <td>FO4<br>(Operands 150, 50)</td>
+        <td>E4<br>Add</td>
+        <td>W4<br>(R5 = 200)</td>
+    </tr>
+</table>
+
+     <p>Instructions (R0=2000, R2=50):</p>
+      <ul>
+        <li>Add R1, R0, #20 → R1 = 2020</li>
+        <li>Mul R3, R2, #3 → R3 = 150</li>
+        <li>And R4, R1, #3A → R4 = 020</li>
+        <li>Add R5, R3, R2 → R5 = 200</li>
+      </ul>
+      <h2>Interstage Buffers at Clock Cycles 2–5</h2>
+      <table>
+        <tr><th>Buffer</th><th>Clock 2</th><th>Clock 3</th><th>Clock 4</th><th>Clock 5</th></tr>
+        <tr><td>B1 (F/D)</td><td>F2</td><td>F3</td><td>F4</td><td>—</td></tr>
+        <tr><td>B2 (D/E)</td><td>D1</td><td>D2</td><td>D3</td><td>D4</td></tr>
+        <tr><td>B3 (E/W)</td><td>—</td><td>—</td><td>E1 (Add)</td><td>E2 (Mul)</td></tr>
+      </table>
+          </div>
+        </div>
+
+ 
+  <div class="card">
+    <div class="card-title">Problem 5 — 3-Stage Pipeline, 100 Instructions</div>
+    <div class="content">
+      <p>A 3-stage pipelined processor with stage delays <span class="highlight">10 ns, 20 ns, 14 ns</span>. No pipeline hazards.</p>
+      <ul>
+        <li>Number of stages N = 3</li>
+        <li>Clock cycle time = max(10, 20, 14) = <span class="highlight">20 ns</span></li>
+        <li>Pipeline latency (first instruction out) = 3 × 20 = <span class="highlight">60 ns</span></li>
+        <li>Remaining 99 instructions = 99 × 20 = <span class="highlight">1980 ns</span></li>
+        <li><span class="highlight">Total = 60 + 1980 = 2040 ns</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Problem 6 — 5-Stage Pipeline, 100 Instructions (with buffer delay)</div>
+    <div class="content">
+      <p>Stage delays: <span class="highlight">150 ns, 120 ns, 150 ns, 160 ns, 140 ns</span>. Register/buffer delay = <span class="highlight">5 ns</span> each.</p>
+      <ul>
+        <li>Clock cycle time = max(150, 120, 150, 160, 140) + 5 = <span class="highlight">165 ns</span></li>
+        <li>First instruction out in = 5 × 165 = <span class="highlight">825 ns</span></li>
+        <li>Remaining 99 instructions = 99 × 165 = <span class="highlight">16,335 ns</span></li>
+        <li><span class="highlight">Total = 825 + 16,335 = 17,160 ns</span></li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title">Problem 8 — Delay Bubble Elimination</div>
+    <div class="content">
+      <p>I₂ (Add) is delayed in the Decode stage due to data dependency on I₁ (Mul). This blocks I₃ and I₄ even though they don't depend on I₁ or I₂.</p>
+      <h2>Original — With Stall</h2>
+	  </div>
+  </div>
+	   <div class="card">
+    <div class="card-title">Pipeline Timing Diagram — 12 Instructions with Branch at I₄</div>
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+    
+    <!-- Figure 1 : Data Hazard / Pipeline Stall Example -->
+<tr>
+<th>Instruction</th>
+<th>1</th><th>2</th><th>3</th><th>4</th>
+<th>5</th><th>6</th><th>7</th><th>8</th>
+</tr>
+
+<tr>
+<td>I1 (Mult)</td>
+<td>F1</td><td>D1</td><td>E1</td><td>W1</td>
+<td></td><td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I2 (Add)</td>
+<td></td><td>F2</td><td>D2</td><td></td>
+<td>D2a</td><td>E2</td><td>W2</td><td></td>
+</tr>
+
+<tr>
+<td>I3</td>
+<td></td><td></td><td>F3</td><td></td>
+<td></td><td>D3</td><td>E3</td><td>W3</td>
+</tr>
+
+<tr>
+<td>I4</td>
+<td></td><td></td><td></td><td>F4</td>
+<td></td><td>D4</td><td>E4</td><td>W4</td>
+</tr>
+</table>
+
+<p>Pipeline stalled by data dependency between D2 and W1.</p>
+
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Problem 8 — Delay Bubble Elimination</div>
+    <div class="content">
+      <p>Pipeline stalled: I₂ must wait for I₁'s Write stage to complete before it can proceed to Decode (D₂). I₃ and I₄ are unnecessarily delayed — the <span class="highlight">delay bubble</span> propagates downstream.</p>
+      <h2>Solution 8.4 — Parallel Decode + Write</h2>
+      <p>If the Decode stage allows <span class="highlight">two Decode steps in parallel</span> and the register file allows <span class="highlight">two Write steps in parallel</span>, the bubble can be completely eliminated. I₃ proceeds past I₂ in the decode stage, and I₄ follows. Total cycles reduced from 8 to <span class="highlight">7</span>.</p>
+      </div>
+  </div>
+    <div class="card">
+    <div class="card-title">Pipeline Timing Diagram — 12 Instructions with Branch at I₄</div>
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+    
+<!-- Figure 2 : Delayed Instruction Execution Due to Dependency -->
+
+<tr>
+<th>Instruction</th>
+<th>1</th><th>2</th><th>3</th>
+<th>4</th><th>5</th><th>6</th><th>7</th>
+</tr>
+
+<tr>
+<td>I1 (Mult)</td>
+<td>F1</td><td>D1</td><td>E1</td><td>W1</td>
+<td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I2 (Add)</td>
+<td></td><td>F2</td><td></td><td>D2</td>
+<td></td><td>E2</td><td>W2</td>
+</tr>
+
+<tr>
+<td>I3</td>
+<td></td><td></td><td>F3</td><td>D3</td>
+<td>E3</td><td>W3</td><td></td>
+</tr>
+
+<tr>
+<td>I4</td>
+<td></td><td></td><td></td><td>F4</td>
+<td>D4</td><td>E4</td><td>W4</td>
+</tr>
+</table>
+
+<p>Pipeline stalled by data dependency between D2 and W1.</p>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Problem 10 — Branch Delay Slots Optimization</div>
+    <div class="content">
+      <p>A pipelined processor has <span class="highlight">2 branch delay slots</span>. An optimizing compiler:</p>
+      <ul>
+        <li>Can fill <span class="highlight">slot 1</span> with a useful instruction 85% of the time</li>
+        <li>Can fill <span class="highlight">slot 2</span> with a useful instruction 20% of the time</li>
+        <li>20% of all executed instructions are branch instructions</li>
+      </ul>
+      <h2>Performance Calculation (per 100 instructions)</h2>
+      <table>
+        <tr><th>Scenario</th><th>Cycles</th></tr>
+        <tr><td>Without optimization</td><td>140</td></tr>
+        <tr><td>With optimization (140 − 20×0.85 − 20×0.2)</td><td>127</td></tr>
+      </table>
+      <p><span class="highlight">Throughput improvement = 140/127 ≈ 1.102 → 10.2% improvement</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Problem 11 — 5-Stage Pipeline, Branch at I₂, Target I₉ (10 instructions)</div>
+    <div class="content">
+      <p>Stage delays: <span class="highlight">FI=15 ns, DI=4 ns, FO=15 ns, EI=5 ns, WO=15 ns</span>. Buffer = 4 ns. 10 instructions, I₂ branches to I₉.</p>
+      <ul>
+        <li>Clock cycle = max(15, 4, 15, 5, 15) + 4 = <span class="highlight">19 ns</span></li>
+        <li>I₁: 5 cycles &nbsp;|&nbsp; I₂ (Branch): completes at cycle 6 &nbsp;|&nbsp; Branch penalty: 2 cycles flushed</li>
+        <li>I₉, I₁₀: each 1 cycle in steady state &nbsp;|&nbsp; Total = <span class="highlight">11 cycles</span></li>
+        <li><span class="highlight">Total time = 11 × 19 = 209 ns</span></li>
+      </ul>
+    </div>
+</div>
+ <div class="card">
+    <div class="content">
+      <div style="overflow-x:auto;">
+        <table class="pipeline-table">
+    <!-- Figure 4 : Branch Penalty in Instruction Pipeline -->
+
+
+
+<tr>
+<th></th>
+<th>1</th><th>2</th><th>3</th><th>4</th>
+<th>5</th><th>6</th><th>7</th><th>8</th>
+<th>9</th><th>10</th><th>11</th>
+</tr>
+
+<tr>
+<td>I1</td>
+<td>F1</td><td>D1</td><td>FO1</td><td>E1</td><td>W1</td>
+<td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I2 (Br)</td>
+<td></td><td>F2</td><td>D2</td><td>FO2</td><td>E2</td><td>W2</td>
+<td></td><td></td><td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I3</td>
+<td></td><td></td><td>F3</td><td>D3</td><td>FO3</td><td>E3</td><td>W3</td>
+<td></td><td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I4</td>
+<td></td><td></td><td></td><td>F4</td><td>D4</td><td>FO4</td>
+<td>E4</td><td>W4</td><td></td><td></td><td></td>
+</tr>
+
+<tr>
+<td>I5</td>
+<td></td><td></td><td></td><td></td><td>F5</td>
+<td>D5</td><td>FO5</td><td>E5</td><td>W5</td>
+<td></td><td></td>
+</tr>
+
+<tr>
+<td>I9 (Tar)</td>
+<td></td><td></td><td></td><td></td><td></td>
+<td>F9</td><td>D9</td><td>FO9</td><td>E9</td><td>W9</td><td></td>
+</tr>
+
+<tr>
+<td>I10</td>
+<td></td><td></td><td></td><td></td><td></td>
+<td></td><td>F10</td><td>D10</td><td>FO10</td><td>E10</td><td>W10</td>
+</tr>
+
+</table>
+
+<p>Branch Penalty</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ────────────────────────────────────────────────────────
+     REAL-TIME PROCESSORS — ARM Cortex A7 and A15
+     ──────────────────────────────────────────────────────── -->
+<hr class="section-divider">
+<h2 class="section-title">Pipeline Concepts in Real-Time Processors</h2>
+
+<div class="frame" style="margin-top:30px;">
+
+  <div class="card">
+    <div class="card-title">1. ARM Cortex-A7 Pipeline — Energy-Efficient In-Order Processor</div>
+    <div class="content">
+      <p>
+        The <span class="highlight">ARM Cortex-A7</span> processor is built to provide a balance between performance and low power consumption. It follows an <span class="highlight">8-stage in-order pipeline</span>, where instructions are processed sequentially in the exact order they are received.
+      </p>
+      <h2>Key Pipeline Characteristics</h2>
+      <ul>
+        <li><span class="highlight">Pipeline Structure:</span> 8-stage pipeline</li>
+        <li><span class="highlight">Execution Method:</span> In-order execution (strict sequential)</li>
+        <li><span class="highlight">Dependency Handling:</span> Pipeline stalls when data dependencies occur</li>
+        <li><span class="highlight">Branch Processing:</span> Lightweight branch prediction mechanism</li>
+        <li><span class="highlight">Power Consumption:</span> Optimized for minimal energy usage</li>
+        <li><span class="highlight">Application Areas:</span> Smartphones, embedded devices, low-power computing systems</li>
+      </ul>
+      <h2>Pipeline Flow</h2>
+      <p>Instruction Fetch → Instruction Decode → Instruction Issue → Execution (ALU) → Memory Access → Write Back</p>
+      <h2>Working Example — Data Hazard in Cortex-A7</h2>
+      <ul>
+        <li>I₁: ADD R1, R2, R3</li>
+        <li>I₂: SUB R4, R1, R5 &nbsp;← depends on R1 produced by I₁</li>
+        <li>I₃: LOAD R6, [R4] &nbsp;← depends on R4 produced by I₂</li>
+      </ul>
+      <p>Since Cortex-A7 is <span class="highlight">strictly in-order</span>, the processor cannot proceed until required data is available. The pipeline introduces <span class="highlight">stall cycles</span>, temporarily pausing execution to maintain correct operation. Its strength lies in <span class="highlight">simplicity, reliability, and power efficiency</span> — ideal for battery-powered and embedded systems.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2. ARM Cortex-A15 Pipeline — Out-of-Order High-Performance Processor</div>
+    <div class="content">
+      <p>
+        The <span class="highlight">ARM Cortex-A15</span> is a high-performance processor designed to maximize instruction throughput and overall system speed. Unlike simpler processors, it uses a <span class="highlight">deep 15-stage pipeline</span> with out-of-order execution, allowing multiple instructions to be processed simultaneously.
+      </p>
+      <h2>Key Pipeline Characteristics</h2>
+      <ul>
+        <li><span class="highlight">Pipeline Structure:</span> 15-stage deep pipeline</li>
+        <li><span class="highlight">Execution Method:</span> Out-of-order execution</li>
+        <li><span class="highlight">Superscalar Design:</span> Multiple instructions execute in a single clock cycle</li>
+        <li><span class="highlight">Register Renaming:</span> Eliminates false (WAR, WAW) data dependencies</li>
+        <li><span class="highlight">Branch Prediction:</span> Advanced prediction techniques improve efficiency</li>
+        <li><span class="highlight">Speculative Execution:</span> Executes future instructions before branch outcomes confirmed</li>
+        <li><span class="highlight">Performance Level:</span> High-performance — suitable for demanding applications</li>
+      </ul>
+      <h2>Advanced Pipeline Flow</h2>
+      <p>Fetch → Decode → Dispatch → Reservation Station → Out-of-Order Execution → Memory Access → Reorder Buffer → Commit / Write Back</p>
+      <h2>Working Example — Out-of-Order in Cortex-A15</h2>
+      <ul>
+        <li>I₁: ADD R1, R2, R3</li>
+        <li>I₂: SUB R4, R1, R5 &nbsp;← depends on I₁</li>
+        <li>I₃: LOAD R6, [R4] &nbsp;← depends on I₂</li>
+        <li>I₄: MUL R8, R9, R10 &nbsp;← <span class="highlight">independent! Can execute immediately</span></li>
+      </ul>
+      <p>In the Cortex-A15, I₄ has no dependency on previous instructions, so the processor executes it while waiting for I₁ and I₂ to complete. This <span class="highlight">significantly reduces idle cycles</span> and improves overall performance. Results are committed in original program order via the <span class="highlight">Reorder Buffer (ROB)</span> to ensure correctness.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cortex-A7 vs Cortex-A15 — Side-by-Side Comparison</div>
+    <div class="content">
+      <table>
+        <tr>
+          <th>Feature</th>
+          <th>ARM Cortex-A7</th>
+          <th>ARM Cortex-A15</th>
+        </tr>
+        <tr><td>Pipeline Depth</td><td>8 stages</td><td>15 stages</td></tr>
+        <tr><td>Execution Order</td><td>In-order (sequential)</td><td>Out-of-order (dynamic scheduling)</td></tr>
+        <tr><td>Issue Width</td><td>Single/Dual issue</td><td>3-wide superscalar</td></tr>
+        <tr><td>Register Renaming</td><td>No</td><td>Yes (eliminates false deps)</td></tr>
+        <tr><td>Branch Prediction</td><td>Basic (lightweight)</td><td>Advanced (dynamic predictor)</td></tr>
+        <tr><td>Speculative Execution</td><td>No</td><td>Yes</td></tr>
+        <tr><td>Reorder Buffer</td><td>No</td><td>Yes</td></tr>
+        <tr><td>Power Usage</td><td>Very low</td><td>Higher (performance trade-off)</td></tr>
+        <tr><td>Target Use</td><td>Battery/embedded systems</td><td>High-performance mobile, laptops</td></tr>
+        <tr><td>IPC (peak)</td><td>~1–2</td><td>~3+</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Architecture Diagram — A7 vs A15 -->
+  <div class="card">
+    <div class="card-title">Architecture Diagram — In-Order (A7) vs Out-of-Order (A15)</div>
+    <div class="content">
+      <div class="diagram-wrapper">
+        <svg width="700" height="400" viewBox="0 0 700 400" style="max-width:100%;">
+          <defs>
+            <linearGradient id="a7g" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#002233;stop-opacity:1"/>
+              <stop offset="100%" style="stop-color:#001122;stop-opacity:1"/>
+            </linearGradient>
+            <linearGradient id="a15g" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#220033;stop-opacity:1"/>
+              <stop offset="100%" style="stop-color:#110022;stop-opacity:1"/>
+            </linearGradient>
+            <filter id="g5">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <marker id="arD" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#00bfff"/>
+            </marker>
+            <marker id="arG" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#00ff99"/>
+            </marker>
+            <marker id="arP" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#ff66ff"/>
+            </marker>
+          </defs>
+
+          <!-- Divider -->
+          <line x1="350" y1="10" x2="350" y2="390" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- HEADERS -->
+          <text x="175" y="22" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="10" filter="url(#g5)">CORTEX-A7 (IN-ORDER)</text>
+          <text x="525" y="22" text-anchor="middle" fill="#ff66ff" font-family="'Orbitron',monospace" font-size="10" filter="url(#g5)">CORTEX-A15 (OUT-OF-ORDER)</text>
+
+          <!-- A7 Pipeline Stages (vertical) -->
+          <!-- Fetch -->
+          <rect x="100" y="35" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="175" y="56" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">FETCH</text>
+          <!-- Decode -->
+          <rect x="100" y="82" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="175" y="103" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">DECODE</text>
+          <!-- Issue -->
+          <rect x="100" y="129" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="175" y="150" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">ISSUE (IN-ORDER)</text>
+          <!-- Execute -->
+          <rect x="100" y="176" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00ff99" stroke-width="1.5"/>
+          <text x="175" y="197" text-anchor="middle" fill="#00ff99" font-family="'Orbitron',monospace" font-size="8">EXECUTE (ALU)</text>
+          <!-- Mem -->
+          <rect x="100" y="223" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="175" y="244" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">MEMORY ACCESS</text>
+          <!-- WB -->
+          <rect x="100" y="270" width="150" height="32" rx="6" fill="url(#a7g)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="175" y="291" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">WRITE BACK</text>
+
+          <!-- A7 arrows -->
+          <line x1="175" y1="67" x2="175" y2="82" stroke="#00bfff" stroke-width="1.5" marker-end="url(#arD)"/>
+          <line x1="175" y1="114" x2="175" y2="129" stroke="#00bfff" stroke-width="1.5" marker-end="url(#arD)"/>
+          <line x1="175" y1="161" x2="175" y2="176" stroke="#00bfff" stroke-width="1.5" marker-end="url(#arD)"/>
+          <line x1="175" y1="208" x2="175" y2="223" stroke="#00bfff" stroke-width="1.5" marker-end="url(#arD)"/>
+          <line x1="175" y1="255" x2="175" y2="270" stroke="#00bfff" stroke-width="1.5" marker-end="url(#arD)"/>
+
+          <!-- STALL label -->
+          <rect x="62" y="190" width="32" height="14" rx="3" fill="#ff2222" opacity="0.9"/>
+          <text x="78" y="200" text-anchor="middle" fill="white" font-size="7" font-weight="bold">STALL</text>
+          <line x1="94" y1="197" x2="100" y2="192" stroke="#ff4444" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+          <!-- A15 Pipeline (OOO) -->
+          <!-- Fetch -->
+          <rect x="390" y="35" width="260" height="32" rx="6" fill="url(#a15g)" stroke="#ff66ff" stroke-width="1.5"/>
+          <text x="520" y="56" text-anchor="middle" fill="#ff88ff" font-family="'Orbitron',monospace" font-size="8">FETCH (Wide)</text>
+          <!-- Decode + Rename -->
+          <rect x="390" y="82" width="260" height="32" rx="6" fill="url(#a15g)" stroke="#ff66ff" stroke-width="1.5"/>
+          <text x="520" y="103" text-anchor="middle" fill="#ff88ff" font-family="'Orbitron',monospace" font-size="8">DECODE + RENAME + DISPATCH</text>
+          <!-- Reservation Station -->
+          <rect x="390" y="129" width="260" height="32" rx="6" fill="url(#a15g)" stroke="#ffaa00" stroke-width="1.5"/>
+          <text x="520" y="150" text-anchor="middle" fill="#ffcc44" font-family="'Orbitron',monospace" font-size="8">RESERVATION STATION (OOO)</text>
+          <!-- Exec units parallel -->
+          <rect x="390" y="176" width="80" height="32" rx="6" fill="url(#a15g)" stroke="#00ff99" stroke-width="1.2"/>
+          <text x="430" y="190" text-anchor="middle" fill="#00ff99" font-size="7">Integer</text>
+          <text x="430" y="201" text-anchor="middle" fill="#00ff99" font-size="7">ALU ×2</text>
+          <rect x="480" y="176" width="80" height="32" rx="6" fill="url(#a15g)" stroke="#00ff99" stroke-width="1.2"/>
+          <text x="520" y="190" text-anchor="middle" fill="#00ff99" font-size="7">Multiply /</text>
+          <text x="520" y="201" text-anchor="middle" fill="#00ff99" font-size="7">FP / NEON</text>
+          <rect x="570" y="176" width="80" height="32" rx="6" fill="url(#a15g)" stroke="#00bfff" stroke-width="1.2"/>
+          <text x="610" y="190" text-anchor="middle" fill="#00bfff" font-size="7">Load /</text>
+          <text x="610" y="201" text-anchor="middle" fill="#00bfff" font-size="7">Store</text>
+          <!-- Simultaneous label -->
+          <text x="520" y="218" text-anchor="middle" fill="#00ff9988" font-size="8">← parallel execution units →</text>
+          <!-- ROB -->
+          <rect x="390" y="228" width="260" height="32" rx="6" fill="url(#a15g)" stroke="#ff66ff" stroke-width="1.5"/>
+          <text x="520" y="249" text-anchor="middle" fill="#ff88ff" font-family="'Orbitron',monospace" font-size="8">REORDER BUFFER (ROB)</text>
+          <!-- Commit -->
+          <rect x="390" y="275" width="260" height="32" rx="6" fill="url(#a15g)" stroke="#ff66ff" stroke-width="1.5"/>
+          <text x="520" y="296" text-anchor="middle" fill="#ff88ff" font-family="'Orbitron',monospace" font-size="8">COMMIT (IN-ORDER)</text>
+
+          <!-- A15 arrows -->
+          <line x1="520" y1="67" x2="520" y2="82" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#arP)"/>
+          <line x1="520" y1="114" x2="520" y2="129" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#arP)"/>
+          <line x1="430" y1="161" x2="430" y2="176" stroke="#ffaa00" stroke-width="1.2" marker-end="url(#arG)"/>
+          <line x1="520" y1="161" x2="520" y2="176" stroke="#ffaa00" stroke-width="1.2" marker-end="url(#arG)"/>
+          <line x1="610" y1="161" x2="610" y2="176" stroke="#ffaa00" stroke-width="1.2" marker-end="url(#arG)"/>
+          <line x1="520" y1="208" x2="520" y2="228" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#arP)"/>
+          <line x1="520" y1="260" x2="520" y2="275" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#arP)"/>
+
+          <!-- NO STALL badge -->
+          <rect x="390" y="330" width="260" height="18" rx="4" fill="#003311" stroke="#00ff99" stroke-width="1"/>
+          <text x="520" y="342" text-anchor="middle" fill="#00ff99" font-size="8">✓ OOO HIDES LATENCY — NO STALL for independent I₄</text>
+
+          <!-- Legend -->
+          <rect x="100" y="348" width="150" height="18" rx="4" fill="#220000" stroke="#ff4444" stroke-width="1"/>
+          <text x="175" y="360" text-anchor="middle" fill="#ff8888" font-size="8">⚠ IN-ORDER: Stalls on dependency</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-bottom-spacer"></div>
+
+<script>
+const cards = document.querySelectorAll('.card');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+}, { threshold: 0.1 });
+cards.forEach(card => observer.observe(card));
+
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (!isTouchDevice) {
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const rx = ((e.clientY - rect.top) - rect.height / 2) / 22;
+      const ry = (rect.width / 2 - (e.clientX - rect.left)) / 22;
+      card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.015)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+  });
+}
+
+cards.forEach(card => {
+  card.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  });
+});
+
+const s = document.createElement('style');
+s.innerHTML = `@keyframes fp{0%{transform:translateY(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-120vh);opacity:0}}`;
+document.head.appendChild(s);
+for (let i = 0; i < 22; i++) {
+  const p = document.createElement('div');
+  const sz = Math.random() * 4 + 2;
+  p.style.cssText = `position:fixed;width:${sz}px;height:${sz}px;background:rgba(0,191,255,0.3);border-radius:50%;left:${Math.random()*100}vw;top:${Math.random()*100}vh;pointer-events:none;z-index:-1;box-shadow:0 0 8px #00bfff;animation:fp ${Math.random()*10+8}s linear ${Math.random()*5}s infinite`;
+  document.body.appendChild(p);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D_467_COA - Chapter 2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+
+html { scroll-behavior: smooth; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(circle at top left, #00111f, #050505 45%),
+              radial-gradient(circle at bottom right, #001a2f, #020202 40%);
+  font-family: 'Exo 2', Arial, sans-serif;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  padding: 80px 20px 20px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #00bfff33, transparent 70%);
+  top: -20px; left: -20px;
+  animation: floatGlow 12s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #0066ff22, transparent 70%);
+  bottom: -20px; right: -20px;
+  animation: floatGlow2 15s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+
+@keyframes floatGlow { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(120px,80px) scale(1.2); } }
+@keyframes floatGlow2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-100px,-60px) scale(1.1); } }
+@keyframes greenGlow { from { text-shadow: 0 0 10px #7FFF00; } to { text-shadow: 0 0 24px #7FFF00, 0 0 48px #7FFF00; } }
+@keyframes lineGlow { from { opacity: 0.4; } to { opacity: 1; } }
+@keyframes borderMove { 0% { background-position: 0 0; } 100% { background-position: 400% 0; } }
+@keyframes containerFloat { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+@keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+@keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; width: 100%;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 5%;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,255,255,0.3);
+  z-index: 1000; flex-wrap: wrap; gap: 10px;
+}
+.logo {
+  font-family: 'Orbitron', monospace;
+  color: cyan; font-size: clamp(13px, 2.2vw, 18px); font-weight: bold;
+  letter-spacing: 3px; text-shadow: 0 0 8px cyan; flex-shrink: 0;
+}
+.nav-links { list-style: none; display: flex; gap: clamp(12px, 2.5vw, 40px); flex-wrap: wrap; }
+.nav-links a {
+  text-decoration: none; color: white; font-size: clamp(12px, 1.8vw, 15px);
+  transition: 0.3s; position: relative; white-space: nowrap; font-family: 'Exo 2', sans-serif;
+}
+.nav-links a:hover { color: cyan; text-shadow: 0 0 8px cyan; }
+.nav-links a::after {
+  content: ""; position: absolute; bottom: -5px; left: 0;
+  width: 0%; height: 2px; background: cyan; transition: 0.3s;
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* FRAME */
+.frame {
+  width: min(95%, 1200px); margin: 20px auto;
+  padding: clamp(10px, 2vw, 18px);
+  background: rgba(15,15,15,0.75); backdrop-filter: blur(14px);
+  border: 2px solid #00bfff; border-radius: 18px;
+  box-shadow: 0 0 15px #00bfff66, 0 0 40px #008cff33, inset 0 0 20px #00bfff22;
+  position: relative; overflow: hidden;
+  animation: containerFloat 5s ease-in-out infinite;
+}
+.frame::before {
+  content: ""; position: absolute; inset: -2px; border-radius: 18px;
+  background: linear-gradient(45deg, #00bfff, transparent, #00bfff, transparent);
+  background-size: 400%; z-index: -1;
+  animation: borderMove 8s linear infinite; opacity: 0.4;
+}
+.frame::after {
+  content: ""; position: absolute; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, #00bfff55, transparent);
+  animation: scanLine 4s linear infinite; z-index: 0; pointer-events: none;
+}
+
+/* PAGE TITLE */
+.title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(28px, 6vw, 52px);
+  margin-top: clamp(80px, 10vw, 100px);
+  color: #7FFF00; letter-spacing: 4px;
+  animation: greenGlow 2s infinite alternate;
+  position: relative; word-break: break-word; padding: 0 20px;
+}
+.title::after {
+  content: ""; position: absolute; width: 60%; height: 8px;
+  background: #00bfff; bottom: -8px; left: 20%;
+  box-shadow: 0 0 10px #00bfff; animation: lineGlow 2s infinite alternate;
+}
+
+/* SECTION */
+.section-divider {
+  width: 90%; margin: 60px auto 0 auto; border: none;
+  border-top: 1px solid rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+}
+.section-title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(14px, 2.8vw, 24px);
+  margin-top: 40px; color: #7FFF00;
+  animation: greenGlow 2s infinite alternate;
+  padding: 0 20px; word-break: break-word;
+}
+
+/* CARD */
+.card {
+  background: rgba(10,10,10,0.72); border: 1px solid rgba(0,191,255,0.5);
+  margin-bottom: 14px; padding: clamp(10px,2vw,18px); color: white;
+  border-radius: 14px; position: relative; overflow: hidden;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(0,191,255,0.15), inset 0 0 10px rgba(0,191,255,0.08);
+  transition: transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+  transform-style: preserve-3d; opacity: 0; transform: translateY(40px);
+}
+.card::before {
+  content: ""; position: absolute; top: -100%; left: -40%; width: 50%; height: 300%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: rotate(25deg); transition: 0.8s;
+}
+.card:hover::before { left: 140%; }
+.card:hover {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-5px) scale(1.015);
+  border-color: #00e1ff;
+  box-shadow: 0 0 20px #00bfff88, 0 0 50px #00bfff33, inset 0 0 15px #00bfff22;
+}
+.card.show { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+
+/* CONTENT */
+.content { line-height: 1.9; color: #d8faff; font-size: clamp(13px,1.8vw,15px); }
+.content p { margin-bottom: 14px; }
+.highlight { color: cyan; font-weight: 600; }
+.formula {
+  background: rgba(0,191,255,0.08); border-left: 3px solid #00bfff;
+  padding: 10px 14px; border-radius: 6px; margin: 12px 0;
+  font-family: 'Courier New', monospace; color: #aaffff; font-size: clamp(12px,1.6vw,14px);
+}
+.answer-box {
+  background: rgba(127,255,0,0.08); border: 1px solid #7FFF00;
+  border-radius: 8px; padding: 10px 16px; margin: 10px 0;
+  color: #7FFF00; font-weight: 600; font-size: clamp(13px,1.8vw,15px);
+}
+.content h2 {
+  color: #00bfff; font-size: clamp(13px,2vw,16px);
+  margin: 22px 0 8px 0; text-shadow: 0 0 6px #00bfff;
+  border-left: 3px solid #00bfff; padding-left: 10px;
+  border-bottom: 1px solid rgba(0,191,255,0.3); padding-bottom: 4px;
+  position: relative; overflow: hidden;
+}
+.content h2::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .content h2::after { width: 100%; }
+.content ul { padding-left: 22px; margin: 10px 0 14px 0; }
+.content ul li { margin-bottom: 7px; font-size: clamp(11px,1.5vw,13.5px); line-height: 1.7; transition: 0.3s; }
+.content ul li:hover { color: #00d9ff; text-shadow: 0 0 8px #00bfff; transform: translateX(4px); }
+
+/* TABLE */
+.content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.content table th {
+  background: rgba(0,191,255,0.15); color: #00bfff;
+  padding: 10px 14px; text-align: left;
+  border: 1px solid rgba(0,191,255,0.3); font-size: clamp(11px,1.5vw,13px);
+}
+.content table td {
+  padding: 9px 14px; border: 1px solid rgba(0,191,255,0.2);
+  color: #d8faff; font-size: clamp(11px,1.4vw,13px); transition: 0.3s;
+}
+.content table tr:nth-child(even) td { background: rgba(0,191,255,0.05); }
+.content table tr:hover td { color: #00d9ff; background: rgba(0,191,255,0.08); }
+
+/* CARD TITLE */
+.card-title {
+  font-family: 'Orbitron', monospace;
+  color: #00bfff; border-bottom: 1px solid rgba(0,191,255,0.4);
+  padding-bottom: 6px; margin-bottom: 14px; font-size: clamp(12px,1.8vw,15px);
+  position: relative; overflow: hidden; letter-spacing: 1px;
+}
+.card-title::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .card-title::after { width: 100%; }
+
+/* RIPPLE */
+.ripple {
+  position: absolute; border-radius: 50%; transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  background: rgba(0,191,255,0.4); pointer-events: none;
+}
+
+.page-bottom-spacer { height: 60px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  body { padding: 70px 15px 15px; }
+  .navbar { padding: 12px 4%; gap: 8px; }
+  .card:hover { transform: translateY(-4px) scale(1.01); }
+}
+@media (max-width: 480px) {
+  body { padding: 130px 10px 10px; }
+  .navbar { padding: 10px 4%; justify-content: center; }
+  .logo { width: 100%; text-align: center; }
+  .nav-links { justify-content: center; width: 100%; gap: 8px; }
+  .title { margin-top: 140px; }
+  .card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">COA PROJECT</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="test.html">Play Book</a></li>
+    <li><a href="processor.html">Processor</a></li>
+    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
+  </ul>
+</nav>
+
+<h1 class="title">Chapter 2</h1>
+
+<!-- Intro banner -->
+<div class="frame" style="margin-top:30px;">
+  <div class="card" style="opacity:1;transform:none;">
+    <div class="card-title">Performance Metrics: CPI, IPC, MIPS, FLOPS & Benchmarking</div>
+    <div class="content">
+      <p>This chapter covers the fundamental quantitative measures used to evaluate and compare processor performance — Amdahl's Law, CPI, MIPS, Execution Time, and benchmarking methodologies through solved numerical examples.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q1 — Amdahl's Law: Dual Pentium ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">1. Dual Pentium — Amdahl's Law (Parallelism)</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Problem Statement</div>
+    <div class="content">
+      <p>Two applications run on a dual Pentium processor. Application 1 needs 80% of resources (40% parallelizable). Application 2 needs 20% (99% parallelizable).</p>
+      <div class="formula">Amdahl's Law:  Speedup = 1 / [(1 − P) + (P / N)]</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">i) Application 1 — 40% Parallelizable, N = 2</div>
+    <div class="content">
+      <div class="formula">P = 0.4,  N = 2<br>Speedup = 1 / [(1 − 0.4) + (0.4 / 2)] = 1 / (0.6 + 0.2) = 1 / 0.8</div>
+      <div class="answer-box">✓ Speedup = 1.25</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">ii) Application 2 — 99% Parallelizable, N = 2</div>
+    <div class="content">
+      <div class="formula">P = 0.99,  N = 2<br>Speedup = 1 / [(1 − 0.99) + (0.99 / 2)] = 1 / (0.01 + 0.495) = 1 / 0.505</div>
+      <div class="answer-box">✓ Speedup ≈ 1.98</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q2 — Quad-Core Amdahl ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">2. Quad-Core Processor — Required Parallelizable Fraction</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Problem Statement</div>
+    <div class="content">
+      <p>Using Amdahl's Law with N = 4 cores, find the percentage of program that must be parallelized for each target speedup.</p>
+      <div class="formula">Solving for P:  P = (4/3) × (1 − 1/S)</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Results Table</div>
+    <div class="content">
+      <table>
+        <tr><th>Target Speedup (S)</th><th>Parallelizable Fraction (P)</th><th>Non-Parallelizable (f)</th></tr>
+        <tr><td>S = 3</td><td>88.89%</td><td>11.11%</td></tr>
+        <tr><td>S = 2</td><td>66.67%</td><td>33.33%</td></tr>
+        <tr><td>S = 1.5</td><td>44.44%</td><td>55.56%</td></tr>
+        <tr><td>S = 1.25</td><td>26.67%</td><td>73.33%</td></tr>
+      </table>
+      <p style="margin-top:10px;"><span class="highlight">Key Takeaway:</span> As desired speedup decreases, the required parallelizable portion also decreases. Amdahl's Law shows why perfect scaling is hard to achieve.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q3 — Enhancement Speedup ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">3. Enhancement of Overall Speedup</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Problem Statement</div>
+    <div class="content">
+      <p>An enhancement runs 10× faster but is usable only 40% of the time.</p>
+      <div class="formula">Speedup = 1 / [(1 − F) + (F / N)]</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">i) 10% of Program 10× Faster</div>
+    <div class="content">
+      <div class="formula">F = 0.10,  N = 10<br>= 1 / [(1 − 0.10) + (0.10 / 10)] = 1 / (0.90 + 0.01) = 1 / 0.91</div>
+      <div class="answer-box">✓ Overall Speedup ≈ 1.099</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">ii) 90% of Program 10× Faster</div>
+    <div class="content">
+      <div class="formula">F = 0.90,  N = 10<br>= 1 / [(1 − 0.90) + (0.90 / 10)] = 1 / (0.10 + 0.09) = 1 / 0.19</div>
+      <div class="answer-box">✓ Overall Speedup ≈ 5.263</div>
+      <p><span class="highlight">Observation:</span> Increasing the fraction of the program that benefits from the enhancement significantly increases the overall speedup.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q4 — Execution Time & Speedup Comparison ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">4. Performance Comparison — Execution Time & Speedup</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Problem & Results</div>
+    <div class="content">
+      <p>Benchmark program executes in 480 s on reference machine A.</p>
+      <table>
+        <tr><th>System</th><th>Execution Time (s)</th><th>Speedup Relative to A</th></tr>
+        <tr><td>A</td><td>480</td><td>1.00 (reference)</td></tr>
+        <tr><td>B</td><td>360</td><td>480/360 = <span class="highlight">1.33</span></td></tr>
+        <tr><td>C</td><td>540</td><td>480/540 = <span class="highlight">0.89</span> (slower)</td></tr>
+        <tr><td>D</td><td>210</td><td>480/210 = <span class="highlight">2.29</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Relative Speedup (B as Reference)</div>
+    <div class="content">
+      <table>
+        <tr><th>System</th><th>Relative Speedup (vs B)</th></tr>
+        <tr><td>B</td><td>1.00</td></tr>
+        <tr><td>C</td><td>360/540 = 0.67</td></tr>
+        <tr><td>D</td><td>360/210 = <span class="highlight">1.71</span></td></tr>
+      </table>
+      <p style="margin-top:10px;"><span class="highlight">Observation:</span> System D has the best performance — lowest execution time and highest speedup.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q5 — Effective CPI, MIPS, Execution Time ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">5. Effective CPI, MIPS Rate & Execution Time — 40 MHz Processor</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Instruction Mix — 100,000 Instructions on 40 MHz Processor</div>
+    <div class="content">
+      <table>
+        <tr><th>Instruction Type</th><th>Count</th><th>CPI</th><th>Total Cycles</th></tr>
+        <tr><td>Integer Arithmetic</td><td>45,000</td><td>1</td><td>45,000</td></tr>
+        <tr><td>Data Transfer</td><td>32,000</td><td>2</td><td>64,000</td></tr>
+        <tr><td>Floating Point</td><td>15,000</td><td>2</td><td>30,000</td></tr>
+        <tr><td>Control Transfer</td><td>8,000</td><td>2</td><td>16,000</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>100,000</strong></td><td>—</td><td><strong>155,000</strong></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Results</div>
+    <div class="content">
+      <div class="formula">Effective CPI = Total Clock Cycles / Total Instructions = 155,000 / 100,000</div>
+      <div class="answer-box">✓ Effective CPI = 1.55</div>
+      <div class="formula">MIPS = Clock Rate / (CPI × 10⁶) = 40 / 1.55</div>
+      <div class="answer-box">✓ MIPS Rate = 25.81 MIPS</div>
+      <div class="formula">Execution Time = Total Cycles / Clock Rate = 155,000 / (40 × 10⁶)</div>
+      <div class="answer-box">✓ Execution Time = 3.875 ms</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q6 — Two Machines Comparison ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">6. Performance Comparison — Two Machines at 200 MHz</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Instruction Mix — Machine A</div>
+    <div class="content">
+      <table>
+        <tr><th>Type</th><th>Count (M)</th><th>CPI</th><th>Cycles (M)</th></tr>
+        <tr><td>Arithmetic & Logic</td><td>8</td><td>1</td><td>8</td></tr>
+        <tr><td>Load & Store</td><td>4</td><td>3</td><td>12</td></tr>
+        <tr><td>Branch</td><td>2</td><td>4</td><td>8</td></tr>
+        <tr><td>Others</td><td>4</td><td>3</td><td>12</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>18 M</strong></td><td>—</td><td><strong>40 M</strong></td></tr>
+      </table>
+      <div class="formula">Effective CPI = 40/18 = 2.222  |  MIPS = 200/2.222 = 90.09  |  Time = 18/90.09</div>
+      <div class="answer-box">✓ CPI = 2.222  |  MIPS = 90.09  |  Exec Time = 0.1998 s</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Instruction Mix — Machine B</div>
+    <div class="content">
+      <table>
+        <tr><th>Type</th><th>Count (M)</th><th>CPI</th><th>Cycles (M)</th></tr>
+        <tr><td>Arithmetic & Logic</td><td>10</td><td>1</td><td>10</td></tr>
+        <tr><td>Load & Store</td><td>8</td><td>2</td><td>16</td></tr>
+        <tr><td>Branch</td><td>2</td><td>4</td><td>8</td></tr>
+        <tr><td>Others</td><td>4</td><td>3</td><td>12</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>24 M</strong></td><td>—</td><td><strong>46 M</strong></td></tr>
+      </table>
+      <div class="formula">Effective CPI = 46/24 = 1.917  |  MIPS = 200/1.917 = 104.35  |  Time = 24/104.35</div>
+      <div class="answer-box">✓ CPI = 1.917  |  MIPS = 104.35  |  Exec Time = 0.2296 s</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Comparison & Conclusion</div>
+    <div class="content">
+      <table>
+        <tr><th>Parameter</th><th>Machine A</th><th>Machine B</th></tr>
+        <tr><td>Total Instructions (M)</td><td>18</td><td>24</td></tr>
+        <tr><td>Total Cycles (M)</td><td>40</td><td>46</td></tr>
+        <tr><td>Effective CPI</td><td>2.222</td><td>1.917 ✓ (lower)</td></tr>
+        <tr><td>MIPS Rate</td><td>90.09</td><td>104.35 ✓ (higher)</td></tr>
+        <tr><td>Execution Time</td><td>0.1998 s ✓ (faster)</td><td>0.2296 s</td></tr>
+      </table>
+      <p style="margin-top:10px;"><span class="highlight">Conclusion:</span> Machine B has lower CPI and higher MIPS, but Machine A finishes faster because it executes fewer total instructions (18M vs 24M). <strong>Machine A provides better overall performance</strong> for this benchmark.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q7 — VAX vs IBM CISC vs RISC ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">7. CISC vs RISC — VAX 11/780 vs IBM RS/6000</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Given Data</div>
+    <div class="content">
+      <table>
+        <tr><th>Processor</th><th>Clock Frequency</th><th>Performance</th><th>CPU Time</th></tr>
+        <tr><td>VAX 11/780</td><td>5 MHz</td><td>1 MIPS</td><td>12x seconds</td></tr>
+        <tr><td>IBM RS/6000</td><td>25 MHz</td><td>18 MIPS</td><td>x seconds</td></tr>
+      </table>
+      <p style="margin-top:10px;">VAX requires 12× longer CPU time than IBM.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">b) CPI Values</div>
+    <div class="content">
+      <div class="formula">CPI = Clock Rate (MHz) / MIPS<br>CPI(VAX) = 5 / 1 = 5.00<br>CPI(IBM) = 25 / 18 = 1.389</div>
+      <div class="answer-box">✓ CPI(VAX) = 5.00  |  CPI(IBM) = 1.389</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">a) Relative Instruction Count</div>
+    <div class="content">
+      <div class="formula">IC(VAX)/IC(IBM) = (CPI_IBM/CPI_VAX) × (Clock_VAX/Clock_IBM) × 12<br>= (1.389/5) × (5/25) × 12 = 0.2778 × 0.2 × 12 = 0.6667</div>
+      <div class="answer-box">✓ IC(VAX) / IC(IBM) ≈ 2/3 = 0.667</div>
+      <p>The VAX executes approximately <span class="highlight">two-thirds as many instructions</span> as the IBM for this benchmark, but each VAX instruction takes far more cycles (CPI = 5 vs 1.389), making it 12× slower overall.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q8 — Arithmetic & Harmonic Means ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">8. Four Benchmarks — Arithmetic vs Harmonic Mean MIPS</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Execution Times (s) — 100M Instructions Each</div>
+    <div class="content">
+      <table>
+        <tr><th>Program</th><th>Computer A</th><th>Computer B</th><th>Computer C</th></tr>
+        <tr><td>Program 1</td><td>1</td><td>10</td><td>20</td></tr>
+        <tr><td>Program 2</td><td>1000</td><td>100</td><td>20</td></tr>
+        <tr><td>Program 3</td><td>500</td><td>1000</td><td>50</td></tr>
+        <tr><td>Program 4</td><td>100</td><td>800</td><td>100</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">MIPS Values (MIPS = 100 / Time)</div>
+    <div class="content">
+      <table>
+        <tr><th>Program</th><th>A (MIPS)</th><th>B (MIPS)</th><th>C (MIPS)</th></tr>
+        <tr><td>Program 1</td><td>100.00</td><td>10.00</td><td>5.00</td></tr>
+        <tr><td>Program 2</td><td>0.10</td><td>1.00</td><td>5.00</td></tr>
+        <tr><td>Program 3</td><td>0.20</td><td>0.10</td><td>2.00</td></tr>
+        <tr><td>Program 4</td><td>1.00</td><td>0.125</td><td>1.00</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Arithmetic Mean vs Harmonic Mean Rankings</div>
+    <div class="content">
+      <table>
+        <tr><th>Computer</th><th>Arithmetic Mean (MIPS)</th><th>Harmonic Mean (MIPS)</th></tr>
+        <tr><td>A</td><td>25.325</td><td>0.199</td></tr>
+        <tr><td>B</td><td>2.806</td><td>0.294</td></tr>
+        <tr><td>C</td><td>3.250</td><td>1.667</td></tr>
+      </table>
+      <p style="margin-top:10px;"><span class="highlight">Arithmetic Mean Rank:</span> A → C → B</p>
+      <p><span class="highlight">Harmonic Mean Rank:</span> C → B → A</p>
+      <p style="margin-top:8px;"><span class="highlight">Conclusion:</span> Arithmetic mean favors Computer A due to its exceptional Program 1 performance. Harmonic mean gives a more balanced picture — <strong>Computer C</strong> is the most consistent performer overall.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q9 — Weighted CPI & MIPS ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">9. Average CPI & MIPS — Weighted Instruction Mix (400 MHz Processor)</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Instruction Mix & CPI</div>
+    <div class="content">
+      <table>
+        <tr><th>Instruction Type</th><th>CPI</th><th>Instruction Mix</th><th>Contribution</th></tr>
+        <tr><td>Arithmetic & Logic</td><td>1</td><td>60%</td><td>1 × 0.60 = 0.60</td></tr>
+        <tr><td>Load/Store (cache hit)</td><td>2</td><td>18%</td><td>2 × 0.18 = 0.36</td></tr>
+        <tr><td>Branch</td><td>4</td><td>12%</td><td>4 × 0.12 = 0.48</td></tr>
+        <tr><td>Memory (cache miss)</td><td>8</td><td>10%</td><td>8 × 0.10 = 0.80</td></tr>
+      </table>
+      <div class="formula">Average CPI = 0.60 + 0.36 + 0.48 + 0.80 = 2.24<br>MIPS = 400 / 2.24 = 178.57</div>
+      <div class="answer-box">✓ Average CPI = 2.24  |  MIPS Rate = 178.57 MIPS</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Q10 — 8-Core Parallel Speedup ═══ -->
+<hr class="section-divider">
+<h2 class="section-title">10. 8-Core Parallel Execution — Speedup Factor</h2>
+<div class="frame" style="margin-top:24px;">
+  <div class="card">
+    <div class="card-title">Modified CPI with Cache Contention (cache miss CPI = 12)</div>
+    <div class="content">
+      <table>
+        <tr><th>Instruction Type</th><th>CPI</th><th>Mix</th><th>Contribution</th></tr>
+        <tr><td>Arithmetic & Logic</td><td>1</td><td>60%</td><td>0.60</td></tr>
+        <tr><td>Load/Store (cache hit)</td><td>2</td><td>18%</td><td>0.36</td></tr>
+        <tr><td>Branch</td><td>4</td><td>12%</td><td>0.48</td></tr>
+        <tr><td>Memory (cache miss)</td><td><span class="highlight">12</span></td><td>10%</td><td>1.20</td></tr>
+      </table>
+      <div class="formula">Average CPI = 0.60 + 0.36 + 0.48 + 1.20 = 2.64<br>MIPS = 400 / 2.64 = 151.52<br>Speedup = MIPS(parallel) / MIPS(single) = 151.52 / 178.57</div>
+      <div class="answer-box">✓ Average CPI = 2.64  |  MIPS = 151.52  |  Speedup = 0.85</div>
+      <p style="margin-top:10px;"><span class="highlight">Conclusion:</span> The increased cache miss penalty (CPI 8 → 12) due to memory contention raises average CPI from 2.24 to 2.64, reducing MIPS from 178.57 to 151.52. The speedup factor of 0.85 means the 8-core version is actually slightly <strong>slower</strong> than the single-core version for this workload — memory contention erases the parallelism benefit.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-bottom-spacer"></div>
+
+<script>
+/* ── Fade-Up Reveal ── */
+const cards = document.querySelectorAll('.card');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+}, { threshold: 0.1 });
+cards.forEach(card => observer.observe(card));
+
+/* ── 3D Tilt (non-touch) ── */
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (!isTouchDevice) {
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const rx = ((e.clientY - rect.top) - rect.height / 2) / 22;
+      const ry = (rect.width / 2 - (e.clientX - rect.left)) / 22;
+      card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.015)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+  });
+}
+
+/* ── Ripple ── */
+cards.forEach(card => {
+  card.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  });
+});
+
+/* ── Floating Particles ── */
+const s = document.createElement('style');
+s.innerHTML = `@keyframes fp{0%{transform:translateY(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-120vh);opacity:0}}`;
+document.head.appendChild(s);
+for (let i = 0; i < 22; i++) {
+  const p = document.createElement('div');
+  const sz = Math.random() * 4 + 2;
+  p.style.cssText = `position:fixed;width:${sz}px;height:${sz}px;background:rgba(0,191,255,0.3);border-radius:50%;left:${Math.random()*100}vw;top:${Math.random()*100}vh;pointer-events:none;z-index:-1;box-shadow:0 0 8px #00bfff;animation:fp ${Math.random()*10+8}s linear ${Math.random()*5}s infinite`;
+  document.body.appendChild(p);
+}
+</script>
+</body>
+</html>

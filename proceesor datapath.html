@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COA Processor Datapath Design</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+
+html { scroll-behavior: smooth; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(circle at top left, #00111f, #050505 45%),
+              radial-gradient(circle at bottom right, #001a2f, #020202 40%);
+  font-family: 'Exo 2', Arial, sans-serif;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  padding: 80px 20px 20px;
+}
+body::before {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #00bfff33, transparent 70%);
+  top: -20px; left: -20px;
+  animation: floatGlow 12s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle, #0066ff22, transparent 70%);
+  bottom: -20px; right: -20px;
+  animation: floatGlow2 15s infinite alternate ease-in-out;
+  z-index: -2; pointer-events: none;
+}
+
+@keyframes floatGlow { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(120px,80px) scale(1.2); } }
+@keyframes floatGlow2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-100px,-60px) scale(1.1); } }
+@keyframes greenGlow { from { text-shadow: 0 0 10px #7FFF00; } to { text-shadow: 0 0 24px #7FFF00, 0 0 48px #7FFF00; } }
+@keyframes lineGlow { from { opacity: 0.4; } to { opacity: 1; } }
+@keyframes borderMove { 0% { background-position: 0 0; } 100% { background-position: 400% 0; } }
+@keyframes containerFloat { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+@keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+@keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
+@keyframes flowDash { to { stroke-dashoffset: -20; } }
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; width: 100%;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 5%;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,255,255,0.3);
+  z-index: 1000; flex-wrap: wrap; gap: 10px;
+}
+.logo {
+  font-family: 'Orbitron', monospace;
+  color: cyan; font-size: clamp(13px, 2.2vw, 18px); font-weight: bold;
+  letter-spacing: 3px; text-shadow: 0 0 8px cyan; flex-shrink: 0;
+}
+.nav-links { list-style: none; display: flex; gap: clamp(12px, 2.5vw, 40px); flex-wrap: wrap; }
+.nav-links a {
+  text-decoration: none; color: white; font-size: clamp(12px, 1.8vw, 15px);
+  transition: 0.3s; position: relative; white-space: nowrap; font-family: 'Exo 2', sans-serif;
+}
+.nav-links a:hover { color: cyan; text-shadow: 0 0 8px cyan; }
+.nav-links a::after {
+  content: ""; position: absolute; bottom: -5px; left: 0;
+  width: 0%; height: 2px; background: cyan; transition: 0.3s;
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* FRAME */
+.frame {
+  width: min(95%, 1200px); margin: 20px auto;
+  padding: clamp(10px, 2vw, 18px);
+  background: rgba(15,15,15,0.75); backdrop-filter: blur(14px);
+  border: 2px solid #00bfff; border-radius: 18px;
+  box-shadow: 0 0 15px #00bfff66, 0 0 40px #008cff33, inset 0 0 20px #00bfff22;
+  position: relative; overflow: hidden;
+  animation: containerFloat 5s ease-in-out infinite;
+}
+.frame::before {
+  content: ""; position: absolute; inset: -2px; border-radius: 18px;
+  background: linear-gradient(45deg, #00bfff, transparent, #00bfff, transparent);
+  background-size: 400%; z-index: -1;
+  animation: borderMove 8s linear infinite; opacity: 0.4;
+}
+.frame::after {
+  content: ""; position: absolute; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, #00bfff55, transparent);
+  animation: scanLine 4s linear infinite; z-index: 0; pointer-events: none;
+}
+
+/* PAGE TITLE */
+.title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(24px, 5vw, 46px);
+  margin-top: clamp(80px, 10vw, 100px);
+  color: #7FFF00; letter-spacing: 4px;
+  animation: greenGlow 2s infinite alternate;
+  position: relative; word-break: break-word; padding: 0 20px;
+}
+.title::after {
+  content: ""; position: absolute; width: 60%; height: 8px;
+  background: #00bfff; bottom: -8px; left: 20%;
+  box-shadow: 0 0 10px #00bfff; animation: lineGlow 2s infinite alternate;
+}
+
+/* SECTION */
+.section-divider {
+  width: 90%; margin: 60px auto 0 auto; border: none;
+  border-top: 1px solid rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+}
+.section-title {
+  font-family: 'Orbitron', monospace;
+  text-align: center; font-size: clamp(14px, 3vw, 26px);
+  margin-top: 40px; color: #7FFF00;
+  animation: greenGlow 2s infinite alternate;
+  padding: 0 20px; word-break: break-word;
+}
+
+/* CARD */
+.card {
+  background: rgba(10,10,10,0.72); border: 1px solid rgba(0,191,255,0.5);
+  margin-bottom: 14px; padding: clamp(10px,2vw,18px); color: white;
+  border-radius: 14px; position: relative; overflow: hidden;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(0,191,255,0.15), inset 0 0 10px rgba(0,191,255,0.08);
+  transition: transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+  transform-style: preserve-3d; opacity: 0; transform: translateY(40px);
+}
+.card::before {
+  content: ""; position: absolute; top: -100%; left: -40%; width: 50%; height: 300%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: rotate(25deg); transition: 0.8s;
+}
+.card:hover::before { left: 140%; }
+.card:hover {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-5px) scale(1.015);
+  border-color: #00e1ff;
+  box-shadow: 0 0 20px #00bfff88, 0 0 50px #00bfff33, inset 0 0 15px #00bfff22;
+}
+.card.show { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+
+/* CONTENT */
+.content { line-height: 1.9; color: #d8faff; font-size: clamp(13px,1.8vw,15px); }
+.content p { margin-bottom: 14px; }
+.highlight { color: cyan; font-weight: 600; }
+.content h2 {
+  color: #00bfff; font-size: clamp(13px,2vw,16px);
+  margin: 22px 0 8px 0; text-shadow: 0 0 6px #00bfff;
+  border-left: 3px solid #00bfff; padding-left: 10px;
+  border-bottom: 1px solid rgba(0,191,255,0.3); padding-bottom: 4px;
+  position: relative; overflow: hidden;
+}
+.content h2::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .content h2::after { width: 100%; }
+.content ul { padding-left: 22px; margin: 10px 0 14px 0; }
+.content ul li { margin-bottom: 7px; font-size: clamp(11px,1.5vw,13.5px); line-height: 1.7; transition: 0.3s; }
+.content ul li:hover { color: #00d9ff; text-shadow: 0 0 8px #00bfff; transform: translateX(4px); }
+
+/* TABLE */
+.content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.content table th {
+  background: rgba(0,191,255,0.15); color: #00bfff;
+  padding: 10px 14px; text-align: left;
+  border: 1px solid rgba(0,191,255,0.3); font-size: clamp(11px,1.5vw,13px);
+}
+.content table td {
+  padding: 9px 14px; border: 1px solid rgba(0,191,255,0.2);
+  color: #d8faff; font-size: clamp(11px,1.4vw,13px); transition: 0.3s;
+}
+.content table tr:nth-child(even) td { background: rgba(0,191,255,0.05); }
+.content table tr:hover td { color: #00d9ff; background: rgba(0,191,255,0.08); }
+
+/* CARD TITLE */
+.card-title {
+  font-family: 'Orbitron', monospace;
+  color: #00bfff; border-bottom: 1px solid rgba(0,191,255,0.4);
+  padding-bottom: 6px; margin-bottom: 14px; font-size: clamp(12px,1.8vw,15px);
+  position: relative; overflow: hidden; letter-spacing: 1px;
+}
+.card-title::after {
+  content: ""; position: absolute; left: 0; bottom: -1px;
+  width: 0%; height: 2px; background: #00bfff;
+  box-shadow: 0 0 10px #00bfff; transition: 0.5s;
+}
+.card:hover .card-title::after { width: 100%; }
+
+/* DIAGRAM */
+.diagram-wrapper {
+  margin: 16px 0; border: 1px solid rgba(0,255,153,0.3);
+  border-radius: 14px; padding: 20px;
+  background: rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 20px rgba(0,255,153,0.06), 0 0 16px rgba(0,255,153,0.15);
+  overflow-x: auto;
+}
+.diagram-wrapper svg { display: block; margin: 0 auto; overflow: visible; }
+
+/* ── LOGISIM IMAGE BLOCK ── */
+.logisim-block {
+  margin: 20px 0 8px 0;
+  border: 1px solid rgba(0, 255, 153, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 18px rgba(0,255,153,0.12), inset 0 0 12px rgba(0,0,0,0.6);
+}
+.logisim-label {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(10px, 1.4vw, 12px);
+  color: #00ff99;
+  background: rgba(0, 255, 153, 0.08);
+  border-bottom: 1px solid rgba(0,255,153,0.25);
+  padding: 8px 16px;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logisim-label::before {
+  content: "◉";
+  color: #00ff99;
+  font-size: 10px;
+  animation: lineGlow 1.5s infinite alternate;
+}
+.logisim-block img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: crisp-edges;
+  background: #fff;
+}
+.logisim-caption {
+  font-size: clamp(10px, 1.3vw, 12px);
+  color: rgba(0,255,153,0.6);
+  padding: 6px 16px;
+  font-family: 'Exo 2', monospace;
+  letter-spacing: 0.05em;
+  background: rgba(0,0,0,0.4);
+  border-top: 1px solid rgba(0,255,153,0.12);
+}
+
+/* Instruction set card */
+.instr-block {
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(0,191,255,0.3);
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;
+  font-family: 'Exo 2', monospace; font-size: clamp(12px,1.6vw,14px);
+}
+.instr-block .instr-num {
+  font-family: 'Orbitron', monospace; color: #7FFF00;
+  font-size: clamp(11px,1.5vw,13px); margin-bottom: 8px;
+  border-bottom: 1px solid rgba(0,255,153,0.3); padding-bottom: 4px;
+}
+.instr-block code {
+  display: block; color: #00ff99; font-size: clamp(12px,1.6vw,14px);
+  line-height: 2; letter-spacing: 0.5px;
+}
+.instr-block .instr-desc {
+  color: #88ccff; font-size: clamp(10px,1.3vw,12px); margin-top: 6px;
+  line-height: 1.6;
+}
+
+/* RIPPLE */
+.ripple {
+  position: absolute; border-radius: 50%; transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  background: rgba(0,191,255,0.4); pointer-events: none;
+}
+
+.chip-badge {
+  display: inline-block; background: linear-gradient(135deg, #002244, #001133);
+  border: 1px solid #00bfff; border-radius: 8px;
+  padding: 3px 10px; font-size: 11px; color: #00bfff;
+  letter-spacing: 1px; margin-left: 8px; vertical-align: middle;
+  box-shadow: 0 0 8px #00bfff55;
+}
+
+.instr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 14px; }
+.page-bottom-spacer { height: 60px; }
+
+@media (max-width: 768px) {
+  body { padding: 70px 15px 15px; }
+  .navbar { padding: 12px 4%; gap: 8px; }
+  .card:hover { transform: translateY(-4px) scale(1.01); }
+  .instr-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  body { padding: 130px 10px 10px; }
+  .navbar { padding: 10px 4%; justify-content: center; }
+  .logo { width: 100%; text-align: center; }
+  .nav-links { justify-content: center; width: 100%; gap: 8px; }
+  .title { margin-top: 140px; }
+  .card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">COA PROJECT</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="test.html">Play Book</a></li>
+    <li><a href="processor.html">Processor</a></li>
+    <li><a href="selfacessment.html">Teamwork And Selflearning</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     PROCESSOR DATAPATH DESIGN
+     ═══════════════════════════════════════════ -->
+<h1 class="title">Processor Datapath Design</h1>
+
+<!-- ─── OVERVIEW ─── -->
+<div class="frame" style="margin-top:36px;">
+
+  <div class="card" style="opacity:1;transform:none;">
+    <div class="card-title">Overview — What is a Processor Datapath?</div>
+    <div class="content">
+      <p>
+        The <span class="highlight">processor datapath</span> is the collection of functional units — ALU, registers, multiplexers, memory interfaces, and interconnecting buses — that physically carry out the operations specified by instructions. The <span class="highlight">Control Unit (CU)</span> orchestrates all these units by generating control signals (Read Enable, Write Enable, MuxB_En, RZ_ALU_En, Store_En, etc.) based on the decoded opcode.
+      </p>
+      <p>
+        In this project's datapath simulator, a <span class="highlight">5-stage register file (REG BANK)</span> is connected to an ALU, a memory unit, a Program Counter (PC), and an Instruction Register (IR). Multiplexers select between register operands and immediate values. The control unit drives all enable signals to route data correctly through the pipeline for each instruction.
+      </p>
+      <h2>Key Datapath Components</h2>
+      <ul>
+        <li><span class="highlight">REG BANK:</span> Multi-port register file storing operands (RA, RB, RZ, RY, EA, RM)</li>
+        <li><span class="highlight">ALU:</span> Performs arithmetic (Add, Sub, Mul) and logical (And, Or) operations; outputs to RZ</li>
+        <li><span class="highlight">MuxB:</span> Selects between register RB value and immediate (Imm.Value) as second ALU input</li>
+        <li><span class="highlight">MuxY:</span> Selects between ALU result and memory data for write-back</li>
+        <li><span class="highlight">PC:</span> Program Counter — holds address of next instruction to fetch from Code Memory</li>
+        <li><span class="highlight">IR:</span> Instruction Register — holds the currently executing instruction's binary encoding</li>
+        <li><span class="highlight">Memory:</span> Data memory accessed for Load and Store instructions via EA (Effective Address)</li>
+        <li><span class="highlight">CU:</span> Decodes opcode from IR and drives READ, WRITE, RZ_ALU_En, MuxB_En, Store_En signals</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Datapath Architecture Diagram -->
+  <div class="card">
+    <div class="card-title">General Datapath Architecture Diagram</div>
+    <div class="content">
+      <div class="diagram-wrapper">
+        <svg width="700" height="460" viewBox="0 0 700 460" style="max-width:100%;">
+          <defs>
+            <linearGradient id="dpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#002244;stop-opacity:1"/>
+              <stop offset="100%" style="stop-color:#001122;stop-opacity:1"/>
+            </linearGradient>
+            <linearGradient id="memGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#220033;stop-opacity:1"/>
+              <stop offset="100%" style="stop-color:#110022;stop-opacity:1"/>
+            </linearGradient>
+            <linearGradient id="cuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#223300;stop-opacity:1"/>
+              <stop offset="100%" style="stop-color:#111800;stop-opacity:1"/>
+            </linearGradient>
+            <filter id="gd">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <marker id="aD" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#00bfff"/>
+            </marker>
+            <marker id="aG" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#00ff99"/>
+            </marker>
+            <marker id="aY" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#ffdd00"/>
+            </marker>
+            <marker id="aP" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#ff66ff"/>
+            </marker>
+          </defs>
+
+          <text x="350" y="18" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="10" filter="url(#gd)">PROCESSOR DATAPATH — GENERAL STRUCTURE</text>
+
+          <!-- PC -->
+          <rect x="20" y="30" width="80" height="36" rx="6" fill="url(#dpGrad)" stroke="#ffdd00" stroke-width="1.5" filter="url(#gd)"/>
+          <text x="60" y="52" text-anchor="middle" fill="#ffdd00" font-family="'Orbitron',monospace" font-size="8">PC</text>
+
+          <!-- Code Memory -->
+          <rect x="130" y="30" width="110" height="36" rx="6" fill="url(#dpGrad)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="185" y="45" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">CODE</text>
+          <text x="185" y="58" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">MEMORY</text>
+          <line x1="100" y1="48" x2="130" y2="48" stroke="#ffdd00" stroke-width="1.5" marker-end="url(#aD)"/>
+
+          <!-- IR -->
+          <rect x="270" y="30" width="80" height="36" rx="6" fill="url(#dpGrad)" stroke="#00ff99" stroke-width="1.5"/>
+          <text x="310" y="52" text-anchor="middle" fill="#00ff99" font-family="'Orbitron',monospace" font-size="8">IR</text>
+          <line x1="240" y1="48" x2="270" y2="48" stroke="#00bfff" stroke-width="1.5" marker-end="url(#aD)"/>
+
+          <!-- CU -->
+          <rect x="370" y="30" width="100" height="36" rx="6" fill="url(#cuGrad)" stroke="#7FFF00" stroke-width="2" filter="url(#gd)"/>
+          <text x="420" y="44" text-anchor="middle" fill="#7FFF00" font-family="'Orbitron',monospace" font-size="8">CONTROL</text>
+          <text x="420" y="57" text-anchor="middle" fill="#7FFF00" font-family="'Orbitron',monospace" font-size="8">UNIT (CU)</text>
+          <line x1="350" y1="48" x2="370" y2="48" stroke="#00ff99" stroke-width="1.5" marker-end="url(#aG)"/>
+
+          <!-- REG BANK -->
+          <rect x="20" y="110" width="130" height="80" rx="8" fill="url(#dpGrad)" stroke="#ff66ff" stroke-width="2" filter="url(#gd)"/>
+          <text x="85" y="130" text-anchor="middle" fill="#ff66ff" font-family="'Orbitron',monospace" font-size="8">REG BANK</text>
+          <text x="85" y="143" text-anchor="middle" fill="#ffaaff" font-size="7">RA, RB, RZ, RY</text>
+          <text x="85" y="155" text-anchor="middle" fill="#ffaaff" font-size="7">EA, RM</text>
+          <text x="85" y="168" text-anchor="middle" fill="#ffaaff" font-size="7">Addr_A, Addr_B, Addr_C</text>
+          <text x="85" y="181" text-anchor="middle" fill="#ffaaff" font-size="7">READ / WRITE Enable</text>
+
+          <!-- CU → REG BANK control lines -->
+          <line x1="420" y1="66" x2="420" y2="90" stroke="#7FFF00" stroke-width="1.2" stroke-dasharray="3,3"/>
+          <line x1="420" y1="90" x2="85" y2="90" stroke="#7FFF00" stroke-width="1.2" stroke-dasharray="3,3"/>
+          <line x1="85" y1="90" x2="85" y2="110" stroke="#7FFF00" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#aG)"/>
+          <text x="240" y="86" text-anchor="middle" fill="#7FFF00" font-size="8">Control Signals</text>
+
+          <!-- MuxB -->
+          <rect x="200" y="130" width="80" height="36" rx="6" fill="url(#dpGrad)" stroke="#ffdd00" stroke-width="1.5"/>
+          <text x="240" y="144" text-anchor="middle" fill="#ffdd00" font-family="'Orbitron',monospace" font-size="8">MuxB</text>
+          <text x="240" y="157" text-anchor="middle" fill="#ffcc44" font-size="7">RB or Imm.Value</text>
+          <line x1="150" y1="152" x2="200" y2="152" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#aD)"/>
+
+          <!-- Imm Value -->
+          <rect x="200" y="185" width="80" height="26" rx="5" fill="rgba(0,0,0,0.5)" stroke="#ffdd0066" stroke-width="1"/>
+          <text x="240" y="202" text-anchor="middle" fill="#ffdd44" font-size="8">Imm. Value</text>
+          <line x1="240" y1="185" x2="240" y2="166" stroke="#ffdd00" stroke-width="1.2" marker-end="url(#aY)"/>
+
+          <!-- ALU -->
+          <rect x="320" y="110" width="110" height="60" rx="8" fill="url(#dpGrad)" stroke="#00ff99" stroke-width="2" filter="url(#gd)"/>
+          <text x="375" y="133" text-anchor="middle" fill="#00ff99" font-family="'Orbitron',monospace" font-size="9">ALU</text>
+          <text x="375" y="148" text-anchor="middle" fill="#aaffcc" font-size="7">Add · Sub · Mul</text>
+          <text x="375" y="160" text-anchor="middle" fill="#aaffcc" font-size="7">And · Or · XOR</text>
+          <line x1="150" y1="130" x2="200" y2="130" stroke="#ff66ff" stroke-width="1.5"/>
+          <line x1="280" y1="130" x2="320" y2="130" stroke="#ffdd00" stroke-width="1.5" marker-end="url(#aG)"/>
+          <line x1="280" y1="152" x2="320" y2="152" stroke="#ffdd00" stroke-width="1.5" marker-end="url(#aG)"/>
+
+          <!-- RZ -->
+          <rect x="470" y="125" width="70" height="30" rx="6" fill="url(#dpGrad)" stroke="#00bfff" stroke-width="1.5"/>
+          <text x="505" y="145" text-anchor="middle" fill="#00bfff" font-family="'Orbitron',monospace" font-size="8">RZ</text>
+          <line x1="430" y1="140" x2="470" y2="140" stroke="#00ff99" stroke-width="2" marker-end="url(#aD)"/>
+          <text x="450" y="133" text-anchor="middle" fill="#00ff9977" font-size="7">ALU_out</text>
+
+          <!-- MuxY -->
+          <rect x="560" y="110" width="80" height="36" rx="6" fill="url(#dpGrad)" stroke="#ff66ff" stroke-width="1.5"/>
+          <text x="600" y="124" text-anchor="middle" fill="#ff88ff" font-family="'Orbitron',monospace" font-size="8">MuxY</text>
+          <text x="600" y="137" text-anchor="middle" fill="#ffaaff" font-size="7">ALU or MemData</text>
+          <line x1="540" y1="140" x2="560" y2="132" stroke="#00bfff" stroke-width="1.5" marker-end="url(#aP)"/>
+
+          <!-- RY -->
+          <rect x="560" y="160" width="80" height="30" rx="6" fill="url(#dpGrad)" stroke="#7FFF00" stroke-width="1.5"/>
+          <text x="600" y="180" text-anchor="middle" fill="#7FFF00" font-family="'Orbitron',monospace" font-size="8">RY → REG BANK</text>
+          <line x1="600" y1="146" x2="600" y2="160" stroke="#ff66ff" stroke-width="1.5" marker-end="url(#aG)"/>
+          <line x1="560" y1="175" x2="155" y2="175" stroke="#7FFF00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#aG)"/>
+
+          <!-- EA -->
+          <rect x="320" y="210" width="110" height="30" rx="6" fill="url(#dpGrad)" stroke="#ffdd00" stroke-width="1.5"/>
+          <text x="375" y="230" text-anchor="middle" fill="#ffdd00" font-family="'Orbitron',monospace" font-size="8">EA (Eff. Address)</text>
+          <line x1="375" y1="170" x2="375" y2="210" stroke="#00bfff" stroke-width="1.5" marker-end="url(#aY)"/>
+
+          <!-- Data Memory -->
+          <rect x="470" y="205" width="130" height="50" rx="8" fill="url(#memGrad)" stroke="#cc44ff" stroke-width="2" filter="url(#gd)"/>
+          <text x="535" y="225" text-anchor="middle" fill="#cc44ff" font-family="'Orbitron',monospace" font-size="9">DATA MEMORY</text>
+          <text x="535" y="240" text-anchor="middle" fill="#dd88ff" font-size="7">Store_En · Read_En</text>
+          <text x="535" y="250" text-anchor="middle" fill="#dd88ff" font-size="7">MemData_In / Out</text>
+          <line x1="430" y1="225" x2="470" y2="225" stroke="#ffdd00" stroke-width="1.5" marker-end="url(#aP)"/>
+          <line x1="600" y1="205" x2="600" y2="160" stroke="#cc44ff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#aP)"/>
+
+          <!-- CU control lines to ALU, Memory -->
+          <line x1="420" y1="66" x2="490" y2="66" stroke="#7FFF00" stroke-width="1" stroke-dasharray="2,3" opacity="0.5"/>
+          <line x1="490" y1="66" x2="490" y2="110" stroke="#7FFF00" stroke-width="1" stroke-dasharray="2,3" opacity="0.5" marker-end="url(#aG)"/>
+
+          <!-- LEGEND -->
+          <rect x="20" y="300" width="10" height="4" rx="2" fill="#00ff99"/>
+          <text x="36" y="306" fill="#aaffcc" font-size="8">ALU / Data Bus</text>
+          <rect x="130" y="300" width="10" height="4" rx="2" fill="#ff66ff"/>
+          <text x="146" y="306" fill="#ffaaff" font-size="8">Register Bus</text>
+          <rect x="240" y="300" width="10" height="4" rx="2" fill="#7FFF00"/>
+          <text x="256" y="306" fill="#aaffcc" font-size="8">Control Signals</text>
+          <rect x="370" y="300" width="10" height="4" rx="2" fill="#ffdd00"/>
+          <text x="386" y="306" fill="#ffddaa" font-size="8">Address Bus</text>
+          <rect x="480" y="300" width="10" height="4" rx="2" fill="#cc44ff"/>
+          <text x="496" y="306" fill="#ddaaff" font-size="8">Memory Bus</text>
+
+          <!-- Stage labels -->
+          <text x="60" y="330" text-anchor="middle" fill="#ffffff33" font-size="9">FETCH</text>
+          <text x="185" y="330" text-anchor="middle" fill="#ffffff33" font-size="9">DECODE</text>
+          <text x="310" y="330" text-anchor="middle" fill="#ffffff33" font-size="9">EXECUTE</text>
+          <text x="450" y="330" text-anchor="middle" fill="#ffffff33" font-size="9">MEMORY</text>
+          <text x="590" y="330" text-anchor="middle" fill="#ffffff33" font-size="9">WRITE-BACK</text>
+          <line x1="115" y1="20" x2="115" y2="340" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="250" y1="20" x2="250" y2="340" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="395" y1="20" x2="395" y2="340" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="540" y1="20" x2="540" y2="340" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── INSTRUCTION SETS ─── -->
+<hr class="section-divider">
+<h2 class="section-title">Instruction Set Datapath Traces</h2>
+
+<div class="frame" style="margin-top:30px;">
+
+  <div class="card">
+    <div class="card-title">Overview — How the Datapath Executes Each Instruction</div>
+    <div class="content">
+      <p>
+        Each instruction in the datapath follows a defined path through the components. The <span class="highlight">CU decodes the opcode</span> and enables the appropriate control signals. Below are all seven instruction groups from the Processor Datapath Design project, with the datapath flow explained for each.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SET 1 — Page 1 of PDF (no circuit image)
+       SET 1 circuit is shown on page 2 with Set 2
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Set 1 — Load, Store, Add, Or</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Set 1</div>
+        <code>Load  R3, X(R1)</code>
+        <code>Store R2, X(R0)</code>
+        <code>Add   R1, R2, R3</code>
+        <code>Or    R0, R1, R2</code>
+        <div class="instr-desc">
+          <b>Load:</b> EA = R1 + X (offset). Memory[EA] → R3 via MemData_In → MuxY → RY → REG BANK. CU sets READ=1, RZ_ALU_En=0, Write_RY_En=1.<br>
+          <b>Store:</b> EA = R0 + X. R2 → MemData. CU sets Store_En=1, READ=0.<br>
+          <b>Add:</b> ALU(R2 + R3) → RZ → MuxY → RY → R1. MuxB selects RB=R3. ALU opcode = ADD.<br>
+          <b>Or:</b> ALU(R1 OR R2) → RY → R0. ALU opcode = OR.
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 2 shows Set 1 + Set 2 circuit -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Set 1</div>
+        <img src="logisim-page.jpg"
+             alt="Logisim circuit simulation for Instruction Sets 1 — showing REG BANK, ALU, MuxB, MuxY, CU, Code Memory (00 34 62 9b / c6 00 00 00), PC, IR, Memory block, 7-segment displays RA RB RM RZ EA RY"
+             loading="lazy">
+        <div class="logisim-caption">
+          Signals visible: Clock · Addr_C · RESET · Addr_A · RA · READ · Addr_B · RB · Write_RY_En · Opcode · MuxB_En · Store_En · InA · MuxB_En · RZ_ALU_En · MemData_In · ALU_out · MuxY_Out · Write_RY_En · Clock · RESET &nbsp;|&nbsp; Code memory: 00 34 62 9b / c6 00 00 00 &nbsp;|&nbsp; IR: 00000000 &nbsp;|&nbsp; 7-seg: RA RB RM RZ EA RY
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SET 2
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Set 2 — Load (register indirect), Add, Sub</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Set 2</div>
+        <code>Load  R3, X(R1)   ; EA = R1 + X, R3 ← Mem[EA]</code>
+        <code>Add   R3, R2      ; R3 ← R3 + R2</code>
+        <code>Sub   R1, R0      ; R1 ← R1 − R0</code>
+        <div class="instr-desc">
+          Load: RA=R1, Imm=X, EA=ALU(R1+X), MuxY selects MemData_In → RY → R3.<br>
+          Add: MuxB selects RB=R2, ALU(R3+R2) → RZ → MuxY → RY → R3. RZ_ALU_En=1.<br>
+          Sub: ALU(R1−R0) → RY → R1. ALU opcode = SUB. MuxB_En selects register mode.
+        </div>
+		 <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Set 2</div>
+        <img src="logisim-page2.jpg"
+             alt="Logisim circuit simulation for Instruction Sets 2— showing REG BANK, ALU, MuxB, MuxY, CU, Code Memory (00 34 62 9b / c6 00 00 00), PC, IR, Memory block, 7-segment displays RA RB RM RZ EA RY"
+             loading="lazy">
+        <div class="logisim-caption">
+          Signals visible: Clock · Addr_C · RESET · Addr_A · RA · READ · Addr_B · RB · Write_RY_En · Opcode · MuxB_En · Store_En · InA · MuxB_En · RZ_ALU_En · MemData_In · ALU_out · MuxY_Out · Write_RY_En · Clock · RESET &nbsp;|&nbsp; Code memory: 00 34 62 9b / c6 00 00 00 &nbsp;|&nbsp; IR: 00000000 &nbsp;|&nbsp; 7-seg: RA RB RM RZ EA RY
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+	</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SETS 3 & 4 — PDF Page 3
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Sets 3 &amp; 4 — Immediate Operand Add and Sub</div>
+    <div class="content">
+      <div class="instr-grid">
+        <div class="instr-block">
+          <div class="instr-num">Set 3</div>
+          <code>Add R1, #0x30   ; R1 ← R1 + 0x30</code>
+          <code>Sub R2, #0x40   ; R2 ← R2 − 0x40</code>
+          <div class="instr-desc">
+            MuxB_En selects immediate path. Imm.Value = 0x30 or 0x40 fed directly to ALU second input. RA=R1 (or R2). ALU result → RZ → RY → write-back.
+          </div>
+        </div>
+        <div class="instr-block">
+          <div class="instr-num">Set 4</div>
+          <code>Add R1, R2      ; R1 ← R1 + R2</code>
+          <code>Sub R3, #0x30   ; R3 ← R3 − 0x30</code>
+          <div class="instr-desc">
+            Add: register-to-register. MuxB selects RB=R2. Sub: MuxB selects immediate 0x30. CU changes MuxB_En control signal between the two instructions.
+          </div>
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 3 -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Sets 3 &amp; 4 (PDF Page 3 / 7)</div>
+        <img src="logisim-page3.jpg"
+             alt="Logisim circuit for Sets 3 and 4 — REG BANK with RESET, CLOCK, WRITE_RY_EN, READ EN, add_a, add_b, add_c, A, B inputs; ALU with ALU_OUT and RZ_ALU_EN; opcode comparator driving MUX B EN; IMM VALUE 0000; PC with Code Memory (00 34 7e 94 / 4 00 00 00); IR 0000000; right side pipeline registers RA RB DATA RZ EA RY; CU with RA_RB_EN RZ_ALU_EN WRITE_RY_EN READ EN; EN(PC and CU); Memory block with EA DATA READ EN CLOCK MUX B EN MUXY_OUT"
+             loading="lazy">
+        <div class="logisim-caption">
+          Code memory: 00 34 7e 94 / 4 00 00 00 &nbsp;|&nbsp; IMM VALUE: 0000 &nbsp;|&nbsp; IR: 0000000 &nbsp;|&nbsp; Signals: WRITE_RY_EN · READ EN · MUX B EN · RA_RB_EN · RZ_ALU_EN · EN(PC &amp; CU) · MUXY_OUY · WRITE_RY_EN · CLOCK · RESET
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SET 5 — PDF Page 4
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Set 5 — Load (absolute), Add, Store (absolute)</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Set 5</div>
+        <code>Load  R3, 0x50   ; R3 ← Mem[0x50]</code>
+        <code>Add   R1, R2     ; R1 ← R1 + R2</code>
+        <code>Store R1, 0x30   ; Mem[0x30] ← R1</code>
+        <div class="instr-desc">
+          <b>Load (absolute):</b> EA = 0x50 (immediate address). Memory[0x50] → MemData_In → MuxY → RY → R3. No register base needed; immediate address feeds EA directly.<br>
+          <b>Add:</b> Standard register add as above.<br>
+          <b>Store (absolute):</b> EA = 0x30. R1 value → MemData bus. CU: Store_En=1, READ=0, Write_RY_En=0.
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 4 -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Set 5 (PDF Page 4 / 7)</div>
+        <img src="logisim-page4.jpg"
+             alt="Logisim circuit for Set 5 — REG BANK (RESET, RY, RY_WRITE_EN, CLOCK, ADD A, ADD B, ADD C, A, B, READ); ALU with RA, RB via MUX, IMM VALUE 0000, MUXB_EN, OPCODE, ALU_OUT, RZ_ALU_EN; three OPCODE comparator blocks (00, 01, 11) with OR gate driving MUXB_EN; PC with Code Memory (00 14 68 96 / fc 00 00 00); CU with RA_RB_EN, RY_WRITE_EN, RZ_ALU_EN, READ; MEMORY block with STORE_EN, READ, CLOCK; right pipeline registers RA RB MEM DATA IN RZ EA RY; bottom MEMORY with EA MEM DATA IN STORE_EN READ CLOCK MUXY_OUT"
+             loading="lazy">
+        <div class="logisim-caption">
+          Code memory: 00 14 68 96 / fc 00 00 00 &nbsp;|&nbsp; IMM VALUE: 0000 &nbsp;|&nbsp; IR: 00000000 &nbsp;|&nbsp; Signals: RA_RB_EN · RY_WRITE_EN · RZ_ALU_EN · READ · STORE_EN · MUXB_EN · MUXY_OUT &nbsp;|&nbsp; LEDs: EN (green ⊙) · store (green ⊙) · RESET (gray □)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SET 6 — PDF Page 5
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Set 6 — Load (register indirect), And, Store (register indirect)</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Set 6</div>
+        <code>Load  R0, (R1)   ; R0 ← Mem[R1]</code>
+        <code>And   R3, R4     ; R3 ← R3 AND R4</code>
+        <code>Store R3, (R5)   ; Mem[R5] ← R3</code>
+        <div class="instr-desc">
+          <b>Load (register indirect):</b> EA = R1 (no offset, MuxZ_En selects register-only mode). Mem[R1] → RY → R0.<br>
+          <b>And:</b> ALU(R3 AND R4) → RZ → RY → R3. ALU opcode = AND. MuxB selects R4.<br>
+          <b>Store (register indirect):</b> EA = R5. R3 → MemData_In path. Store_En=1.
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 5 -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Set 6 (PDF Page 5 / 7)</div>
+        <img src="logisim-page5.jpg"
+             alt="Logisim circuit for Set 6 — REG BANK (RESET, A, READ EN, RY, B, RY_WRITE_EN, ADD C, CLOCK, ADD B, ADD A); ALU with RB, RA via MUX, IMM VALUE 1011, OPCODE, RZ_ALU_EN, MUX Z EN, ALU_OUT; OPCODE comparators (000 and 21 STORE EN) driving MUX Z EN; PC with Code Memory (000 000 / 24a 401 / 000 000 / 000 030); CU with RZ_ALU_EN, RA_RB_EN, READ EN, RY_WRITE_EN, EN, CLOCK, RESET; right pipeline registers RA RB MEM_DATA RZ EA RY; Memory block (EA MEM_DATA STORE_EN MUX_Z_EN READ_EN CLOCK MUXY_OUT)"
+             loading="lazy">
+        <div class="logisim-caption">
+          Code memory: 000 000 / 24a 401 / 000 000 / 000 030 &nbsp;|&nbsp; IMM VALUE: 1011 &nbsp;|&nbsp; IR: 0000 00000000 &nbsp;|&nbsp; Signals: RZ_ALU_EN · RA_RB_EN · READ EN · RY_WRITE_EN · MUX Z EN · STORE EN · MUXY_OUT
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SET 7 — PDF Page 6
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Instruction Set 7 — Load (base+index addressing), Or</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Set 7</div>
+        <code>Load  R3, (R1, R2)   ; R3 ← Mem[R1 + R2]</code>
+        <code>Or    R5, R6         ; R5 ← R5 OR R6</code>
+        <div class="instr-desc">
+          <b>Load (base + index):</b> EA = ALU(R1 + R2). Both R1 and R2 are read from REG BANK. ALU computes base + index address → EA register → Memory. MemData_In → MuxY → RY → R3. MuxZ_En selects sum-of-registers mode for EA.<br>
+          <b>Or:</b> Standard bitwise OR between R5 and R6. ALU opcode = OR. MuxB selects RB=R6.
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 6 -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Instruction Set 7 (PDF Page 6 / 7)</div>
+        <img src="logisim-page6.jpg"
+             alt="Logisim circuit for Set 7 — same layout as Set 6 with base+index addressing mode; REG BANK (RESET A READ EN RY B RY_WRITE_EN ADD C CLOCK ADD B); ALU with RB, RA via MUX, IMM VALUE 0000, OPCODE, RZ_ALU_EN, MUX Z EN, ALU_OUT; OPCODE comparators (000 and 011 STORE EN) driving MUX Z EN; PC with Code Memory (000 038 / 100 42b / 000 030 / 000 030); CU with RZ_ALU_EN RA_RB_EN READ EN RY_WRITE_EN EN CLOCK RESET; pipeline registers RA RB MEM_DATA RZ EA RY; Memory block (EA MEM_DATA STORE_EN MUX_Z_EN READ_EN CLOCK MUXY_OUT)"
+             loading="lazy">
+        <div class="logisim-caption">
+          Code memory: 000 038 / 100 42b / 000 030 / 000 030 &nbsp;|&nbsp; IMM VALUE: 0000 &nbsp;|&nbsp; IR: 0000 00000000 &nbsp;|&nbsp; Signals: RZ_ALU_EN · RA_RB_EN · READ EN · RY_WRITE_EN · MUX Z EN · STORE EN · MUXY_OUT
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       EXTRA / EXTENDED CIRCUIT — PDF Page 7
+       EA_EN variant (no instruction label in PDF)
+       ══════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Extended Datapath Circuit — EA_EN Variant (PDF Page 7 / 7)</div>
+    <div class="content">
+      <div class="instr-block">
+        <div class="instr-num">Extended Circuit</div>
+        <code>; No instruction label — extended EA_EN datapath variant</code>
+        <div class="instr-desc">
+          This final circuit from the PDF introduces <b>EA_EN</b> (Effective Address Enable) as an explicit pipeline register control signal, replacing MUX Z EN from Sets 6 &amp; 7. The two OPCODE comparators now drive both <b>EA_EN</b> and <b>MUX_B_EN</b> (note green LED indicators active on both comparator outputs). Code memory: 000 0ca / 366 000 / 000 000 / 000 000.
+        </div>
+      </div>
+
+      <!-- Logisim circuit image — PDF Page 7 -->
+      <div class="logisim-block">
+        <div class="logisim-label">LOGISIM CIRCUIT — Extended EA_EN Datapath (PDF Page 7 / 7)</div>
+        <img src="logisim-page7.jpg"
+             alt="Logisim extended EA_EN circuit — REG BANK (RESET A READ_EN RY B RY_WRITE_EN ADD C CLOCK ADD B ADD A); ALU with RB RA via MUX, IMM VALUE 0000, OPCODE, MUX_B_EN, RZ_ALU_EN, ALU_OUT; two OPCODE comparators driving EA_EN and MUX_B_EN (green LEDs active ⊙); PC with Code Memory (000 0ca / 366 000 / 000 000 / 000 000); CU with RA_RB_EN RZ_ALU_EN RY_WRITE_EN READ_EN EN CLOCK RESET; right pipeline registers RA RB MEM DATA IN RZ EA (with EA_EN) RY (with RY_WRITE_EN); bottom Memory block (EA MEM DATA IN EA_EN READ_EN CLOCK MUXY_OUT EA_EN output)"
+             loading="lazy">
+        <div class="logisim-caption">
+          Code memory: 000 0ca / 366 000 / 000 000 / 000 000 &nbsp;|&nbsp; IMM VALUE: 0000 &nbsp;|&nbsp; IR: 0000 00000000 &nbsp;|&nbsp; New signal: EA_EN replaces MUX Z EN &nbsp;|&nbsp; Signals: RA_RB_EN · RZ_ALU_EN · RY_WRITE_EN · READ_EN · MUX_B_EN · EA_EN · MUXY_OUT
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── CONTROL SIGNALS SUMMARY ─── -->
+<hr class="section-divider">
+<h2 class="section-title">Control Signals Summary</h2>
+
+<div class="frame" style="margin-top:30px;">
+
+  <div class="card">
+    <div class="card-title">CU Control Signal Truth Table</div>
+    <div class="content">
+      <table>
+        <tr>
+          <th>Instruction Type</th>
+          <th>READ</th>
+          <th>Write_RY_En</th>
+          <th>MuxB_En</th>
+          <th>RZ_ALU_En</th>
+          <th>Store_En</th>
+          <th>MuxY_Out</th>
+        </tr>
+        <tr>
+          <td><span class="highlight">Load</span> (register)</td>
+          <td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>MemData</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Store</span></td>
+          <td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>—</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Add / Sub</span> (register)</td>
+          <td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>ALU_out</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Add / Sub</span> (immediate)</td>
+          <td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>ALU_out</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">And / Or</span> (logical)</td>
+          <td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>ALU_out</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Load</span> (absolute addr.)</td>
+          <td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>MemData</td>
+        </tr>
+      </table>
+      <p style="margin-top:12px;">
+        MuxB_En=1 means the ALU second input is the <span class="highlight">immediate value</span> from IR rather than register RB. RZ_ALU_En=1 routes the ALU output to the RZ intermediate register. MuxY_Out selects either ALU result or memory data for the write-back path to RY and then to the register file.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-bottom-spacer"></div>
+
+<script>
+const cards = document.querySelectorAll('.card');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+}, { threshold: 0.1 });
+cards.forEach(card => observer.observe(card));
+
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (!isTouchDevice) {
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const rx = ((e.clientY - rect.top) - rect.height / 2) / 22;
+      const ry = (rect.width / 2 - (e.clientX - rect.left)) / 22;
+      card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.015)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+  });
+}
+
+cards.forEach(card => {
+  card.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  });
+});
+
+const s = document.createElement('style');
+s.innerHTML = `@keyframes fp{0%{transform:translateY(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-120vh);opacity:0}}`;
+document.head.appendChild(s);
+for (let i = 0; i < 22; i++) {
+  const p = document.createElement('div');
+  const sz = Math.random() * 4 + 2;
+  p.style.cssText = `position:fixed;width:${sz}px;height:${sz}px;background:rgba(0,191,255,0.3);border-radius:50%;left:${Math.random()*100}vw;top:${Math.random()*100}vh;pointer-events:none;z-index:-1;box-shadow:0 0 8px #00bfff;animation:fp ${Math.random()*10+8}s linear ${Math.random()*5}s infinite`;
+  document.body.appendChild(p);
+}
+</script>
+</body>
+</html>
